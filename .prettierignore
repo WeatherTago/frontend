@@ -1,0 +1,16 @@
+# 빌드/캐시 관련
+node_modules/
+build/
+dist/
+
+# Expo 관련
+.expo/
+.expo-shared/
+
+# 환경변수 및 설정
+.env
+*.log
+
+# 기타
+*.png
+*.svg
