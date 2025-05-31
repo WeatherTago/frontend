@@ -1,50 +1,157 @@
-# Welcome to your Expo app 👋
+# WeatherTago: 날씨 기반 지하철 혼잡도 예측 서비스
 
-This is an [Expo](https://expo.dev) project created with [`create-expo-app`](https://www.npmjs.com/package/create-expo-app).
+**기술 스택:**  
+- React Native  
+- Expo  
+- TypeScript  
 
-## Get started
+---
 
-1. Install dependencies
+## 프로젝트 소개
 
-   ```bash
-   npm install
-   ```
+WeatherTago는 날씨 데이터를 기반으로 지하철 역의 혼잡도를 예측하고, 사용자 맞춤 알림 및 커뮤니티 기능을 제공하는 모바일 앱입니다.
 
-2. Start the app
+---
 
-   ```bash
-   npx expo start
-   ```
+## 주요 기능
 
-In the output, you'll find options to open the app in a
+1. **로그인/회원가입**
+   - 카카오톡 소셜 로그인 지원
 
-- [development build](https://docs.expo.dev/develop/development-builds/introduction/)
-- [Android emulator](https://docs.expo.dev/workflow/android-studio-emulator/)
-- [iOS simulator](https://docs.expo.dev/workflow/ios-simulator/)
-- [Expo Go](https://expo.dev/go), a limited sandbox for trying out app development with Expo
+2. **온보딩**
+   - 첫 가입 시 앱 기능 간단 소개
 
-You can start developing by editing the files inside the **app** directory. This project uses [file-based routing](https://docs.expo.dev/router/introduction).
+3. **사전정보**
+   - 즐겨찾는 역 다중 설정
 
-## Get a fresh project
+4. **홈 화면**
+   - 오늘/일주일 기후 정보
+   - 기후에 따른 즐겨찾기 역 혼잡도 예측
+   - 공지사항(시위, 공사 등) 알림
+   - 즐겨찾기 수정
 
-When you're ready, run:
+5. **알림 설정 페이지**
+   - 알림 시간 및 요일 설정(역별)
+
+6. **역 혼잡도 분석**
+   - 전체 지하철 노선도 제공
+   - 역 검색 및 상세 혼잡도 안내
+   - 출발/도착역 입력 및 길찾기 결과
+   - 추천 출발 시간대 안내
+
+7. **커뮤니티**
+   - 지하철 상황 정보 공유 및 조회
+   - 검색 및 리스트 제공
+
+8. **마이페이지**
+   - 즐겨찾기 역 관리
+   - 내 프로필 및 내가 쓴 글 관리
+   - 로그아웃, 회원탈퇴
+
+---
+
+## 설치 및 실행
 
 ```bash
-npm run reset-project
+git clone https://github.com/WeatherTago/frontend.git
+cd WeatherRoute
+npm install
+npx expo start
 ```
 
-This command will move the starter code to the **app-example** directory and create a blank **app** directory where you can start developing.
+---
 
-## Learn more
+## 기여 방법
 
-To learn more about developing your project with Expo, look at the following resources:
+1. **이슈를 확인하고 작업할 항목 선택**
+2. **브랜치 생성:**  
+   `feat/기능명` 또는 `fix/버그명`
+3. **작업 전 최신 dev 브랜치로부터 pull**
+   ```bash
+   git checkout dev
+   git pull origin dev
+   git checkout -b feat/기능명   # 또는 fix/버그명
+   ```
+4. **기능 개발**
+5. **커밋 전 변경사항 확인**
+   ```bash
+   git status
+   git diff
+   ```
+6. **변경사항 스테이징 및 커밋**
+   ```bash
+   git add .
+   git commit -m "feat: 기능 추가 설명"
+   ```
+7. **PR 생성 전 dev 브랜치 최신 내용 반영**
+   ```bash
+   git pull origin dev
+   # 충돌 발생 시 해결 후 add/commit
+   ```
+8. **PR(Pull Request) 생성**
+9. **코드리뷰 후 병합**
 
-- [Expo documentation](https://docs.expo.dev/): Learn fundamentals, or go into advanced topics with our [guides](https://docs.expo.dev/guides).
-- [Learn Expo tutorial](https://docs.expo.dev/tutorial/introduction/): Follow a step-by-step tutorial where you'll create a project that runs on Android, iOS, and the web.
+---
 
-## Join the community
+## 커밋 컨벤션
 
-Join our community of developers creating universal apps.
+- `feat`: 새로운 기능 개발
+- `fix`: 버그 수정
+- `refactor`: 코드 리팩토링
+- `style`: 코드 포맷팅/오타/함수명 등 스타일 수정
+- `build`: 빌드 관련 파일 수정
+- `docs`: 문서 수정
+- `chore`: 기타 자잘한 수정
+- `ci`: CI 관련 설정 수정
+- `test`: 테스트 코드 수정
+- `design`: 디자인 관련 수정
 
-- [Expo on GitHub](https://github.com/expo/expo): View our open source platform and contribute.
-- [Discord community](https://chat.expo.dev): Chat with Expo users and ask questions.
+**예시**  
+```markdown
+feat: 로그인 기능 추가
+fix: 역 검색 오류 수정
+```
+
+---
+
+## 브랜치 전략
+
+- `main`: 배포(프로덕션) 브랜치
+- `dev`(develop): 통합 개발 브랜치 (기본 브랜치)
+- `feature/기능명`: 기능 개발 브랜치 (`feat/`도 허용)
+- `hotfix/이슈명`: 배포 중 긴급 버그 수정 브랜치
+
+---
+
+## Issue 작성 규칙
+
+- **제목:** `[Feat|Fix|Refactor|Docs] 이슈 제목`
+- **본문:** 아래 템플릿 활용
+
+```
+### 만들고자 하는 기능/수정사항
+설명을 작성하세요.
+
+### 세부 작업 목록
+- [ ] 작업 1
+- [ ] 작업 2
+
+### 예상 작업 시간
+ex) 2h
+```
+
+- **라벨, 담당자 지정 필수**  
+  - 라벨: 이슈 유형(예: feat, bug, urgent 등) 선택  
+  - 담당자: 실제 작업할 팀원 지정
+
+---
+
+## 기타
+
+- Pull Request, Issue, 커밋, 브랜치명 등에 이슈 번호를 명시하면 추적이 용이합니다.
+- 자세한 협업 규칙 및 코드 스타일 가이드는 추후 별도 문서로 안내될 수 있습니다.
+
+---
+
+**문의 및 제안:**  
+이슈 또는 PR로 남겨주세요.
