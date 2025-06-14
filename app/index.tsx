@@ -1,4 +1,3 @@
-import AsyncStorage from '@react-native-async-storage/async-storage';
 import { useRouter } from 'expo-router';
 import { useEffect, useState } from 'react';
 import { Text, View } from 'react-native';
@@ -6,17 +5,15 @@ import { Text, View } from 'react-native';
 export default function Index() {
   const router = useRouter();
   const [loading, setLoading] = useState(true);
+  const isLoggedIn = false;
 
   useEffect(() => {
     const checkOnboarding = async () => {
       try {
-        const done = await AsyncStorage.getItem('onboardingDone');
-        if (done) {
-          //router.replace('/');
-          //온보딩 테스트용 주석
-          router.replace('/onboarding');
+        if (isLoggedIn === null) return;
+        if (isLoggedIn) {
+          router.replace('/');
         } else {
-          console.log('온보딩 체크 실패');
           router.replace('/onboarding');
         }
       } catch (e) {
@@ -27,7 +24,7 @@ export default function Index() {
       }
     };
     checkOnboarding();
-  }, []);
+  }, [isLoggedIn]);
 
   return (
     <View
