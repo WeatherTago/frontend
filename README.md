@@ -1,9 +1,10 @@
 # WeatherTago: 날씨 기반 지하철 혼잡도 예측 서비스
 
-**기술 스택:**  
-- React Native  
-- Expo  
-- TypeScript  
+**기술 스택:**
+
+- React Native
+- Expo
+- TypeScript
 
 ---
 
@@ -16,30 +17,37 @@ WeatherTago는 날씨 데이터를 기반으로 지하철 역의 혼잡도를 �
 ## 주요 기능
 
 1. **로그인/회원가입**
+
    - 카카오톡 소셜 로그인 지원
 
 2. **온보딩**
+
    - 첫 가입 시 앱 기능 간단 소개
 
 3. **사전정보**
+
    - 즐겨찾는 역 다중 설정
 
 4. **홈 화면**
+
    - 오늘/일주일 기후 정보
    - 기후에 따른 즐겨찾기 역 혼잡도 예측
    - 공지사항(시위, 공사 등) 알림
    - 즐겨찾기 수정
 
 5. **알림 설정 페이지**
+
    - 알림 시간 및 요일 설정(역별)
 
 6. **역 혼잡도 분석**
+
    - 전체 지하철 노선도 제공
    - 역 검색 및 상세 혼잡도 안내
    - 출발/도착역 입력 및 길찾기 결과
    - 추천 출발 시간대 안내
 
 7. **커뮤니티**
+
    - 지하철 상황 정보 공유 및 조회
    - 검색 및 리스트 제공
 
@@ -68,6 +76,7 @@ npx expo start
    `feat/기능명` 또는 `fix/버그명`
 3. **작업 전 최신 dev 브랜치로부터 pull**
    ```bash
+   git fetch origin
    git checkout dev
    git pull origin dev
    git checkout -b feat/기능명   # 또는 fix/버그명
@@ -85,8 +94,8 @@ npx expo start
    ```
 7. **PR 생성 전 dev 브랜치 최신 내용 반영**
    ```bash
-   git pull origin dev
-   # 충돌 발생 시 해결 후 add/commit
+   git fetch origin
+   git rebase origin/dev
    ```
 8. **PR(Pull Request) 생성**
 9. **코드리뷰 후 병합**
@@ -106,7 +115,8 @@ npx expo start
 - `test`: 테스트 코드 수정
 - `design`: 디자인 관련 수정
 
-**예시**  
+**예시**
+
 ```markdown
 feat: 로그인 기능 추가
 fix: 역 검색 오류 수정
@@ -140,8 +150,8 @@ fix: 역 검색 오류 수정
 ex) 2h
 ```
 
-- **라벨, 담당자 지정 필수**  
-  - 라벨: 이슈 유형(예: feat, bug, urgent 등) 선택  
+- **라벨, 담당자 지정 필수**
+  - 라벨: 이슈 유형(예: feat, bug, urgent 등) 선택
   - 담당자: 실제 작업할 팀원 지정
 
 ---
