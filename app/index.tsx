@@ -8,9 +8,10 @@ export default function Index() {
   const isLoggedIn = false;
 
   useEffect(() => {
-    const checkOnboarding = async () => {
+    const timeout = setTimeout(() => {
+      if (isLoggedIn === null) return;
+
       try {
-        if (isLoggedIn === null) return;
         if (isLoggedIn) {
           router.replace('/');
         } else {
@@ -22,9 +23,24 @@ export default function Index() {
       } finally {
         setLoading(false);
       }
-    };
-    checkOnboarding();
+    }, 300); // 300ms 지연
+
+    return () => clearTimeout(timeout); // cleanup
   }, [isLoggedIn]);
+
+  if (loading) {
+    return (
+      <View
+        style={{
+          flex: 1,
+          justifyContent: 'center',
+          alignItems: 'center',
+        }}
+      >
+        <Text>로딩 중...</Text>
+      </View>
+    );
+  }
 
   return (
     <View
