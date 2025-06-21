@@ -1,11 +1,27 @@
 import { AuthContext } from '@/context/AuthContext';
+import styled from '@emotion/native';
 import { useContext } from 'react';
-import { Button } from 'react-native';
 
 const LoginButton = () => {
   const { login } = useContext(AuthContext);
 
-  return <Button title="카카오 계정으로 로그인하기" onPress={login} />;
+  return (
+    <ButtonContainer onPress={login}>
+      <ButtonText>카카오 계정으로 로그인하기</ButtonText>
+    </ButtonContainer>
+  );
 };
 
 export default LoginButton;
+
+const ButtonContainer = styled.TouchableOpacity`
+  background-color: ${({ theme }) => theme.colors.primary};
+  padding: ${({ theme }) => `${theme.spacing.md}px`};
+  border-radius: ${({ theme }) => `${theme.spacing.md}px`};
+  align-items: center;
+`;
+
+const ButtonText = styled.Text`
+  color: ${({ theme }) => theme.colors.text};
+  font-size: ${({ theme }) => `${theme.fontSize.title}px`};
+`;

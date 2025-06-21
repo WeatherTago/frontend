@@ -1,5 +1,7 @@
 import { AuthProvider } from '@/context/AuthContext';
 import { makeServer } from '@/services/mirage/server';
+import { theme } from '@/styles/theme';
+import { ThemeProvider } from '@emotion/react';
 import { Asset } from 'expo-asset';
 import Constants from 'expo-constants';
 import { Image } from 'expo-image';
@@ -115,7 +117,9 @@ export default function RootLayout() {
   return (
     <AnimatedAppLoader image={require('../assets/images/react-logo.png')}>
       <AuthProvider>
-        <Stack screenOptions={{ headerShown: false }} />
+        <ThemeProvider theme={theme}>
+          <Stack screenOptions={{ headerShown: false }} />
+        </ThemeProvider>
       </AuthProvider>
     </AnimatedAppLoader>
   );
