@@ -1,20 +1,20 @@
+import { AuthContext } from '@/context/AuthContext';
 import { useRouter } from 'expo-router';
-import { useEffect, useState } from 'react';
+import { useContext, useEffect, useState } from 'react';
 import { Text, View } from 'react-native';
 
 export default function Index() {
   const router = useRouter();
   const [loading, setLoading] = useState(true);
-  const isLoggedIn = false;
+  const { user } = useContext(AuthContext);
+  const isLoggedIn = !!user;
 
   useEffect(() => {
     const timeout = setTimeout(() => {
       if (isLoggedIn === null) return;
 
       try {
-        if (isLoggedIn) {
-          router.replace('/');
-        } else {
+        if (!isLoggedIn) {
           router.replace('/onboarding');
         }
       } catch (e) {
