@@ -28,7 +28,8 @@ export default function OnboardingStep3() {
           }
         }
 
-        router.replace('/');
+        router.replace('/(tabs)');
+
       };
 
       fetchTokens();
