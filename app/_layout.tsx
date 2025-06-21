@@ -1,10 +1,25 @@
+import { AuthProvider } from '@/context/AuthContext';
+import { makeServer } from '@/services/mirage/server';
 import { Asset } from 'expo-asset';
 import Constants from 'expo-constants';
 import { Image } from 'expo-image';
 import { Stack } from 'expo-router';
 import * as SplashScreen from 'expo-splash-screen';
+import { Server } from 'miragejs';
 import { useEffect, useRef, useState } from 'react';
 import { Animated, StyleSheet, View } from 'react-native';
+
+declare global {
+  interface Window {
+    server: Server;
+  }
+}
+
+if (__DEV__ && typeof globalThis.window !== 'undefined') {
+  if (!globalThis.window.server) {
+    globalThis.window.server = makeServer();
+  }
+}
 
 // 기본 스플래시 스크린이 자동으로 숨겨지지 않도록 함
 SplashScreen.preventAutoHideAsync().catch(e => console.error(e));
@@ -99,7 +114,9 @@ function AnimatedSplashScreen({ children, image }: { children: React.ReactNode; 
 export default function RootLayout() {
   return (
     <AnimatedAppLoader image={require('../assets/images/react-logo.png')}>
-      <Stack />
+      <AuthProvider>
+        <Stack screenOptions={{ headerShown: false }} />
+      </AuthProvider>
     </AnimatedAppLoader>
   );
 }
