@@ -160,6 +160,11 @@ ex) 2h
 
 - Pull Request, Issue, 커밋, 브랜치명 등에 이슈 번호를 명시하면 추적이 용이합니다.
 - 자세한 협업 규칙 및 코드 스타일 가이드는 추후 별도 문서로 안내될 수 있습니다.
+- ### package.json 정렬
+커밋 전 `package.json` 파일은 수동 정렬이 필요합니다.
+
+```bash
+npx sort-package-json
 
 ---
 
