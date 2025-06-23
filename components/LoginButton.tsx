@@ -15,7 +15,7 @@ const LoginButton = () => {
 export default LoginButton;
 
 const ButtonContainer = styled.TouchableOpacity`
-  background-color: ${({ theme }) => theme.colors.primary};
+  background-color: ${({ theme }) => theme.colors.primary['700']};
   padding: ${({ theme }) => `${theme.spacing.md}px`};
   border-radius: ${({ theme }) => `${theme.spacing.md}px`};
   align-items: center;
@@ -23,5 +23,5 @@ const ButtonContainer = styled.TouchableOpacity`
 
 const ButtonText = styled.Text`
   color: ${({ theme }) => theme.colors.text};
-  font-size: ${({ theme }) => `${theme.fontSize.title}px`};
+  font-size: ${({ theme }) => `${theme.typography.body1.fontSize}px`};
 `;
