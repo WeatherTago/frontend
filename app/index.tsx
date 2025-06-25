@@ -1,12 +1,12 @@
-import { AuthContext } from '@/context/AuthContext';
+import { useAuth } from '@/context/AuthContext';
 import { useRouter } from 'expo-router';
-import { useContext, useEffect, useState } from 'react';
+import { useEffect, useState } from 'react';
 import { Text, View } from 'react-native';
 
 export default function Index() {
   const router = useRouter();
   const [loading, setLoading] = useState(true);
-  const { user } = useContext(AuthContext);
+  const { user } = useAuth();
   const isLoggedIn = !!user;
 
   useEffect(() => {

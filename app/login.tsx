@@ -1,11 +1,10 @@
 import LoginButton from '@/components/LoginButton';
-import { AuthContext } from '@/context/AuthContext';
+import { useAuth } from '@/context/AuthContext';
 import { router } from 'expo-router';
-import { useContext } from 'react';
 import { StyleSheet, View } from 'react-native';
 
 export default function Login() {
-  const { user } = useContext(AuthContext);
+  const { user } = useAuth();
 
   if (!!user) {
     router.replace('/');

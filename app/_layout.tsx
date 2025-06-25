@@ -1,5 +1,4 @@
 import { AuthProvider } from '@/context/AuthContext';
-import { makeServer } from '@/services/mirage/server';
 import { theme } from '@/styles/theme';
 import { ThemeProvider } from '@emotion/react';
 import { Asset } from 'expo-asset';
@@ -17,13 +16,6 @@ declare global {
   }
 }
 
-if (__DEV__ && typeof globalThis.window !== 'undefined') {
-  if (!globalThis.window.server) {
-    globalThis.window.server = makeServer();
-  }
-}
-
-// 기본 스플래시 스크린이 자동으로 숨겨지지 않도록 함
 SplashScreen.preventAutoHideAsync().catch(e => console.error(e));
 
 function AnimatedAppLoader({ children, image }: { children: React.ReactNode; image: number }) {
