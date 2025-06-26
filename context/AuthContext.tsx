@@ -70,7 +70,6 @@ export const AuthProvider = ({ children }: { children: React.ReactNode }) => {
         setUser({ ...parsed, ...profile });
       }
     } catch (err) {
-      console.error('사용자 로드 실패:', err);
     } finally {
       setLoading(false);
       setIsAuthReady(true);

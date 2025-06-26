@@ -31,7 +31,11 @@ axiosInstance.interceptors.response.use(
   async error => {
     const originalRequest: CustomInternalAxiosRequestConfig = error.config;
 
-    if (error.response?.status === 401 && !originalRequest._retry) {
+    if (
+      error.response &&
+      (error.response?.status === 401 || error.response?.status === 404) &&
+      !originalRequest._retry
+    ) {
       if (originalRequest.url === '/api/auth/reissue') {
         SecureStore.deleteItemAsync('accessToken');
         SecureStore.deleteItemAsync('refreshToken');
@@ -63,19 +67,12 @@ axiosInstance.interceptors.response.use(
         });
     }
 
-    return refreshPromise
-      .then(newAccessToken => {
-        originalRequest.headers = {
-          ...originalRequest.headers,
-          Authorization: `Bearer ${newAccessToken}`,
-        };
-        return axiosInstance.request(originalRequest);
-      })
-      .catch(error => {
-        return Promise.reject(error);
-      })
-      .finally(() => {
-        originalRequest._retry = false;
-      });
+    return refreshPromise.then(newAccessToken => {
+      originalRequest.headers = {
+        ...originalRequest.headers,
+        Authorization: `Bearer ${newAccessToken}`,
+      };
+      return axiosInstance.request(originalRequest);
+    });
   },
 );
