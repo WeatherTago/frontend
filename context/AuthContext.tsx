@@ -1,9 +1,9 @@
-import { AuthContextType, User } from '@/types/auth';
+import { AuthContextType, FullUser } from '@/types/auth';
 import AsyncStorage from '@react-native-async-storage/async-storage';
 import * as SecureStore from 'expo-secure-store';
-import React, { createContext, useContext, useState } from 'react';
+import React, { createContext, useContext, useEffect, useState } from 'react';
 import { Alert } from 'react-native';
-import { loginKakao } from '../apis/auth';
+import { fetchUser, loginKakao } from '../apis/auth';
 import { KakaoLoginRequest, KakaoLoginResponse } from '../types/auth';
 
 export const AuthContext = createContext<AuthContextType>({
@@ -11,24 +11,26 @@ export const AuthContext = createContext<AuthContextType>({
   login: async () => {},
   logout: () => {},
   loading: true,
+  isAuthReady: false,
 });
 
 export const AuthProvider = ({ children }: { children: React.ReactNode }) => {
-  const [user, setUser] = useState<User | null>(null);
+  const [user, setUser] = useState<FullUser | null>(null);
   const [loading, setLoading] = useState(true);
+  const [isAuthReady, setIsAuthReady] = useState(false);
 
   const login = async (accessToken: string) => {
     try {
       setLoading(true);
-      const payload: KakaoLoginRequest = { accessToken };
-      const res: KakaoLoginResponse = await loginKakao(payload);
+      const body: KakaoLoginRequest = { accessToken };
+      const res: KakaoLoginResponse = await loginKakao(body);
 
       // TODO: remove after development
       if (__DEV__) {
         console.log('로그인 응답:', res);
       }
 
-      const userData: User = {
+      const userData: FullUser = {
         userId: res.result.userId,
         newUser: res.result.newUser,
       };
@@ -45,6 +47,7 @@ export const AuthProvider = ({ children }: { children: React.ReactNode }) => {
       Alert.alert('로그인 실패', '다시 시도해주세요.');
     } finally {
       setLoading(false);
+      setIsAuthReady(true);
     }
   };
 
@@ -57,8 +60,30 @@ export const AuthProvider = ({ children }: { children: React.ReactNode }) => {
     ]);
   };
 
+  const loadUser = async () => {
+    try {
+      const user = await AsyncStorage.getItem('user');
+      const parsed = user ? JSON.parse(user) : null;
+
+      if (parsed) {
+        const profile = await fetchUser();
+        setUser({ ...parsed, ...profile });
+      }
+    } catch (err) {
+    } finally {
+      setLoading(false);
+      setIsAuthReady(true);
+    }
+  };
+
+  useEffect(() => {
+    loadUser();
+  }, []);
+
   return (
-    <AuthContext.Provider value={{ user, login, logout, loading }}>{children}</AuthContext.Provider>
+    <AuthContext.Provider value={{ user, login, logout, loading, isAuthReady }}>
+      {children}
+    </AuthContext.Provider>
   );
 };
 
