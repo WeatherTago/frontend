@@ -1,27 +1,34 @@
-export interface User {
+import { CommonResponse } from './common';
+
+export type AuthUser = {
   userId: number;
   newUser: boolean;
-}
+};
 
-export interface AuthContextType {
-  user: User | null;
+export type UserProfile = {
+  nickname: string;
+  email: string;
+};
+
+export type FullUser = AuthUser & Partial<UserProfile>;
+
+export type AuthContextType = {
+  user: FullUser | null;
   login: (token: string) => Promise<void>;
   logout: () => void;
   loading: boolean;
-}
+  isAuthReady: boolean;
+};
 
-export interface KakaoLoginRequest {
+export type KakaoLoginRequest = {
   accessToken: string;
-}
+};
 
-export interface KakaoLoginResponse {
-  isSuccess: boolean;
-  code: string;
-  message: string;
-  result: {
-    userId: number;
-    accessToken: string;
-    refreshToken: string;
-    newUser: boolean;
-  };
-}
+export type KakaoLoginResponse = CommonResponse<{
+  userId: number;
+  accessToken: string;
+  refreshToken: string;
+  newUser: boolean;
+}>;
+
+export type FetchUserResponse = CommonResponse<UserProfile>;
