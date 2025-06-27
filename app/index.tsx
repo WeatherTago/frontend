@@ -10,15 +10,11 @@ export default function Index() {
   useEffect(() => {
     if (!isAuthReady) return;
 
-    const timeout = setTimeout(() => {
-      if (user) {
-        router.replace('/(tabs)');
-      } else {
-        router.replace('/onboarding');
-      }
-    }, 300);
-
-    return () => clearTimeout(timeout);
+    if (user) {
+      router.replace('/(tabs)');
+    } else {
+      router.replace('/onboarding');
+    }
   }, [isAuthReady, user]);
 
   if (loading) {
