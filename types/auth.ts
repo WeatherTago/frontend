@@ -16,6 +16,7 @@ export type AuthContextType = {
   user: FullUser | null;
   login: (token: string) => Promise<void>;
   logout: () => void;
+  loadUser: () => Promise<void>;
   loading: boolean;
   isAuthReady: boolean;
 };
