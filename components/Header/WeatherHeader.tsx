@@ -1,15 +1,16 @@
 /** @jsxImportSource @emotion/react */
 import styled from '@emotion/native';
 import { useTheme } from '@emotion/react';
-import { FontAwesome, Ionicons } from '@expo/vector-icons';
+import { Ionicons } from '@expo/vector-icons';
+import { TouchableOpacity } from 'react-native';
 import { useSafeAreaInsets } from 'react-native-safe-area-context';
+import AlarmDot from '../icons/AlarmDot';
+import StarIcon from '../icons/starIcon';
 
-const OuterContainer = styled.View<{ insetsTop: number }>`
-  heigth: 74px;
-  padding-top: ${({ insetsTop }) => insetsTop}px;
-  background-color:${({ theme }) => theme.colors.gray[50]};
+const OuterContainer = styled.View`
+  padding-bottom: 8px;
+  background-color: ${({ theme }) => theme.colors.gray[50]};
 `;
-
 const InnerContainer = styled.View`
   height: 54px;
   padding: 0 14px;
@@ -26,24 +27,28 @@ const WeatherText = styled.Text`
   color: ${({ theme }) => theme.colors.gray[300]};
 `;
 
-const IconRow = styled.View`
-  flex-direction: row;
-  align-items: center;
-`;
 
 const BellWrapper = styled.View`
-  margin-left: 12px;
   position: relative;
 `;
 
-const BadgeDot = styled.View`
-  width: 6px;
-  height: 6px;
-  border-radius: 3px;
-  background-color: ${({ theme }) => theme.colors.primary[700]};
+
+const IconButton = styled(TouchableOpacity)`
+  width: 46px;
+  height: 46px;
+  justify-content: center;
+  align-items: center;
+`;
+
+const IconRow = styled.View`
+  flex-direction: row;
+  align-items: center;
+  
+`;
+const AlarmDotWrapper = styled.View`
   position: absolute;
-  top: -2px;
-  right: -2px;
+  top: 5px;
+  right: 5px;
 `;
 
 
@@ -52,19 +57,30 @@ export default function WeatherHeader() {
   const theme = useTheme();
 
   return (
-    <OuterContainer insetsTop={insets.top}>
+    <OuterContainer style={{ paddingTop: insets.top }}>
       <InnerContainer>
         <WeatherText>WEATHER</WeatherText>
 
         <IconRow>
-          <FontAwesome name="star-o" size={20} color={theme.colors.gray[300]} />
+          <IconButton onPress={() => { /* 즐겨찾기 로직 */ }}>
+            <StarIcon size={54} />
+          </IconButton>
 
           <BellWrapper>
-            <Ionicons name="notifications-outline" size={20} color={theme.colors.gray[300]} />
-            <BadgeDot />
+            <IconButton onPress={() => { /* 공지사항 로직 */ }}>
+              <Ionicons
+                name="notifications"
+                size={35} // 
+                color={theme.colors.gray[300]}
+              />
+            </IconButton>
+            <AlarmDotWrapper>
+              <AlarmDot />
+            </AlarmDotWrapper>
           </BellWrapper>
         </IconRow>
       </InnerContainer>
     </OuterContainer>
   );
 }
+
