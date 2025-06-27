@@ -1,5 +1,5 @@
 import WeatherHeader from '@/components/Header/WeatherHeader';
-import NoticeBanner from '@/components/Notice.Banner';
+import NoticeBanner from '@/components/NoticeBanner';
 import { useTheme } from '@emotion/react';
 import { View } from 'react-native';
 
