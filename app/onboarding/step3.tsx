@@ -1,14 +1,14 @@
 import LoginButton from '@/components/LoginButton';
-import { AuthContext } from '@/context/AuthContext';
+import { useAuth } from '@/context/AuthContext';
 import { useRouter } from 'expo-router';
 import * as SecureStore from 'expo-secure-store';
-import { useContext, useEffect } from 'react';
+import { useEffect } from 'react';
 import { StyleSheet, Text, View } from 'react-native';
 import { useSafeAreaInsets } from 'react-native-safe-area-context';
 
 export default function OnboardingStep3() {
   const insets = useSafeAreaInsets();
-  const { user } = useContext(AuthContext);
+  const { user } = useAuth();
   const router = useRouter();
 
   useEffect(() => {
@@ -29,7 +29,6 @@ export default function OnboardingStep3() {
         }
 
         router.replace('/(tabs)');
-
       };
 
       fetchTokens();

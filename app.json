@@ -25,7 +25,7 @@
       "favicon": "./assets/images/favicon.png"
     },
     "splash": {
-      "image": "./assets/images/react-icon.png",
+      "image": "./assets/images/react-logo.png",
       "imageWidth": 200,
       "resizeMode": "contain",
       "backgroundColor": "#ffffff"
@@ -35,7 +35,7 @@
       [
         "expo-splash-screen",
         {
-          "image": "./assets/images/react-icon.png",
+          "image": "./assets/images/react-logo.png",
           "imageWidth": 200,
           "resizeMode": "contain",
           "backgroundColor": "#ffffff"

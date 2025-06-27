@@ -1,32 +1,21 @@
-import { AuthContext } from '@/context/AuthContext';
+import { useAuth } from '@/context/AuthContext';
 import { useRouter } from 'expo-router';
-import { useContext, useEffect, useState } from 'react';
+import { useEffect } from 'react';
 import { Text, View } from 'react-native';
 
 export default function Index() {
   const router = useRouter();
-  const [loading, setLoading] = useState(true);
-  const { user } = useContext(AuthContext);
-  const isLoggedIn = !!user;
+  const { user, loading, isAuthReady } = useAuth();
 
   useEffect(() => {
-    const timeout = setTimeout(() => {
-      if (isLoggedIn === null) return;
+    if (!isAuthReady) return;
 
-      try {
-        if (!isLoggedIn) {
-          router.replace('/onboarding');
-        }
-      } catch (e) {
-        console.error('온보딩 체크 실패:', e);
-        router.replace('/onboarding');
-      } finally {
-        setLoading(false);
-      }
-    }, 300); // 300ms 지연
-
-    return () => clearTimeout(timeout); // cleanup
-  }, [isLoggedIn]);
+    if (user) {
+      router.replace('/(tabs)');
+    } else {
+      router.replace('/onboarding');
+    }
+  }, [isAuthReady, user]);
 
   if (loading) {
     return (
@@ -50,7 +39,7 @@ export default function Index() {
         alignItems: 'center',
       }}
     >
-      <Text>메인화면</Text>
+      <Text>라우팅 화면</Text>
     </View>
   );
 }

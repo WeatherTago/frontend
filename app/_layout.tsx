@@ -1,5 +1,4 @@
 import { AuthProvider } from '@/context/AuthContext';
-import { makeServer } from '@/services/mirage/server';
 import { theme } from '@/styles/theme';
 import { ThemeProvider } from '@emotion/react';
 import { Asset } from 'expo-asset';
@@ -18,13 +17,6 @@ declare global {
   }
 }
 
-if (__DEV__ && typeof globalThis.window !== 'undefined') {
-  if (!globalThis.window.server) {
-    globalThis.window.server = makeServer();
-  }
-}
-
-// 기본 스플래시 스크린이 자동으로 숨겨지지 않도록 함
 SplashScreen.preventAutoHideAsync().catch(e => console.error(e));
 
 function AnimatedAppLoader({ children, image }: { children: React.ReactNode; image: number }) {
@@ -39,22 +31,17 @@ function AnimatedAppLoader({ children, image }: { children: React.ReactNode; ima
     prepare();
   }, [image]);
 
-  // TODO : 로그인, 로그아웃 컨텍스트 API 로직 넣기?
-
   if (!isSplashReady) {
     return null;
   }
 
-  // TODO : AuthContext로 감싸기
   return <AnimatedSplashScreen image={image}>{children}</AnimatedSplashScreen>;
 }
 
 function AnimatedSplashScreen({ children, image }: { children: React.ReactNode; image: number }) {
   const [isAppReady, setAppReady] = useState(false);
-  // ㄴ App이 준비되고, SplashAnimation이 끝나면 보여줌
   const [isSplashAnimationComplete, setSplashAnimationComplete] = useState(false);
   const animation = useRef(new Animated.Value(1)).current;
-  // const {updateUser} = useContext(AuthContext);
 
   useEffect(() => {
     if (isAppReady) {
@@ -69,10 +56,7 @@ function AnimatedSplashScreen({ children, image }: { children: React.ReactNode; 
   const onImageLoaded = async () => {
     try {
       // 데이터 준비
-      await Promise.all([
-        // AsyncStorage.getItem('user').then((user)=>{updateUser?.(user?JSON.parse(user):null)}),
-        // TODO: validating access token
-      ]);
+      await Promise.all([]);
       await SplashScreen.hideAsync();
     } catch (error) {
       console.error(error);
