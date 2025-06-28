@@ -21,7 +21,7 @@ const Container = styled.View<{ backgroundColor: string }>`
 
 const NoticeText = styled.Text<{ textColor: string }>`
   font-size: 20px;
-  font-family: Pretendard-Regular;
+  font-family: ${({ theme }) => theme.fonts.pretendard.regular};
   color: ${({ textColor }) => textColor};
   flex-shrink: 1;
   flex: 1;
