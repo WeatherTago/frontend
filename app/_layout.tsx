@@ -9,6 +9,7 @@ import * as SplashScreen from 'expo-splash-screen';
 import { Server } from 'miragejs';
 import { useEffect, useRef, useState } from 'react';
 import { Animated, StyleSheet, View } from 'react-native';
+import { SafeAreaProvider } from 'react-native-safe-area-context';
 
 declare global {
   interface Window {
@@ -99,12 +100,14 @@ function AnimatedSplashScreen({ children, image }: { children: React.ReactNode; 
 
 export default function RootLayout() {
   return (
-    <AnimatedAppLoader image={require('../assets/images/react-logo.png')}>
-      <AuthProvider>
-        <ThemeProvider theme={theme}>
-          <Stack screenOptions={{ headerShown: false }} />
-        </ThemeProvider>
-      </AuthProvider>
-    </AnimatedAppLoader>
+    <SafeAreaProvider>
+      <AnimatedAppLoader image={require('../assets/images/react-logo.png')}>
+        <AuthProvider>
+          <ThemeProvider theme={theme}>
+            <Stack screenOptions={{ headerShown: false }} />
+          </ThemeProvider>
+        </AuthProvider>
+      </AnimatedAppLoader>
+    </SafeAreaProvider>
   );
 }

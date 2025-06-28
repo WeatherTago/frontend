@@ -51,6 +51,15 @@ declare module '@emotion/react' {
       md: number;
       lg: number;
     };
+    fonts: {
+      pretendard: {
+        extrabold: string;
+        regular: string;
+      };
+      spaceMono: {
+        regular: string;
+      };
+    };
     typography: {
       header1: {
         fontSize: number;

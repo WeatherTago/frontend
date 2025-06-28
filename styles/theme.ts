@@ -47,6 +47,15 @@ export const theme = {
     md: 16,
     lg: 24,
   },
+  fonts: {
+    pretendard: {
+      extrabold: 'Pretendard-ExtraBold',
+      regular: 'Pretendard-Regular',
+    },
+    spaceMono: {
+      regular: 'SpaceMono-Regular',
+    },
+  },
   typography: {
     header1: {
       fontSize: 32,
