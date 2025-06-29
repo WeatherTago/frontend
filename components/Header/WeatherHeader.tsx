@@ -62,7 +62,7 @@ export default function WeatherHeader() {
               /* 즐겨찾기 로직 */
             }}
           >
-            <StarIcon size={54} />
+            <StarIcon size={46} />
           </IconButton>
 
           <BellWrapper>
@@ -73,7 +73,7 @@ export default function WeatherHeader() {
             >
               <Ionicons
                 name="notifications"
-                size={35} //
+                size={30} //
                 color={theme.colors.gray[300]}
               />
             </IconButton>
