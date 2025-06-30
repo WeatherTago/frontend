@@ -1,5 +1,6 @@
 // theme.ts
 import { px } from '@/utils/scale'; // 반응형 px 함수 불러오기
+import { TextStyle } from 'react-native';
 
 export const theme = {
   colors: {
@@ -66,37 +67,37 @@ export const theme = {
     header1: {
       fontSize: px(32),
       lineHeight: px(44),
-      fontWeight: '600',
+      fontWeight: '600' as TextStyle['fontWeight'],
     },
     subtitle1: {
       fontSize: px(24),
       lineHeight: px(34),
-      fontWeight: '600',
+      fontWeight: '600' as TextStyle['fontWeight'],
     },
     subtitle2: {
       fontSize: px(20),
       lineHeight: px(28),
-      fontWeight: '600',
+      fontWeight: '600' as TextStyle['fontWeight'],
     },
     body1: {
       fontSize: px(18),
       lineHeight: px(26),
-      fontWeight: '500',
+      fontWeight: '500' as TextStyle['fontWeight'],
     },
     body2: {
       fontSize: px(16),
       lineHeight: px(24),
-      fontWeight: '500',
+      fontWeight: '500' as TextStyle['fontWeight'],
     },
     caption: {
       fontSize: px(14),
       lineHeight: px(20),
-      fontWeight: '400',
+      fontWeight: '400' as TextStyle['fontWeight'],
     },
     footnote: {
       fontSize: px(12),
       lineHeight: px(18),
-      fontWeight: '400',
+      fontWeight: '400' as TextStyle['fontWeight'],
     },
   },
 };

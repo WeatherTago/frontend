@@ -3,7 +3,7 @@ import OnboardingHeader from '@/components/Onboarding/OnboardingHeader';
 import StepIndicator from '@/components/Onboarding/StepIndicator';
 import { useAuth } from '@/context/AuthContext';
 import { theme } from '@/styles/theme';
-import { hp, wp } from '@/utils/scale';
+import { hp, px, wp } from '@/utils/scale';
 import { router } from 'expo-router';
 import * as SecureStore from 'expo-secure-store';
 import { useEffect } from 'react';
@@ -69,6 +69,8 @@ export default function Index() {
           fontColor="#3C1E1E"
           typography={theme.typography.subtitle1}
           onPress={handleLogin}
+          icon={require('@/assets/images/kakao-logo.png')}
+          iconStyle={{ width: px(47.194), height: px(26.783) }}
         />
       </View>
     </View>
