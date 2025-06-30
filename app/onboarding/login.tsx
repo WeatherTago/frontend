@@ -10,7 +10,7 @@ import { useEffect } from 'react';
 import { StyleSheet, Text, TextStyle, View } from 'react-native';
 import { useSafeAreaInsets } from 'react-native-safe-area-context';
 
-export default function Index() {
+export default function OnboardingLogin() {
   const insets = useSafeAreaInsets();
   const { login, user } = useAuth();
   const token = process.env.EXPO_PUBLIC_KAKAO_ACCESS_TOKEN;

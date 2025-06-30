@@ -7,7 +7,7 @@ import { router } from 'expo-router';
 import { StyleSheet, Text, TextStyle, View } from 'react-native';
 import { useSafeAreaInsets } from 'react-native-safe-area-context';
 
-export default function Index() {
+export default function OnboardingStep3() {
   const insets = useSafeAreaInsets();
 
   return (
