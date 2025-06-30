@@ -1,8 +1,9 @@
+import { hp, wp } from '@/utils/scale';
 import React from 'react';
 import { StyleSheet, View } from 'react-native';
 
-const CARD_WIDTH = 400;
-const CARD_HEIGHT = 498;
+const CARD_WIDTH = wp(400);
+const CARD_HEIGHT = hp(498);
 
 export default function FavoriteStationCard() {
   return (

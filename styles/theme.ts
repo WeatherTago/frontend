@@ -1,3 +1,6 @@
+// theme.ts
+import { px } from '@/utils/scale'; // 반응형 px 함수 불러오기
+
 export const theme = {
   colors: {
     primary: {
@@ -42,11 +45,13 @@ export const theme = {
     },
     text: '#0A0A0A',
   },
+
   spacing: {
     sm: 8,
     md: 16,
     lg: 24,
   },
+
   fonts: {
     pretendard: {
       extrabold: 'Pretendard-ExtraBold',
@@ -56,40 +61,41 @@ export const theme = {
       regular: 'SpaceMono-Regular',
     },
   },
+
   typography: {
     header1: {
-      fontSize: 32,
-      lineHeight: 44,
-      fontWeight: '600', // SemiBold
+      fontSize: px(32),
+      lineHeight: px(44),
+      fontWeight: '600',
     },
     subtitle1: {
-      fontSize: 24,
-      lineHeight: 34,
+      fontSize: px(24),
+      lineHeight: px(34),
       fontWeight: '600',
     },
     subtitle2: {
-      fontSize: 20,
-      lineHeight: 28,
+      fontSize: px(20),
+      lineHeight: px(28),
       fontWeight: '600',
     },
     body1: {
-      fontSize: 18,
-      lineHeight: 26,
-      fontWeight: '500', // Medium
+      fontSize: px(18),
+      lineHeight: px(26),
+      fontWeight: '500',
     },
     body2: {
-      fontSize: 16,
-      lineHeight: 24,
+      fontSize: px(16),
+      lineHeight: px(24),
       fontWeight: '500',
     },
     caption: {
-      fontSize: 14,
-      lineHeight: 20,
-      fontWeight: '400', // Regular
+      fontSize: px(14),
+      lineHeight: px(20),
+      fontWeight: '400',
     },
     footnote: {
-      fontSize: 12,
-      lineHeight: 18,
+      fontSize: px(12),
+      lineHeight: px(18),
       fontWeight: '400',
     },
   },

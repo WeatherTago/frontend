@@ -1,4 +1,5 @@
 /** @jsxImportSource @emotion/react */
+import { px } from '@/utils/scale';
 import styled from '@emotion/native';
 import { TouchableOpacity } from 'react-native';
 import ArrowRightIcon from './icons/ArrowRight';
@@ -22,7 +23,7 @@ const Container = styled.View<{ backgroundColor: string }>`
 const NoticeText = styled.Text<{ textColor: string }>(
   ({ theme, textColor }) => {
     return {
-      fontSize: 20,
+      fontSize: theme.typography.subtitle1.fontSize,
       lineHeight: theme.typography.subtitle1.lineHeight,
       fontFamily: theme.fonts.pretendard.extrabold,
       color: textColor,
@@ -45,7 +46,7 @@ export default function NoticeBanner({
 
       {onPressArrow && (
         <TouchableOpacity onPress={onPressArrow}>
-          <ArrowRightIcon width={46} height={46} color={textColor} />
+          <ArrowRightIcon width={px(46)} height={px(46)} color={textColor} />
         </TouchableOpacity>
       )}
     </Container>

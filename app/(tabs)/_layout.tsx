@@ -1,13 +1,13 @@
+import { hp, px, wp } from '@/utils/scale';
 import { Tabs } from 'expo-router';
 import { Image, StyleSheet, Text, View } from 'react-native';
 import { useSafeAreaInsets } from 'react-native-safe-area-context';
-import { theme } from '../../styles/theme';
-
 import AlarmIcon from '../../assets/images/alarm.png';
 import HomeIcon from '../../assets/images/home.png';
 import MapIcon from '../../assets/images/map.png';
 import TrainIcon from '../../assets/images/subway.png';
 import UserIcon from '../../assets/images/user.png';
+import { theme } from '../../styles/theme';
 
 const icons = {
   index: HomeIcon,
@@ -26,23 +26,23 @@ export default function TabsLayout() {
         headerShown: false,
         tabBarShowLabel: false,
         tabBarStyle: {
-          height: 82 + insets.bottom,
+          height: hp(82) + insets.bottom,
           backgroundColor: theme.colors.gray[0],
           borderTopWidth: 0,
           paddingBottom: insets.bottom,
           justifyContent: 'center',
           alignItems: 'center',
           shadowColor: '#000',
-          shadowOffset: { width: 4, height: 0 },
+          shadowOffset: { width: px(4), height: 0 },
           shadowOpacity: 0.05,
-          shadowRadius: 4,
+          shadowRadius: px(4),
           elevation: 4,
         },
        tabBarIcon: ({ focused }) => {
-  const label = getLabel(route.name);
-  const tintColor = focused ? theme.colors.primary[700] : theme.colors.gray[300];
-  const iconSource = icons[route.name as keyof typeof icons];
-  const isSmallIcon = route.name === 'index' || route.name === 'mypage';
+        const label = getLabel(route.name);
+        const tintColor = focused ? theme.colors.primary[700] : theme.colors.gray[300];
+        const iconSource = icons[route.name as keyof typeof icons];
+        const isSmallIcon = route.name === 'index' || route.name === 'mypage';
 
   return (
     <View style={styles.tabItem}>
@@ -52,19 +52,25 @@ export default function TabsLayout() {
           styles.icon,
           {
             tintColor,
-            width: isSmallIcon ? 26 : 30,
-            height: isSmallIcon ? 26 : 30,
-            marginTop: isSmallIcon ? 26 : 25,
+            width: isSmallIcon ? px(30) : px(38),
+            height: isSmallIcon ? px(30) : px(38),
+            marginTop : isSmallIcon ? 28 : 25
           },
         ]}
       />
       <Text
-        numberOfLines={1}
-        ellipsizeMode="clip"
-        style={[styles.label, { color: tintColor }]}
-      >
-        {label}
-      </Text>
+          numberOfLines={1}
+          ellipsizeMode="clip"
+          style={[
+            styles.label,
+            {
+              color: tintColor,
+              marginTop: route.name === 'index' || route.name === 'mypage' ? hp(4) : 0,
+            },
+          ]}
+        >
+          {label}
+        </Text>
     </View>
   );
 }
@@ -101,13 +107,13 @@ const styles = StyleSheet.create({
   tabItem: {
     alignItems: 'center',
     justifyContent: 'center',
-    minWidth: 108,
-    paddingTop: 14,
+    minWidth: wp(108),
+    paddingTop: hp(14),
   },
   icon: {
-    width: 30,
-    height: 30,
-    marginTop: 25,
+    width: px(38),
+    height: px(38),
+    marginTop:25
   },
   label: {
     fontSize: theme.typography.body2.fontSize,

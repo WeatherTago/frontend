@@ -1,11 +1,13 @@
 /** @jsxImportSource @emotion/react */
 import styled from '@emotion/native';
+
 import { useTheme } from '@emotion/react';
 import { Ionicons } from '@expo/vector-icons';
 import { TouchableOpacity } from 'react-native';
 import { useSafeAreaInsets } from 'react-native-safe-area-context';
 import AlarmDot from '../icons/AlarmDot';
 import StarIcon from '../icons/starIcon';
+
 
 const OuterContainer = styled.View`
   background-color: ${({ theme }) => theme.colors.gray[50]};
