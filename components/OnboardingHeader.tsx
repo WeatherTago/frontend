@@ -1,3 +1,4 @@
+import { hp } from '@/utils/scale';
 import React from 'react';
 import { StyleSheet, Text, TextStyle, View } from 'react-native';
 
@@ -24,12 +25,12 @@ const OnboardingHeader: React.FC<OnboardingHeaderProps> = ({ title, subtitle }) 
 const styles = StyleSheet.create({
   container: {
     display: 'flex',
-    height: 160,
-    paddingVertical: 20,
+    height: hp(160),
+    paddingVertical: hp(20),
     flexDirection: 'column',
     justifyContent: 'center',
     alignItems: 'center',
-    gap: 6,
+    gap: hp(6),
     alignSelf: 'stretch',
   },
   titleWrapper: {
@@ -45,13 +46,9 @@ const styles = StyleSheet.create({
     alignSelf: 'stretch',
   },
   titleText: {
-    fontSize: 20,
-    fontWeight: '700',
     textAlign: 'center',
   } as TextStyle,
   subtitleText: {
-    fontSize: 14,
-    color: '#B0B0B0',
     textAlign: 'center',
   } as TextStyle,
 });

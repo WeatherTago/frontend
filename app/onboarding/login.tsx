@@ -1,21 +1,58 @@
 import LargeButton from '@/components/Button/LargeButton';
 import OnboardingHeader from '@/components/OnboardingHeader';
 import StepIndicator from '@/components/StepIndicator';
+import { useAuth } from '@/context/AuthContext';
 import { theme } from '@/styles/theme';
 import { hp, wp } from '@/utils/scale';
 import { router } from 'expo-router';
+import * as SecureStore from 'expo-secure-store';
+import { useEffect } from 'react';
 import { StyleSheet, Text, TextStyle, View } from 'react-native';
 import { useSafeAreaInsets } from 'react-native-safe-area-context';
 
 export default function Index() {
   const insets = useSafeAreaInsets();
+  const { login, user } = useAuth();
+  const token = process.env.EXPO_PUBLIC_KAKAO_ACCESS_TOKEN;
+
+  useEffect(() => {
+    if (!!user) {
+      const fetchTokens = async () => {
+        // TODO: remove after token validation
+        if (__DEV__) {
+          console.log('user', user);
+
+          try {
+            const accessToken = await SecureStore.getItemAsync('accessToken');
+            const refreshToken = await SecureStore.getItemAsync('refreshToken');
+            console.log('accessToken:', accessToken);
+            console.log('refreshToken:', refreshToken);
+          } catch (error) {
+            console.error('토큰 가져오기 실패:', error);
+          }
+        }
+
+        router.replace('/(tabs)');
+      };
+
+      fetchTokens();
+    }
+  }, [user]);
+
+  const handleLogin = () => {
+    if (!token) {
+      console.error('카카오 액세스 토큰이 설정되지 않았습니다.');
+      return;
+    }
+    login(token);
+  };
 
   return (
     <View
       style={[styles.container, { paddingTop: insets.top, paddingBottom: insets.bottom + hp(16) }]}
     >
       <View style={styles.imageContainer} />
-      <StepIndicator totalSteps={4} currentStep={1} />
+      <StepIndicator totalSteps={4} currentStep={4} />
       <OnboardingHeader
         title={
           <>
@@ -27,11 +64,11 @@ export default function Index() {
       />
       <View style={styles.buttonContainer}>
         <LargeButton
-          text="다음"
-          backgroundColor={theme.colors.gray[900]}
-          fontColor={theme.colors.gray[0]}
+          text="카카오로 3초만에 로그인"
+          backgroundColor="#FAE100"
+          fontColor="#3C1E1E"
           typography={theme.typography.subtitle1}
-          onPress={() => router.replace('/onboarding/step2')}
+          onPress={handleLogin}
         />
       </View>
     </View>

@@ -1,4 +1,5 @@
 import { theme } from '@/styles/theme';
+import { hp, wp } from '@/utils/scale';
 import React from 'react';
 import { StyleSheet, View } from 'react-native';
 
@@ -37,11 +38,11 @@ const StepIndicator: React.FC<StepIndicatorProps> = ({
 const styles = StyleSheet.create({
   container: {
     display: 'flex',
-    paddingVertical: 30,
-    paddingHorizontal: 10,
+    paddingVertical: hp(30),
+    paddingHorizontal: wp(10),
     flexDirection: 'column',
     alignItems: 'center',
-    gap: 10,
+    gap: wp(10),
     alignSelf: 'stretch',
   },
   dotsWrapper: {
@@ -49,13 +50,13 @@ const styles = StyleSheet.create({
     flexDirection: 'row',
     justifyContent: 'center',
     alignItems: 'center',
-    gap: 10,
+    gap: wp(10),
     alignSelf: 'stretch',
   },
   dot: {
-    width: 12,
-    height: 12,
-    borderRadius: 6,
+    width: wp(12),
+    height: wp(12),
+    borderRadius: wp(6),
   },
 });
 
