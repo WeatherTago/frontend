@@ -54,7 +54,7 @@ export default function TabsLayout() {
             tintColor,
             width: isSmallIcon ? 26 : 30,
             height: isSmallIcon ? 26 : 30,
-            marginTop: isSmallIcon ? 29 : 25,
+            marginTop: isSmallIcon ? 26 : 25,
           },
         ]}
       />
