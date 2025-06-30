@@ -1,6 +1,6 @@
 import LargeButton from '@/components/Button/LargeButton';
-import OnboardingHeader from '@/components/OnboardingHeader';
-import StepIndicator from '@/components/StepIndicator';
+import OnboardingHeader from '@/components/Onboarding/OnboardingHeader';
+import StepIndicator from '@/components/Onboarding/StepIndicator';
 import { theme } from '@/styles/theme';
 import { hp, wp } from '@/utils/scale';
 import { router } from 'expo-router';
