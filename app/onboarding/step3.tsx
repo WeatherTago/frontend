@@ -59,7 +59,6 @@ const styles = StyleSheet.create({
     alignSelf: 'stretch',
   },
   imageContainer: {
-    display: 'flex',
     height: hp(720),
     flexDirection: 'column',
     alignItems: 'center',

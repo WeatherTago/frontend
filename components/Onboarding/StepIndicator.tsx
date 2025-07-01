@@ -37,7 +37,6 @@ const StepIndicator: React.FC<StepIndicatorProps> = ({
 
 const styles = StyleSheet.create({
   container: {
-    display: 'flex',
     paddingVertical: hp(30),
     paddingHorizontal: wp(10),
     flexDirection: 'column',
@@ -46,7 +45,6 @@ const styles = StyleSheet.create({
     alignSelf: 'stretch',
   },
   dotsWrapper: {
-    display: 'flex',
     flexDirection: 'row',
     justifyContent: 'center',
     alignItems: 'center',
