@@ -25,7 +25,6 @@ const OnboardingHeader: React.FC<OnboardingHeaderProps> = ({ title, subtitle }) 
 const styles = StyleSheet.create({
   container: {
     display: 'flex',
-    height: hp(160),
     paddingVertical: hp(20),
     flexDirection: 'column',
     justifyContent: 'center',
