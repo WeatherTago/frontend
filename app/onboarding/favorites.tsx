@@ -1,0 +1,62 @@
+import LargeButton from '@/components/Button/LargeButton';
+import SmallThumbnail from '@/components/Favorites/SmallThumbnail';
+import { theme } from '@/styles/theme';
+import { hp, wp } from '@/utils/scale';
+import { router } from 'expo-router';
+import { StyleSheet, View } from 'react-native';
+import { useSafeAreaInsets } from 'react-native-safe-area-context';
+
+export default function Favorites() {
+  const insets = useSafeAreaInsets();
+
+  return (
+    <View style={[styles.container, { paddingTop: insets.top }]}>
+      <View style={styles.thumbnailOuterContainer}>
+        <View style={styles.thumbnailInnerContainer}>
+          <SmallThumbnail stationName="한강진역" lineName="6호선" />
+          <SmallThumbnail stationName="한강진역" lineName="6호선" />
+          <SmallThumbnail stationName="한강진역" lineName="6호선" />
+        </View>
+      </View>
+      <View style={styles.buttonContainer}>
+        <LargeButton
+          text="웨더타고 시작하기"
+          backgroundColor={theme.colors.primary[700]}
+          fontColor={theme.colors.gray[0]}
+          typography={theme.typography.subtitle1}
+          onPress={() => router.replace('/(tabs)')}
+        />
+      </View>
+    </View>
+  );
+}
+
+const styles = StyleSheet.create({
+  container: {
+    display: 'flex',
+    flexDirection: 'column',
+    alignItems: 'center',
+    justifyContent: 'center',
+  },
+  thumbnailOuterContainer: {
+    display: 'flex',
+    height: hp(829),
+    paddingVertical: hp(36),
+    paddingHorizontal: wp(24),
+    justifyContent: 'space-between',
+    alignItems: 'flex-start',
+    flexShrink: 0,
+    alignSelf: 'stretch',
+  },
+  thumbnailInnerContainer: {
+    display: 'flex',
+  },
+  buttonContainer: {
+    paddingHorizontal: wp(24),
+    paddingVertical: hp(10),
+    gap: hp(10),
+    flexDirection: 'column',
+    alignItems: 'flex-start',
+    alignSelf: 'stretch',
+  },
+});
