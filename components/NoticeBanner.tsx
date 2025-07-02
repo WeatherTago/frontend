@@ -2,7 +2,7 @@
 import { px } from '@/utils/scale';
 import styled from '@emotion/native';
 import { TouchableOpacity } from 'react-native';
-import ArrowRightIcon from './icons/ArrowRight';
+import ArrowRightIcon from './Icons/ArrowRight';
 
 interface NoticeBannerProps {
   text: string;
@@ -20,17 +20,15 @@ const Container = styled.View<{ backgroundColor: string }>`
   background-color: ${({ backgroundColor }) => backgroundColor};
 `;
 
-const NoticeText = styled.Text<{ textColor: string }>(
-  ({ theme, textColor }) => {
-    return {
-      fontSize: theme.typography.subtitle1.fontSize,
-      lineHeight: theme.typography.subtitle1.lineHeight,
-      fontFamily: theme.fonts.pretendard.extrabold,
-      color: textColor,
-      flexShrink: 0,
-    };
-  }
-);
+const NoticeText = styled.Text<{ textColor: string }>(({ theme, textColor }) => {
+  return {
+    fontSize: theme.typography.subtitle1.fontSize,
+    lineHeight: theme.typography.subtitle1.lineHeight,
+    fontFamily: theme.fonts.pretendard.extrabold,
+    color: textColor,
+    flexShrink: 0,
+  };
+});
 
 export default function NoticeBanner({
   text,
