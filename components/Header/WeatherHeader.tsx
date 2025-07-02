@@ -1,12 +1,18 @@
 /** @jsxImportSource @emotion/react */
 import styled from '@emotion/native';
 
+import { px } from '@/utils/scale';
 import { useTheme } from '@emotion/react';
 import { Ionicons } from '@expo/vector-icons';
-import { TouchableOpacity } from 'react-native';
+import { Text, TouchableOpacity } from 'react-native';
 import { useSafeAreaInsets } from 'react-native-safe-area-context';
+<<<<<<< Updated upstream
 import AlarmDot from '../Icons/AlarmDot';
 import StarIcon from '../Icons/StarIcon';
+=======
+import AlarmDot from '../icons/AlarmDot';
+import StarIcon from '../icons/starIcon';
+>>>>>>> Stashed changes
 
 const OuterContainer = styled.View`
   background-color: ${({ theme }) => theme.colors.gray[50]};
@@ -17,14 +23,6 @@ const InnerContainer = styled.View`
   flex-direction: row;
   justify-content: space-between;
   align-items: center;
-`;
-
-const WeatherText = styled.Text`
-  font-family: ${({ theme }) => theme.fonts.pretendard.extrabold};
-  font-weight: 800;
-  font-size: 30px;
-  line-height: 44px;
-  color: ${({ theme }) => theme.colors.gray[300]};
 `;
 
 const BellWrapper = styled.View`
@@ -44,8 +42,8 @@ const IconRow = styled.View`
 `;
 const AlarmDotWrapper = styled.View`
   position: absolute;
-  top: 5px;
-  right: 5px;
+  top: 9px;
+  right: 9px;
 `;
 
 export default function WeatherHeader() {
@@ -55,7 +53,17 @@ export default function WeatherHeader() {
   return (
     <OuterContainer style={{ paddingTop: insets.top }}>
       <InnerContainer>
-        <WeatherText>WEATHER</WeatherText>
+        <Text
+          style={{
+            fontSize: px(30),
+            lineHeight: px(44),
+            fontWeight: '800',
+            fontFamily: theme.fonts.pretendard.extrabold,
+            color: theme.colors.gray[300],
+          }}
+        >
+          WEATHER
+        </Text>
 
         <IconRow>
           <IconButton
@@ -63,7 +71,7 @@ export default function WeatherHeader() {
               /* 즐겨찾기 로직 */
             }}
           >
-            <StarIcon size={46} />
+            <StarIcon/>
           </IconButton>
 
           <BellWrapper>
@@ -74,7 +82,7 @@ export default function WeatherHeader() {
             >
               <Ionicons
                 name="notifications"
-                size={30} //
+                size={px(36)}
                 color={theme.colors.gray[300]}
               />
             </IconButton>

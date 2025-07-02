@@ -16,7 +16,7 @@ const Container = styled.View<{ backgroundColor: string }>`
   flex-direction: row;
   align-items: center;
   justify-content: space-between;
-  padding: 24px;
+  padding: 28px 12px 28px 30px;
   background-color: ${({ backgroundColor }) => backgroundColor};
 `;
 
