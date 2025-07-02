@@ -1,18 +1,13 @@
 /** @jsxImportSource @emotion/react */
-import styled from '@emotion/native';
-
 import { px } from '@/utils/scale';
+import styled from '@emotion/native';
 import { useTheme } from '@emotion/react';
 import { Ionicons } from '@expo/vector-icons';
+import { useRouter } from 'expo-router';
 import { Text, TouchableOpacity } from 'react-native';
 import { useSafeAreaInsets } from 'react-native-safe-area-context';
-<<<<<<< Updated upstream
 import AlarmDot from '../Icons/AlarmDot';
 import StarIcon from '../Icons/StarIcon';
-=======
-import AlarmDot from '../icons/AlarmDot';
-import StarIcon from '../icons/starIcon';
->>>>>>> Stashed changes
 
 const OuterContainer = styled.View`
   background-color: ${({ theme }) => theme.colors.gray[50]};
@@ -49,6 +44,7 @@ const AlarmDotWrapper = styled.View`
 export default function WeatherHeader() {
   const insets = useSafeAreaInsets();
   const theme = useTheme();
+  const router= useRouter();
 
   return (
     <OuterContainer style={{ paddingTop: insets.top }}>
@@ -64,20 +60,20 @@ export default function WeatherHeader() {
         >
           WEATHER
         </Text>
-
+          {/* ⭐ 별 아이콘 - 즐겨찾기 모달 */}
         <IconRow>
           <IconButton
             onPress={() => {
-              /* 즐겨찾기 로직 */
+              router.push('/favorite-modal')
             }}
           >
             <StarIcon/>
           </IconButton>
-
+            {/* 🔔 알림 아이콘 - 공지 모달 */}
           <BellWrapper>
             <IconButton
               onPress={() => {
-                /* 공지사항 로직 */
+                router.push('/alert-modal')
               }}
             >
               <Ionicons

@@ -26,7 +26,7 @@ export default function DirectAccessCard({
           fontSize: theme.typography.subtitle1.fontSize,
           lineHeight: theme.typography.subtitle1.lineHeight,
           fontWeight: theme.typography.subtitle1.fontWeight as any,
-          fontFamily: theme.fonts.pretendard.regular,
+          fontFamily: theme.typography.subtitle1.fontFamily,
           marginBottom: hp(8),
           color: theme.colors.gray[900],
         }}
@@ -39,7 +39,7 @@ export default function DirectAccessCard({
           fontSize: theme.typography.body1.fontSize,
           lineHeight: theme.typography.body1.lineHeight,
           fontWeight: theme.typography.body1.fontWeight as any,
-          fontFamily: theme.fonts.pretendard.regular,
+          fontFamily: theme.typography.body1.fontFamily,
           color: theme.colors.gray[400],
           marginBottom: hp(16),
         }}

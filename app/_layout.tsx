@@ -3,6 +3,7 @@ import { theme } from '@/styles/theme';
 import { ThemeProvider } from '@emotion/react';
 import { Asset } from 'expo-asset';
 import Constants from 'expo-constants';
+import * as Font from 'expo-font';
 import { Image } from 'expo-image';
 import { Stack } from 'expo-router';
 import * as SplashScreen from 'expo-splash-screen';
@@ -64,6 +65,15 @@ function AnimatedSplashScreen({ children, image }: { children: React.ReactNode; 
       setAppReady(true);
     }
   };
+  const [fontsLoaded] = Font.useFonts({
+    'Pretendard-Regular': require('@/assets/fonts/Pretendard-Regular.otf'),
+    'Pretendard-Medium': require('@/assets/fonts/Pretendard-Medium.otf'),
+    'Pretendard-Bold': require('@/assets/fonts/Pretendard-Bold.otf'),
+    'Pretendard-ExtraBold': require('@/assets/fonts/Pretendard-ExtraBold.otf'),
+  });
+
+  if (!fontsLoaded) return null;
+
 
   return (
     <View style={{ flex: 1 }}>

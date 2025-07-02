@@ -32,7 +32,7 @@ export default function MediumButton({
         style={{
           fontSize: theme.typography.subtitle1.fontSize,
           fontWeight: theme.typography.subtitle1.fontWeight as any,
-          fontFamily: theme.fonts.pretendard.regular,
+          fontFamily: theme.typography.subtitle1.fontFamily,
           lineHeight: theme.typography.subtitle1.lineHeight,
           color: '#fff',
         }}

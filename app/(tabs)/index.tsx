@@ -26,7 +26,7 @@ export default function HomeScreen() {
         backgroundColor={theme.colors.gray[700]}
         textColor={theme.colors.gray[0]}
       />
-      <Text style={[styles.sectionTitle, { color: theme.colors.gray[700], fontFamily: theme.fonts.pretendard.extrabold }]}>
+      <Text style={[styles.sectionTitle, { color: theme.colors.gray[700], fontFamily: theme.fonts.pretendard.semibold, fontWeight:'600' }]}>
         오늘 즐겨찾는 역의 혼잡도는?
       </Text>
 
@@ -50,7 +50,7 @@ export default function HomeScreen() {
         )}
       />
 
-      <Text style={[styles.sectionTitle, { color: theme.colors.gray[700], fontFamily: theme.fonts.pretendard.extrabold }]}>
+      <Text style={[styles.sectionTitle, { color: theme.colors.gray[700], fontFamily: theme.fonts.pretendard.semibold, fontWeight:'600' }]}>
         지하철 편의시설 정보
       </Text>
 
@@ -61,7 +61,7 @@ export default function HomeScreen() {
         onPress={() => console.log('바로가기 눌림')}
       />
 
-      <Text style={[styles.sectionTitle, { color: theme.colors.gray[700], fontFamily: theme.fonts.pretendard.extrabold }]}>
+      <Text style={[styles.sectionTitle, { color: theme.colors.gray[700], fontFamily: theme.fonts.pretendard.semibold, fontWeight:'600' }]}>
         혼잡도 알림 설정
       </Text>
       
@@ -72,7 +72,7 @@ export default function HomeScreen() {
         onPress={() => console.log('바로가기 눌림')}
       />
 
-      <Text style={[styles.sectionTitle, { color: theme.colors.gray[700], fontFamily: theme.fonts.pretendard.extrabold }]}>
+      <Text style={[styles.sectionTitle, { color: theme.colors.gray[700], fontFamily: theme.fonts.pretendard.semibold, fontWeight:'600' }]}>
         도착역까지 빠른 혼잡도 확인
       </Text>
     </ScrollView>
