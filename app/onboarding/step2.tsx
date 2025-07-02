@@ -14,17 +14,23 @@ export default function OnboardingStep2() {
     <View
       style={[styles.container, { paddingTop: insets.top, paddingBottom: insets.bottom + hp(16) }]}
     >
-      <View style={styles.imageContainer} />
-      <StepIndicator totalSteps={4} currentStep={2} />
-      <OnboardingHeader
-        title={
-          <>
-            <Text style={styles.titlePrimary}>웨더타고</Text>
-            <Text style={styles.titleDefault}>{`로 날씨에 따른\n지하철 혼잡도 쉽게 알아봐요`}</Text>
-          </>
-        }
-        subtitle={<Text style={styles.subtitle}>자주 가는 역의 혼잡도를 알림으로 받아보세요</Text>}
-      />
+      <View style={styles.contentContainer}>
+        <View style={styles.imageContainer} />
+        <StepIndicator totalSteps={4} currentStep={2} />
+        <OnboardingHeader
+          title={
+            <>
+              <Text style={styles.titlePrimary}>웨더타고</Text>
+              <Text
+                style={styles.titleDefault}
+              >{`로 날씨에 따른\n지하철 혼잡도 쉽게 알아봐요`}</Text>
+            </>
+          }
+          subtitle={
+            <Text style={styles.subtitle}>자주 가는 역의 혼잡도를 알림으로 받아보세요</Text>
+          }
+        />
+      </View>
       <View style={styles.buttonContainer}>
         <LargeButton
           text="다음"
@@ -46,9 +52,14 @@ const styles = StyleSheet.create({
     backgroundColor: theme.colors.gray[0],
     gap: hp(32),
   },
+  contentContainer: {
+    flex: 1,
+    flexDirection: 'column',
+    alignItems: 'flex-start',
+    alignSelf: 'stretch',
+  },
   imageContainer: {
-    display: 'flex',
-    // height: hp(720),
+    height: hp(720),
     flexDirection: 'column',
     alignItems: 'center',
     alignSelf: 'stretch',

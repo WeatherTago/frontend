@@ -79,7 +79,6 @@ const styles = StyleSheet.create({
     alignSelf: 'stretch',
   },
   content: {
-    display: 'flex',
     flexDirection: 'row',
     alignItems: 'center',
     gap: px(6),
