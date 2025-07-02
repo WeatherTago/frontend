@@ -64,37 +64,37 @@ declare module '@emotion/react' {
       header1: {
         fontSize: number;
         lineHeight: number;
-        fontWeight: string;
+        fontWeight: TextStyle['fontWeight'];
       };
       subtitle1: {
         fontSize: number;
         lineHeight: number;
-        fontWeight: string;
+        fontWeight: TextStyle['fontWeight'];
       };
       subtitle2: {
         fontSize: number;
         lineHeight: number;
-        fontWeight: string;
+        fontWeight: TextStyle['fontWeight'];
       };
       body1: {
         fontSize: number;
         lineHeight: number;
-        fontWeight: string;
+        fontWeight: TextStyle['fontWeight'];
       };
       body2: {
         fontSize: number;
         lineHeight: number;
-        fontWeight: string;
+        fontWeight: TextStyle['fontWeight'];
       };
       caption: {
         fontSize: number;
         lineHeight: number;
-        fontWeight: string;
+        fontWeight: TextStyle['fontWeight'];
       };
       footnote: {
         fontSize: number;
         lineHeight: number;
-        fontWeight: string;
+        fontWeight: TextStyle['fontWeight'];
       };
     };
   }
