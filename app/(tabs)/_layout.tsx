@@ -1,4 +1,5 @@
 import { hp, px, wp } from '@/utils/scale';
+import * as Font from 'expo-font';
 import { Tabs } from 'expo-router';
 import { Image, StyleSheet, Text, View } from 'react-native';
 import { useSafeAreaInsets } from 'react-native-safe-area-context';
@@ -19,6 +20,16 @@ const icons = {
 
 export default function TabsLayout() {
   const insets = useSafeAreaInsets();
+
+  const [fontsLoaded] = Font.useFonts({
+    'Pretendard-Regular': require('@/assets/fonts/Pretendard-Regular.otf'),
+    'Pretendard-Medium': require('@/assets/fonts/Pretendard-Medium.otf'),
+    'Pretendard-Bold': require('@/assets/fonts/Pretendard-Bold.otf'),
+    'Pretendard-ExtraBold': require('@/assets/fonts/Pretendard-ExtraBold.otf'),
+  });
+
+  if (!fontsLoaded) return null;
+
 
   return (
     <Tabs

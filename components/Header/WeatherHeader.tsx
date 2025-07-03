@@ -1,9 +1,10 @@
 /** @jsxImportSource @emotion/react */
+import { px } from '@/utils/scale';
 import styled from '@emotion/native';
-
 import { useTheme } from '@emotion/react';
 import { Ionicons } from '@expo/vector-icons';
-import { TouchableOpacity } from 'react-native';
+import { useRouter } from 'expo-router';
+import { Text, TouchableOpacity } from 'react-native';
 import { useSafeAreaInsets } from 'react-native-safe-area-context';
 import AlarmDot from '../Icons/AlarmDot';
 import StarIcon from '../Icons/StarIcon';
@@ -17,14 +18,6 @@ const InnerContainer = styled.View`
   flex-direction: row;
   justify-content: space-between;
   align-items: center;
-`;
-
-const WeatherText = styled.Text`
-  font-family: ${({ theme }) => theme.fonts.pretendard.extrabold};
-  font-weight: 800;
-  font-size: 30px;
-  line-height: 44px;
-  color: ${({ theme }) => theme.colors.gray[300]};
 `;
 
 const BellWrapper = styled.View`
@@ -44,37 +37,48 @@ const IconRow = styled.View`
 `;
 const AlarmDotWrapper = styled.View`
   position: absolute;
-  top: 5px;
-  right: 5px;
+  top: 9px;
+  right: 9px;
 `;
 
 export default function WeatherHeader() {
   const insets = useSafeAreaInsets();
   const theme = useTheme();
+  const router= useRouter();
 
   return (
     <OuterContainer style={{ paddingTop: insets.top }}>
       <InnerContainer>
-        <WeatherText>WEATHER</WeatherText>
-
+        <Text
+          style={{
+            fontSize: px(30),
+            lineHeight: px(44),
+            fontWeight: '800',
+            fontFamily: theme.fonts.pretendard.extrabold,
+            color: theme.colors.gray[300],
+          }}
+        >
+          WEATHER
+        </Text>
+          {/* ⭐ 별 아이콘 - 즐겨찾기 모달 */}
         <IconRow>
           <IconButton
             onPress={() => {
-              /* 즐겨찾기 로직 */
+              router.push('/favorite-modal')
             }}
           >
-            <StarIcon size={46} />
+            <StarIcon/>
           </IconButton>
-
+            {/* 🔔 알림 아이콘 - 공지 모달 */}
           <BellWrapper>
             <IconButton
               onPress={() => {
-                /* 공지사항 로직 */
+                router.push('/alert-modal')
               }}
             >
               <Ionicons
                 name="notifications"
-                size={30} //
+                size={px(36)}
                 color={theme.colors.gray[300]}
               />
             </IconButton>

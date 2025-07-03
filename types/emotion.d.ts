@@ -54,6 +54,9 @@ declare module '@emotion/react' {
     fonts: {
       pretendard: {
         extrabold: string;
+        bold: string;
+        semibold: string;
+        medium: string;
         regular: string;
       };
       spaceMono: {
@@ -65,36 +68,43 @@ declare module '@emotion/react' {
         fontSize: number;
         lineHeight: number;
         fontWeight: TextStyle['fontWeight'];
+        fontFamily: string;
       };
       subtitle1: {
         fontSize: number;
         lineHeight: number;
         fontWeight: TextStyle['fontWeight'];
+        fontFamily: string;
       };
       subtitle2: {
         fontSize: number;
         lineHeight: number;
         fontWeight: TextStyle['fontWeight'];
+        fontFamily: string;
       };
       body1: {
         fontSize: number;
         lineHeight: number;
         fontWeight: TextStyle['fontWeight'];
+        fontFamily: string;
       };
       body2: {
         fontSize: number;
         lineHeight: number;
         fontWeight: TextStyle['fontWeight'];
+        fontFamily: string;
       };
       caption: {
         fontSize: number;
         lineHeight: number;
         fontWeight: TextStyle['fontWeight'];
+        fontFamily: string;
       };
       footnote: {
         fontSize: number;
         lineHeight: number;
         fontWeight: TextStyle['fontWeight'];
+        fontFamily: string;
       };
     };
   }
