@@ -63,7 +63,7 @@ const styles = StyleSheet.create({
     height: hp(168),
     flexDirection: 'column',
     alignItems: 'flex-end',
-    gap: hp(70),
+    justifyContent: 'space-between',
     alignSelf: 'stretch',
   },
   textContainer: {
