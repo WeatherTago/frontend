@@ -1,6 +1,8 @@
+import Header from '@/components/Header/CommonHeader';
 import { useAuth } from '@/context/AuthContext';
 import { router } from 'expo-router';
-import { Button, StyleSheet, Text, View } from 'react-native';
+import { Button, StyleSheet } from 'react-native';
+import { SafeAreaView } from 'react-native-safe-area-context';
 
 export default function MyPageScreen() {
   const { logout } = useAuth();
@@ -9,17 +11,16 @@ export default function MyPageScreen() {
     router.replace('/onboarding');
   };
   return (
-    <View style={styles.container}>
-      <Text>마이페이지</Text>
+    <SafeAreaView style={styles.container}>
+      <Header title="마이페이지" />
       <Button title="로그아웃" onPress={handleLogout} />
-    </View>
+    </SafeAreaView>
   );
 }
 
 const styles = StyleSheet.create({
   container: {
     flex: 1,
-    justifyContent: 'center',
-    alignItems: 'center',
+    
   },
 });

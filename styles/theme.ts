@@ -56,6 +56,9 @@ export const theme = {
   fonts: {
     pretendard: {
       extrabold: 'Pretendard-ExtraBold',
+      bold: 'Pretendard-Bold',
+      semibold: 'Pretendard-SemiBold',
+      medium: 'Pretendard-Medium',
       regular: 'Pretendard-Regular',
     },
     spaceMono: {
@@ -68,36 +71,43 @@ export const theme = {
       fontSize: px(32),
       lineHeight: px(44),
       fontWeight: '600' as TextStyle['fontWeight'],
+      fontFamily: 'Pretendard-SemiBold',
     },
     subtitle1: {
       fontSize: px(24),
       lineHeight: px(34),
       fontWeight: '600' as TextStyle['fontWeight'],
+      fontFamily: 'Pretendard-SemiBold',
     },
     subtitle2: {
       fontSize: px(20),
       lineHeight: px(28),
       fontWeight: '600' as TextStyle['fontWeight'],
+      fontFamily: 'Pretendard-SemiBold',
     },
     body1: {
       fontSize: px(18),
       lineHeight: px(26),
       fontWeight: '500' as TextStyle['fontWeight'],
+      fontFamily: 'Pretendard-Medium',
     },
     body2: {
       fontSize: px(16),
       lineHeight: px(24),
       fontWeight: '500' as TextStyle['fontWeight'],
+      fontFamily: 'Pretendard-Medium',
     },
     caption: {
       fontSize: px(14),
       lineHeight: px(20),
       fontWeight: '400' as TextStyle['fontWeight'],
+      fontFamily: 'Pretendard-Regular',
     },
     footnote: {
       fontSize: px(12),
       lineHeight: px(18),
       fontWeight: '400' as TextStyle['fontWeight'],
+      fontFamily: 'Pretendard-Regular',
     },
   },
 };

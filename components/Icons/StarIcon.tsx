@@ -1,7 +1,8 @@
+import { px } from '@/utils/scale';
 import { useTheme } from '@emotion/react';
 import Svg, { Path } from 'react-native-svg';
 
-export default function StarIcon({ size = 24, color = '#D4D4D4' }: { size?: number; color?: string }) {
+export default function StarIcon({ size = px(54), color = '#D4D4D4' }: { size?: number; color?: string }) {
   const theme = useTheme();
 
   return (
