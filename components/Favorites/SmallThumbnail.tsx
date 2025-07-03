@@ -1,12 +1,14 @@
 import { theme } from '@/styles/theme';
 import { hp, px, wp } from '@/utils/scale';
-import { Dimensions, StyleSheet, Text, View } from 'react-native';
+import { useEffect } from 'react';
+import { Dimensions, StyleSheet, Text, TouchableOpacity, View } from 'react-native';
 import StarIcon from '../Icons/StarIcon';
 
 type SmallThumbnailProps = {
   isFavorite?: boolean;
   stationName: string;
-  lineName: string;
+  stationLine: string;
+  onToggleFavorite?: () => void;
 };
 
 // 화면 너비 가져오기
@@ -24,10 +26,20 @@ const thumbnailWidth = Math.floor((screenWidth - horizontalPadding * 2 - columnG
 const SmallThumbnail = ({
   isFavorite = false,
   stationName = '한강진역',
-  lineName = '6호선',
+  stationLine = '6호선',
+  onToggleFavorite,
 }: SmallThumbnailProps) => {
+  useEffect(() => {
+    console.log(`${stationName} 즐겨찾기 상태:`, isFavorite);
+  }, [isFavorite]);
+
+  const handleFavorites = () => {
+    if (onToggleFavorite) {
+      onToggleFavorite();
+    }
+  };
   return (
-    <View style={styles.container}>
+    <TouchableOpacity style={styles.container} onPress={handleFavorites}>
       <View style={styles.contentContainer}>
         <StarIcon
           size={px(42)}
@@ -38,11 +50,11 @@ const SmallThumbnail = ({
             <Text style={styles.stationNameText}>{stationName}</Text>
           </View>
           <View style={styles.lineContainer}>
-            <Text style={styles.lineText}>{lineName}</Text>
+            <Text style={styles.lineText}>{stationLine}</Text>
           </View>
         </View>
       </View>
-    </View>
+    </TouchableOpacity>
   );
 };
 

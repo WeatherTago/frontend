@@ -1,26 +1,23 @@
 import LargeButton from '@/components/Button/LargeButton';
 import SmallThumbnail from '@/components/Favorites/SmallThumbnail';
+import { useFavorite } from '@/context/FavoriteContext';
 import { theme } from '@/styles/theme';
 import { hp, wp } from '@/utils/scale';
 import { router } from 'expo-router';
 import { StyleSheet, View } from 'react-native';
 import { useSafeAreaInsets } from 'react-native-safe-area-context';
 
-const stations = new Array(9).fill({ stationName: '한강진역', lineName: '6호선' });
-
 export default function Favorites() {
   const insets = useSafeAreaInsets();
+
+  const { stations, toggleFavorite } = useFavorite();
 
   return (
     <View style={[styles.container, { paddingTop: insets.top }]}>
       <View style={styles.thumbnailOuterContainer}>
         <View style={styles.thumbnailInnerContainer}>
-          {stations.map((station, index) => (
-            <SmallThumbnail
-              key={index}
-              stationName={station.stationName}
-              lineName={station.lineName}
-            />
+          {stations.map((station, idx) => (
+            <SmallThumbnail key={idx} {...station} onToggleFavorite={() => toggleFavorite(idx)} />
           ))}
         </View>
       </View>
