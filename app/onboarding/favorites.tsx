@@ -6,6 +6,8 @@ import { router } from 'expo-router';
 import { StyleSheet, View } from 'react-native';
 import { useSafeAreaInsets } from 'react-native-safe-area-context';
 
+const stations = new Array(9).fill({ stationName: '한강진역', lineName: '6호선' });
+
 export default function Favorites() {
   const insets = useSafeAreaInsets();
 
@@ -13,9 +15,13 @@ export default function Favorites() {
     <View style={[styles.container, { paddingTop: insets.top }]}>
       <View style={styles.thumbnailOuterContainer}>
         <View style={styles.thumbnailInnerContainer}>
-          <SmallThumbnail stationName="한강진역" lineName="6호선" />
-          <SmallThumbnail stationName="한강진역" lineName="6호선" />
-          <SmallThumbnail stationName="한강진역" lineName="6호선" />
+          {stations.map((station, index) => (
+            <SmallThumbnail
+              key={index}
+              stationName={station.stationName}
+              lineName={station.lineName}
+            />
+          ))}
         </View>
       </View>
       <View style={styles.buttonContainer}>
@@ -49,7 +55,14 @@ const styles = StyleSheet.create({
     alignSelf: 'stretch',
   },
   thumbnailInnerContainer: {
-    display: 'flex',
+    height: hp(771),
+    flexDirection: 'row',
+    flexWrap: 'wrap',
+    flexGrow: 1,
+    flexShrink: 0,
+    flexBasis: 0,
+    rowGap: hp(20),
+    columnGap: wp(12),
   },
   buttonContainer: {
     paddingHorizontal: wp(24),
