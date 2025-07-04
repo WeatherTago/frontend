@@ -10,7 +10,10 @@ import * as SplashScreen from 'expo-splash-screen';
 import { Server } from 'miragejs';
 import { useEffect, useRef, useState } from 'react';
 import { Animated, StyleSheet, View } from 'react-native';
+import { ko, registerTranslation } from 'react-native-paper-dates';
 import { SafeAreaProvider } from 'react-native-safe-area-context';
+
+registerTranslation('ko', ko);
 
 declare global {
   interface Window {

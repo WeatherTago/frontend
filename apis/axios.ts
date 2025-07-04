@@ -33,14 +33,13 @@ axiosInstance.interceptors.response.use(
 
     if (
       error.response &&
-      (error.response?.status === 401 || error.response?.status === 404) &&
+      (error.response.status === 401 || error.response.status === 404) &&
       !originalRequest._retry
     ) {
       if (originalRequest.url === '/api/auth/reissue') {
-        SecureStore.deleteItemAsync('accessToken');
-        SecureStore.deleteItemAsync('refreshToken');
-
-        return Promise.reject(error);
+        await SecureStore.deleteItemAsync('accessToken');
+        await SecureStore.deleteItemAsync('refreshToken');
+        return Promise.reject(error); // ✅ 그대로 두기
       }
 
       originalRequest._retry = true;
@@ -52,6 +51,7 @@ axiosInstance.interceptors.response.use(
           const { data } = await axiosInstance.post('/api/auth/reissue', {
             refreshToken,
           });
+
           await SecureStore.setItemAsync('accessToken', data.result.accessToken);
           await SecureStore.setItemAsync('refreshToken', data.result.refreshToken);
 
@@ -60,6 +60,7 @@ axiosInstance.interceptors.response.use(
           .catch(() => {
             SecureStore.deleteItemAsync('accessToken');
             SecureStore.deleteItemAsync('refreshToken');
+            throw new Error('refresh token expired'); // ✅ 명시적으로 예외 던지기
           })
           .finally(() => {
             refreshPromise = null;
@@ -71,8 +72,13 @@ axiosInstance.interceptors.response.use(
           ...originalRequest.headers,
           Authorization: `Bearer ${newAccessToken}`,
         };
-        return axiosInstance.request(originalRequest);
+        return axiosInstance.request(originalRequest); // ✅ 반드시 리턴해야 함
+      }).catch(err => {
+        return Promise.reject(err); // ✅ 빠지면 undefined로 떨어짐
       });
     }
-  },
+
+    return Promise.reject(error); // ✅ 마지막 fallback 필수
+  }
 );
+
