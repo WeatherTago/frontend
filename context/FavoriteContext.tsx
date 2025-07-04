@@ -1,37 +1,38 @@
-import { popularStationList, stationList } from '@/constants/stations';
-import React, { createContext, useContext, useState } from 'react';
-
-export type Station = {
-  stationId: string;
-  stationName: string;
-  stationLine: string;
-};
+import { myFavorite } from '@/apis/favorite';
+import { StationInfo } from '@/types/common';
+import React, { createContext, useContext, useEffect, useState } from 'react';
 
 type FavoriteContextType = {
-  stationList: Station[];
-  popularStationList: Station[];
-  favoriteStationIds: string[];
-  toggleFavorite: (stationId: string) => void;
-  isFavorite: (stationId: string) => boolean;
+  favoriteStationIds: number[];
+  toggleFavorite: (stationId: number) => void;
+  isFavorite: (stationId: number) => boolean;
 };
 
 const FavoriteContext = createContext<FavoriteContextType | null>(null);
 
 export const FavoriteProvider = ({ children }: { children: React.ReactNode }) => {
-  const [favoriteStationIds, setFavoriteStationIds] = useState<string[]>([]);
+  const [favoriteStationIds, setFavoriteStationIds] = useState<number[]>([]);
 
-  const toggleFavorite = (stationId: string) => {
+  const toggleFavorite = (stationId: number) => {
     setFavoriteStationIds(prev =>
       prev.includes(stationId) ? prev.filter(id => id !== stationId) : [...prev, stationId],
     );
   };
 
-  const isFavorite = (stationId: string) => favoriteStationIds.includes(stationId);
+  const isFavorite = (stationId: number) => favoriteStationIds.includes(stationId);
+
+  useEffect(() => {
+    const fetchFavorites = async () => {
+      const res = await myFavorite();
+      const ids = res.result.stations.map((station: StationInfo) => station.stationId);
+      setFavoriteStationIds(ids);
+    };
+
+    fetchFavorites();
+  }, []);
 
   return (
-    <FavoriteContext.Provider
-      value={{ stationList, popularStationList, favoriteStationIds, toggleFavorite, isFavorite }}
-    >
+    <FavoriteContext.Provider value={{ favoriteStationIds, toggleFavorite, isFavorite }}>
       {children}
     </FavoriteContext.Provider>
   );

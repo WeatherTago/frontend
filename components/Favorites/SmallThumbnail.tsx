@@ -5,11 +5,11 @@ import { Dimensions, StyleSheet, Text, TouchableOpacity, View } from 'react-nati
 import StarIcon from '../Icons/StarIcon';
 
 type SmallThumbnailProps = {
-  stationId: string;
+  stationId: number;
   stationName: string;
   stationLine: string;
-  isFavorite: boolean;
-  onToggleFavorite: (stationId: string) => void;
+  isFavorite: (stationId: number) => boolean;
+  onToggleFavorite: (stationId: number) => void;
 };
 
 // 화면 너비 가져오기
@@ -32,14 +32,14 @@ const SmallThumbnail = ({
   onToggleFavorite,
 }: SmallThumbnailProps) => {
   const handleFavorites = async () => {
-    const newFavorite = !isFavorite;
+    const newFavorite = !isFavorite(stationId);
     onToggleFavorite(stationId);
 
     if (newFavorite) {
-      const res = await deleteFavorite({ stationName, stationLine });
+      const res = await addFavorite({ stationName, stationLine });
       if (__DEV__) console.log('즐겨찾기 등록:', res, '즐겨찾기 여부:', newFavorite);
     } else {
-      const res = await addFavorite({ stationName, stationLine });
+      const res = await deleteFavorite({ stationName, stationLine });
       if (__DEV__) console.log('즐겨찾기 삭제:', res, '즐겨찾기 여부:', newFavorite);
     }
   };
@@ -48,7 +48,7 @@ const SmallThumbnail = ({
       <View style={styles.contentContainer}>
         <StarIcon
           size={px(42)}
-          color={isFavorite ? theme.colors.primary[700] : theme.colors.gray[300]}
+          color={isFavorite(stationId) ? theme.colors.primary[700] : theme.colors.gray[300]}
         />
         <View style={styles.textContainer}>
           <View style={styles.stationNameContainer}>

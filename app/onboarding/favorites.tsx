@@ -1,19 +1,32 @@
+import { getStationInfo } from '@/apis/station';
 import LargeButton from '@/components/Button/LargeButton';
 import SmallThumbnail from '@/components/Favorites/SmallThumbnail';
+import Header from '@/components/Header/CommonHeader';
 import { useFavorite } from '@/context/FavoriteContext';
 import { theme } from '@/styles/theme';
+import { StationInfo } from '@/types/common';
 import { hp, wp } from '@/utils/scale';
 import { router } from 'expo-router';
+import { useEffect, useState } from 'react';
 import { FlatList, StyleSheet, View } from 'react-native';
 import { useSafeAreaInsets } from 'react-native-safe-area-context';
 
 export default function Favorites() {
   const insets = useSafeAreaInsets();
+  const { toggleFavorite, isFavorite } = useFavorite();
+  const [popularStationList, setPopularStationList] = useState<StationInfo[]>([]);
 
-  const { popularStationList, toggleFavorite, isFavorite } = useFavorite();
+  useEffect(() => {
+    const fetchStationInfo = async () => {
+      const res = await getStationInfo();
+      setPopularStationList(res.result.slice(0, 12));
+    };
+    fetchStationInfo();
+  }, []);
 
   return (
     <View style={[styles.container, { paddingTop: insets.top }]}>
+      <Header title="즐겨찾는 역" onPressLeft={() => router.back()} />
       <View style={styles.flatListOuterContainer}>
         <FlatList
           data={popularStationList}
@@ -24,7 +37,7 @@ export default function Favorites() {
               stationId={item.stationId}
               stationName={item.stationName}
               stationLine={item.stationLine}
-              isFavorite={isFavorite(item.stationId)}
+              isFavorite={isFavorite}
               onToggleFavorite={() => toggleFavorite(item.stationId)}
             />
           )}
