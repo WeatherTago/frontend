@@ -5,11 +5,11 @@ import { Dimensions, StyleSheet, Text, TouchableOpacity, View } from 'react-nati
 import StarIcon from '../Icons/StarIcon';
 
 type SmallThumbnailProps = {
-  key: string;
+  stationId: string;
   stationName: string;
   stationLine: string;
   isFavorite: boolean;
-  onToggleFavorite: (key: string) => void;
+  onToggleFavorite: (stationId: string) => void;
 };
 
 // 화면 너비 가져오기
@@ -25,15 +25,15 @@ const columnGap = wp(12); // 컬럼 간 간격
 const thumbnailWidth = Math.floor((screenWidth - horizontalPadding * 2 - columnGap * 2) / 3);
 
 const SmallThumbnail = ({
-  key,
+  stationId,
   stationName,
   stationLine,
   isFavorite,
   onToggleFavorite,
 }: SmallThumbnailProps) => {
-  const handleFavorites = async (key: string) => {
+  const handleFavorites = async () => {
     const newFavorite = !isFavorite;
-    onToggleFavorite(key);
+    onToggleFavorite(stationId);
 
     if (newFavorite) {
       const res = await deleteFavorite({ stationName, stationLine });
@@ -44,7 +44,7 @@ const SmallThumbnail = ({
     }
   };
   return (
-    <TouchableOpacity style={styles.container} onPress={() => handleFavorites(key)}>
+    <TouchableOpacity style={styles.container} onPress={() => handleFavorites()}>
       <View style={styles.contentContainer}>
         <StarIcon
           size={px(42)}

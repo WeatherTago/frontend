@@ -21,6 +21,7 @@ export default function Favorites() {
           renderItem={({ item }) => (
             <SmallThumbnail
               key={item.stationId}
+              stationId={item.stationId}
               stationName={item.stationName}
               stationLine={item.stationLine}
               isFavorite={isFavorite(item.stationId)}
