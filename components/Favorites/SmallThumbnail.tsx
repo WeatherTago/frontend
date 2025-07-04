@@ -1,14 +1,15 @@
+import { addFavorite, deleteFavorite } from '@/apis/favorite';
 import { theme } from '@/styles/theme';
 import { hp, px, wp } from '@/utils/scale';
-import { useEffect } from 'react';
 import { Dimensions, StyleSheet, Text, TouchableOpacity, View } from 'react-native';
 import StarIcon from '../Icons/StarIcon';
 
 type SmallThumbnailProps = {
-  isFavorite?: boolean;
+  key: string;
   stationName: string;
   stationLine: string;
-  onToggleFavorite?: () => void;
+  isFavorite: boolean;
+  onToggleFavorite: (key: string) => void;
 };
 
 // 화면 너비 가져오기
@@ -24,22 +25,26 @@ const columnGap = wp(12); // 컬럼 간 간격
 const thumbnailWidth = Math.floor((screenWidth - horizontalPadding * 2 - columnGap * 2) / 3);
 
 const SmallThumbnail = ({
-  isFavorite = false,
-  stationName = '한강진역',
-  stationLine = '6호선',
+  key,
+  stationName,
+  stationLine,
+  isFavorite,
   onToggleFavorite,
 }: SmallThumbnailProps) => {
-  useEffect(() => {
-    console.log(`${stationName} 즐겨찾기 상태:`, isFavorite);
-  }, [isFavorite]);
+  const handleFavorites = async (key: string) => {
+    const newFavorite = !isFavorite;
+    onToggleFavorite(key);
 
-  const handleFavorites = () => {
-    if (onToggleFavorite) {
-      onToggleFavorite();
+    if (newFavorite) {
+      const res = await deleteFavorite({ stationName, stationLine });
+      if (__DEV__) console.log('즐겨찾기 등록:', res, '즐겨찾기 여부:', newFavorite);
+    } else {
+      const res = await addFavorite({ stationName, stationLine });
+      if (__DEV__) console.log('즐겨찾기 삭제:', res, '즐겨찾기 여부:', newFavorite);
     }
   };
   return (
-    <TouchableOpacity style={styles.container} onPress={handleFavorites}>
+    <TouchableOpacity style={styles.container} onPress={() => handleFavorites(key)}>
       <View style={styles.contentContainer}>
         <StarIcon
           size={px(42)}

@@ -10,16 +10,22 @@ import { useSafeAreaInsets } from 'react-native-safe-area-context';
 export default function Favorites() {
   const insets = useSafeAreaInsets();
 
-  const { stations, toggleFavorite } = useFavorite();
+  const { popularStationList, toggleFavorite, isFavorite } = useFavorite();
 
   return (
     <View style={[styles.container, { paddingTop: insets.top }]}>
       <View style={styles.flatListOuterContainer}>
         <FlatList
-          data={stations}
+          data={popularStationList}
           keyExtractor={(_, idx) => idx.toString()}
-          renderItem={({ item, index }) => (
-            <SmallThumbnail {...item} onToggleFavorite={() => toggleFavorite(index)} />
+          renderItem={({ item }) => (
+            <SmallThumbnail
+              key={item.stationId}
+              stationName={item.stationName}
+              stationLine={item.stationLine}
+              isFavorite={isFavorite(item.stationId)}
+              onToggleFavorite={() => toggleFavorite(item.stationId)}
+            />
           )}
           numColumns={3}
           contentContainerStyle={styles.flatListContainer}
