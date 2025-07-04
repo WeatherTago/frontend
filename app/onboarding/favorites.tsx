@@ -4,7 +4,7 @@ import { useFavorite } from '@/context/FavoriteContext';
 import { theme } from '@/styles/theme';
 import { hp, wp } from '@/utils/scale';
 import { router } from 'expo-router';
-import { StyleSheet, View } from 'react-native';
+import { FlatList, StyleSheet, View } from 'react-native';
 import { useSafeAreaInsets } from 'react-native-safe-area-context';
 
 export default function Favorites() {
@@ -14,12 +14,17 @@ export default function Favorites() {
 
   return (
     <View style={[styles.container, { paddingTop: insets.top }]}>
-      <View style={styles.thumbnailOuterContainer}>
-        <View style={styles.thumbnailInnerContainer}>
-          {stations.map((station, idx) => (
-            <SmallThumbnail key={idx} {...station} onToggleFavorite={() => toggleFavorite(idx)} />
-          ))}
-        </View>
+      <View style={styles.flatListOuterContainer}>
+        <FlatList
+          data={stations}
+          keyExtractor={(_, idx) => idx.toString()}
+          renderItem={({ item, index }) => (
+            <SmallThumbnail {...item} onToggleFavorite={() => toggleFavorite(index)} />
+          )}
+          numColumns={3}
+          contentContainerStyle={styles.flatListContainer}
+          columnWrapperStyle={styles.columnWrapper}
+        />
       </View>
       <View style={styles.buttonContainer}>
         <LargeButton
@@ -41,25 +46,25 @@ const styles = StyleSheet.create({
     alignItems: 'center',
     justifyContent: 'center',
   },
-  thumbnailOuterContainer: {
+  flatListOuterContainer: {
     display: 'flex',
-    height: hp(829),
-    paddingVertical: hp(36),
-    paddingHorizontal: wp(24),
+    height: hp(721), // 829 - 108
     justifyContent: 'space-between',
     alignItems: 'flex-start',
     flexShrink: 0,
     alignSelf: 'stretch',
   },
-  thumbnailInnerContainer: {
-    height: hp(771),
-    flexDirection: 'row',
-    flexWrap: 'wrap',
+  flatListContainer: {
+    paddingVertical: hp(36),
+    paddingHorizontal: wp(24),
+    alignItems: 'flex-start',
+    justifyContent: 'flex-start',
     flexGrow: 1,
-    flexShrink: 0,
-    flexBasis: 0,
-    rowGap: hp(20),
-    columnGap: wp(12),
+  },
+  columnWrapper: {
+    justifyContent: 'flex-start',
+    gap: wp(12), // 컬럼 간 간격 (column-gap)
+    marginBottom: hp(20), // 행 간 간격 (row-gap)
   },
   buttonContainer: {
     paddingHorizontal: wp(24),

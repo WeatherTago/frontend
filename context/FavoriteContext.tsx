@@ -16,6 +16,15 @@ const initialStations: SmallThumbnailProps[] = [
   { stationName: '건대입구', stationLine: '2호선', isFavorite: false },
   { stationName: '동대문역사문화공원', stationLine: '2호선', isFavorite: false },
   { stationName: '왕십리', stationLine: '2호선', isFavorite: false },
+  { stationName: '강남', stationLine: '2호선', isFavorite: false },
+  { stationName: '홍대입구', stationLine: '2호선', isFavorite: false },
+  { stationName: '서울역', stationLine: '1호선', isFavorite: false },
+  { stationName: '사당', stationLine: '2호선', isFavorite: false },
+  { stationName: '잠실', stationLine: '2호선', isFavorite: false },
+  { stationName: '신림', stationLine: '2호선', isFavorite: false },
+  { stationName: '건대입구', stationLine: '2호선', isFavorite: false },
+  { stationName: '동대문역사문화공원', stationLine: '2호선', isFavorite: false },
+  { stationName: '왕십리', stationLine: '2호선', isFavorite: false },
 ];
 
 const FavoriteContext = createContext<{
