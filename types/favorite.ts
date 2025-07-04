@@ -1,13 +1,10 @@
 import { CommonResponse, StationInfo } from './common';
 
-export type Station = {
-  stationName: string;
-  stationLine: string;
+export type AddFavoriteRequest = {
+  stationId: number;
 };
 
-export type AddFavoriteRequest = Station;
-
-export type DeleteFavoriteRequest = Station;
+export type DeleteFavoriteRequest = AddFavoriteRequest;
 
 export type MyFavoriteResponse = CommonResponse<{
   faviroteId: number;

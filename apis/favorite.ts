@@ -2,20 +2,16 @@ import { CommonResponse } from '@/types/common';
 import { AddFavoriteRequest, MyFavoriteResponse } from '@/types/favorite';
 import { axiosInstance } from './axios';
 
-export const addFavorite = async ({
-  stationName,
-  stationLine,
-}: AddFavoriteRequest): Promise<CommonResponse> => {
-  const { data } = await axiosInstance.post('/api/users/me/favorite', { stationName, stationLine });
+export const addFavorite = async ({ stationId }: AddFavoriteRequest): Promise<CommonResponse> => {
+  const { data } = await axiosInstance.post('/api/users/me/favorite', { stationId });
   return data;
 };
 
 export const deleteFavorite = async ({
-  stationName,
-  stationLine,
+  stationId,
 }: AddFavoriteRequest): Promise<CommonResponse> => {
   const { data } = await axiosInstance.delete('/api/users/me/favorite', {
-    data: { stationName, stationLine },
+    data: { stationId },
   });
   return data;
 };
