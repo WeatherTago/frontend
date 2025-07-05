@@ -1,44 +1,86 @@
-import { fetchStationByConditions, StationResult } from '@/apis/station';
-import React, { useState } from 'react';
-import { Button, ScrollView, StyleSheet, Text, TextInput, View } from 'react-native';
-import { Provider as PaperProvider } from 'react-native-paper';
+import Fuse from 'fuse.js';
+import React, { useMemo, useState } from 'react';
+import {
+  Button,
+  ScrollView,
+  StyleSheet,
+  Text,
+  TextInput,
+  TouchableOpacity,
+  View,
+} from 'react-native';
+import { PaperProvider } from 'react-native-paper';
 import { DatePickerModal, TimePickerModal } from 'react-native-paper-dates';
 
+import { fetchStationByIdAndTime, StationResult } from '@/apis/station';
+import { useStationContext } from '@/context/StationContext';
+
 export default function CongestionScreen() {
-  const [station, setStation] = useState('');
-  const [line, setLine] = useState('');
+  const { stations, loading, getStationIdByNameAndLine } = useStationContext();
+
+  const [stationName, setStationName] = useState('');
+  const [selectedLine, setSelectedLine] = useState('');
+  const [filteredLines, setFilteredLines] = useState<string[]>([]);
   const [date, setDate] = useState<Date | undefined>();
   const [time, setTime] = useState<{ hours: number; minutes: number } | undefined>();
   const [dateOpen, setDateOpen] = useState(false);
   const [timeOpen, setTimeOpen] = useState(false);
-
   const [result, setResult] = useState<StationResult | null>(null);
-  const [loading, setLoading] = useState(false);
+  const [isLoading, setIsLoading] = useState(false);
+  const [showSuggestions, setShowSuggestions] = useState(false);
+
+  // 1. 중복 제거된 역 이름만 뽑기
+  const uniqueStationNames = useMemo(() => {
+    const nameSet = new Set<string>();
+    return stations.filter((station) => {
+      if (nameSet.has(station.stationName)) return false;
+      nameSet.add(station.stationName);
+      return true;
+    });
+  }, [stations]);
+
+  // 2. Fuse.js 인스턴스는 중복 제거된 리스트로 생성
+  const fuse = useMemo(() => new Fuse(uniqueStationNames, {
+    keys: ['stationName'],
+    threshold: 0.45,
+  }), [uniqueStationNames]);
+
+  const filteredStations = stationName
+    ? fuse.search(stationName).map((res) => res.item)
+    : [];
+
+  const handleStationSelect = (name: string) => {
+    setStationName(name);
+    setShowSuggestions(false);
+    const matched = stations.filter((s) => s.stationName === name);
+    const lines = [...new Set(matched.map((s) => s.stationLine))];
+    setFilteredLines(lines);
+    setSelectedLine('');
+  };
 
   const handleSearch = async () => {
-    if (!station || !line || !date || !time) {
+    if (!stationName || !selectedLine || !date || !time) {
       alert('모든 항목을 입력해주세요.');
       return;
     }
 
-    // ISO 포맷으로 시간 생성
-    const dateTime = new Date(date);
-    dateTime.setHours(time.hours);
-    dateTime.setMinutes(time.minutes);
-    dateTime.setSeconds(0);
-    dateTime.setMilliseconds(0);
-    const isoTime = dateTime.toISOString();
+    const stationId = getStationIdByNameAndLine(stationName, selectedLine);
+    if (!stationId) {
+      alert('해당 역 정보가 존재하지 않습니다.');
+      return;
+    }
 
-    setLoading(true);
-    const response = await fetchStationByConditions({
-      name: station,
-      line,
-      date: date.toISOString().split('T')[0],
-      time: isoTime,
-    });
+    const searchTime = new Date(date);
+    searchTime.setHours(time.hours);
+    searchTime.setMinutes(time.minutes);
+    searchTime.setSeconds(0);
+    searchTime.setMilliseconds(0);
+    const isoTime = searchTime.toISOString();
 
-    setResult(response);
-    setLoading(false);
+    setIsLoading(true);
+    const res = await fetchStationByIdAndTime({ stationId, time: isoTime });
+    setResult(res);
+    setIsLoading(false);
   };
 
   return (
@@ -46,19 +88,56 @@ export default function CongestionScreen() {
       <ScrollView contentContainerStyle={styles.container}>
         <Text style={styles.label}>역 이름</Text>
         <TextInput
-          placeholder="예: 서울대입구"
-          value={station}
-          onChangeText={setStation}
+          placeholder="예: 사당"
+          value={stationName}
+          onChangeText={(text) => {
+            setStationName(text);
+            setShowSuggestions(true);
+          }}
           style={styles.input}
         />
 
-        <Text style={styles.label}>호선</Text>
-        <TextInput
-          placeholder="예: 2호선"
-          value={line}
-          onChangeText={setLine}
-          style={styles.input}
-        />
+        {/* 3. 중복 제거된 자동완성 렌더링 */}
+        {showSuggestions && filteredStations.length > 0 && (
+          <View style={styles.suggestionList}>
+            <ScrollView>
+              {filteredStations.map((item) => (
+                <TouchableOpacity
+                  key={item.stationName}
+                  onPress={() => handleStationSelect(item.stationName)}
+                  style={styles.suggestionItem}
+                >
+                  <Text>{item.stationName}</Text>
+                </TouchableOpacity>
+              ))}
+            </ScrollView>
+          </View>
+        )}
+
+        {filteredLines.length > 0 && (
+          <>
+            <Text style={styles.label}>호선 선택</Text>
+            <View style={styles.lineList}>
+              {filteredLines.map((line) => (
+                <TouchableOpacity
+                  key={line}
+                  onPress={() => setSelectedLine(line)}
+                  style={[
+                    styles.lineItem,
+                    selectedLine === line && styles.lineItemSelected,
+                  ]}
+                >
+                  <Text>{line}</Text>
+                </TouchableOpacity>
+              ))}
+            </View>
+            {selectedLine && (
+              <Text style={styles.selectedLine}>
+                선택한 호선: {selectedLine}
+              </Text>
+            )}
+          </>
+        )}
 
         <Button title="날짜 선택" onPress={() => setDateOpen(true)} />
         <Button title="시간 선택" onPress={() => setTimeOpen(true)} />
@@ -77,7 +156,7 @@ export default function CongestionScreen() {
 
         <Button title="혼잡도 검색" onPress={handleSearch} />
 
-        {loading && <Text>불러오는 중...</Text>}
+        {isLoading && <Text>불러오는 중...</Text>}
 
         {result && (
           <View style={{ marginTop: 20 }}>
@@ -88,7 +167,7 @@ export default function CongestionScreen() {
           </View>
         )}
 
-        {/* 날짜 선택 모달 */}
+        {/* 날짜 모달 */}
         <DatePickerModal
           locale="ko"
           mode="single"
@@ -101,7 +180,7 @@ export default function CongestionScreen() {
           }}
         />
 
-        {/* 시간 선택 모달 */}
+        {/* 시간 모달 */}
         <TimePickerModal
           locale="ko"
           visible={timeOpen}
@@ -131,6 +210,36 @@ const styles = StyleSheet.create({
     padding: 8,
     borderRadius: 6,
     marginBottom: 12,
+  },
+  suggestionList: {
+    maxHeight: 160,
+    borderWidth: 1,
+    borderColor: '#ccc',
+    borderRadius: 4,
+    marginBottom: 12,
+  },
+  suggestionItem: {
+    padding: 8,
+    borderBottomWidth: 1,
+    borderColor: '#ccc',
+  },
+  lineList: {
+    flexDirection: 'column',
+    gap: 8,
+  },
+  lineItem: {
+    padding: 10,
+    borderWidth: 1,
+    borderColor: '#ccc',
+    borderRadius: 4,
+    marginVertical: 4,
+  },
+  lineItemSelected: {
+    backgroundColor: '#d0ebff',
+  },
+  selectedLine: {
+    marginBottom: 8,
+    fontStyle: 'italic',
   },
   resultTitle: {
     fontWeight: 'bold',
