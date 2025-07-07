@@ -1,4 +1,5 @@
 import { AuthProvider } from '@/context/AuthContext';
+import { StationProvider } from '@/context/StationContext';
 import { FavoriteProvider } from '@/context/FavoriteContext';
 import { theme } from '@/styles/theme';
 import { ThemeProvider } from '@emotion/react';
@@ -11,7 +12,10 @@ import * as SplashScreen from 'expo-splash-screen';
 import { Server } from 'miragejs';
 import { useEffect, useRef, useState } from 'react';
 import { Animated, StyleSheet, View } from 'react-native';
+import { ko, registerTranslation } from 'react-native-paper-dates';
 import { SafeAreaProvider } from 'react-native-safe-area-context';
+
+registerTranslation('ko', ko);
 
 declare global {
   interface Window {
@@ -70,6 +74,7 @@ function AnimatedSplashScreen({ children, image }: { children: React.ReactNode; 
     'Pretendard-Regular': require('@/assets/fonts/Pretendard-Regular.otf'),
     'Pretendard-Medium': require('@/assets/fonts/Pretendard-Medium.otf'),
     'Pretendard-Bold': require('@/assets/fonts/Pretendard-Bold.otf'),
+    'Pretendard-SemiBold': require('@/assets/fonts/Pretendard-SemiBold.otf'),
     'Pretendard-ExtraBold': require('@/assets/fonts/Pretendard-ExtraBold.otf'),
   });
 
@@ -110,16 +115,19 @@ function AnimatedSplashScreen({ children, image }: { children: React.ReactNode; 
 
 export default function RootLayout() {
   return (
-    <SafeAreaProvider>
+      <SafeAreaProvider>
       <AnimatedAppLoader image={require('../assets/images/react-logo.png')}>
         <AuthProvider>
-          <FavoriteProvider>
-            <ThemeProvider theme={theme}>
-              <Stack screenOptions={{ headerShown: false }} />
-            </ThemeProvider>
-          </FavoriteProvider>
+          <StationProvider>
+            <FavoriteProvider>
+              <ThemeProvider theme={theme}>
+                <Stack screenOptions={{ headerShown: false }} />
+              </ThemeProvider>
+            </FavoriteProvider>
+          </StationProvider>
         </AuthProvider>
       </AnimatedAppLoader>
     </SafeAreaProvider>
+
   );
 }
