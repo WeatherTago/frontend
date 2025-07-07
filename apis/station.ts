@@ -1,24 +1,5 @@
+import { StationResult } from '@/types/station';
 import { axiosInstance } from './axios';
-
-interface CongestionInfo {
-  level: string | null;
-  rate: number | null;
-}
-
-interface WeatherInfo {
-  temperature: string;
-  condition: string;
-}
-
-export interface StationResult {
-  stationId: number;
-  name: string;
-  line: string;
-  stationCode: string;
-  weather?: WeatherInfo;
-  congestion: CongestionInfo;
-  createdAt: string;
-}
 
 interface SearchStationResponse {
   isSuccess: boolean;
@@ -40,8 +21,8 @@ export const fetchStationByIdAndTime = async (params: {
           time: params.time,
         },
         headers: {
-        skipAuth: true,
-      },
+          skipAuth: true,
+        },
       }
     );
 

@@ -66,7 +66,6 @@ const styles = StyleSheet.create({
     alignItems: 'flex-start',
     justifyContent: 'center',
     paddingHorizontal: px(22),
-    paddingVertical:px(6)
   },
   input: {
     fontFamily: 'Pretendard-Medium',
