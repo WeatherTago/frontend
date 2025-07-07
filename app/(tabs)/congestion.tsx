@@ -11,10 +11,11 @@ import {
 import { PaperProvider } from 'react-native-paper';
 import { DatePickerModal, TimePickerModal } from 'react-native-paper-dates';
 
-import { fetchStationByIdAndTime, StationResult } from '@/apis/station';
+import { fetchStationByIdAndTime } from '@/apis/station';
 import mapImage from '@/assets/images/map.png';
 import SearchBar from '@/components/SearchBar';
 import { useStationContext } from '@/context/StationContext';
+import type { StationResult } from '@/types/station';
 import { useSafeAreaInsets } from 'react-native-safe-area-context';
 
 export default function CongestionScreen() {

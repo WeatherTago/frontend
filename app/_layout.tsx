@@ -116,7 +116,7 @@ function AnimatedSplashScreen({ children, image }: { children: React.ReactNode; 
 export default function RootLayout() {
   return (
 
-    <SafeAreaProvider>
+      <SafeAreaProvider>
       <AnimatedAppLoader image={require('../assets/images/react-logo.png')}>
         <AuthProvider>
           <StationProvider>
