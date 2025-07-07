@@ -32,7 +32,7 @@ export default function OnboardingLogin() {
           }
         }
 
-        router.replace('/(tabs)');
+        router.replace('/onboarding/favorites');
       };
 
       fetchTokens();

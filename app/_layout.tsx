@@ -1,4 +1,5 @@
 import { AuthProvider } from '@/context/AuthContext';
+import { FavoriteProvider } from '@/context/FavoriteContext';
 import { theme } from '@/styles/theme';
 import { ThemeProvider } from '@emotion/react';
 import { Asset } from 'expo-asset';
@@ -74,7 +75,6 @@ function AnimatedSplashScreen({ children, image }: { children: React.ReactNode; 
 
   if (!fontsLoaded) return null;
 
-
   return (
     <View style={{ flex: 1 }}>
       {isAppReady && children}
@@ -113,9 +113,11 @@ export default function RootLayout() {
     <SafeAreaProvider>
       <AnimatedAppLoader image={require('../assets/images/react-logo.png')}>
         <AuthProvider>
-          <ThemeProvider theme={theme}>
-            <Stack screenOptions={{ headerShown: false }} />
-          </ThemeProvider>
+          <FavoriteProvider>
+            <ThemeProvider theme={theme}>
+              <Stack screenOptions={{ headerShown: false }} />
+            </ThemeProvider>
+          </FavoriteProvider>
         </AuthProvider>
       </AnimatedAppLoader>
     </SafeAreaProvider>
