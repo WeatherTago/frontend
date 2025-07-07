@@ -117,15 +117,15 @@ export default function RootLayout() {
   return (
     
       <SafeAreaProvider>
-        <StationProvider>
             <AnimatedAppLoader image={require('../assets/images/react-logo.png')}>
               <AuthProvider>
+                <StationProvider>
                 <ThemeProvider theme={theme}>
                   <Stack screenOptions={{ headerShown: false }} />
                 </ThemeProvider>
+                </StationProvider>
             </AuthProvider>
           </AnimatedAppLoader>
-          </StationProvider>
       </SafeAreaProvider>
     
     

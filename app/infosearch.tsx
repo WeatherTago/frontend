@@ -1,0 +1,115 @@
+import ArrowIcon from '@/components/Icons/ArrowIcon';
+import { useStationContext } from '@/context/StationContext';
+import { hp, px, wp } from '@/utils/scale';
+import { useTheme } from '@emotion/react';
+import { useRouter } from 'expo-router';
+import Fuse from 'fuse.js';
+import React, { useMemo, useState } from 'react';
+import { Dimensions, FlatList, Keyboard, StyleSheet, Text, TextInput, TouchableOpacity, View } from 'react-native';
+import { useSafeAreaInsets } from 'react-native-safe-area-context';
+
+export default function SearchScreen() {
+  const insets = useSafeAreaInsets();
+  const router = useRouter();
+  const [searchText, setSearchText] = useState('');
+  const theme = useTheme();
+  const {stations}=useStationContext();
+
+// 중복 없는 역 이름 배열 만들기
+  const uniqueStationNames = useMemo(() => {
+  const nameSet = new Set<string>();
+  stations.forEach(s => nameSet.add(s.stationName));
+  return Array.from(nameSet);
+}, [stations]);
+  // Fuse.js로 필터링
+  const fuse = useMemo(() => new Fuse(uniqueStationNames, { threshold: 0.5 }), [uniqueStationNames]);
+
+const filteredStations = searchText
+  ? fuse.search(searchText).map(res => res.item)
+  : [];
+
+  const handleSelect = (name: string) => {
+  setSearchText(name);
+  Keyboard.dismiss(); // 키보드 닫기
+};
+const screenHeight = Dimensions.get('window').height;
+const listHeight = screenHeight * 0.5; // 화면의 절반 높이
+
+
+ return (
+    <View style={{ paddingTop: insets.top, backgroundColor: '#FFF' }}>
+      {/* 상단 검색바 */}
+      <View style={[styles.container, {backgroundColor:theme.colors.gray[0]}]}>
+        <TouchableOpacity onPress={() => router.back()}>
+          <ArrowIcon
+            direction="left"
+            color={theme.colors.gray[500]} 
+            width={px(46)}
+            height={px(46)}
+          />
+        </TouchableOpacity>
+        <TextInput
+          style={[styles.input, { color: theme.colors.gray[950] }]}
+          placeholder="편의시설이 궁금한 역을 검색해보세요"
+          placeholderTextColor={theme.colors.gray[300]}
+          value={searchText}
+          onChangeText={setSearchText}
+          returnKeyType="search"
+        />
+      </View>
+
+      {filteredStations.length > 0 && (
+      <FlatList
+        data={filteredStations}
+        keyExtractor={(item) => item}
+        renderItem={({ item }) => (
+          <TouchableOpacity onPress={() => handleSelect(item)} style={{ padding: 12 }}>
+            <Text style={[styles.suggestionItemText, { color: theme.colors.gray[900] }]}>{item}</Text>
+          </TouchableOpacity>
+        )}
+         ItemSeparatorComponent={() => (
+          <View style={{ height: 1, backgroundColor: theme.colors.gray[100] }} />
+        )}
+        style={{
+          backgroundColor: '#FFF',
+          borderColor: '#DDD',
+          borderWidth: 1,
+          maxHeight: listHeight,
+        }}
+        keyboardShouldPersistTaps="handled"
+      />
+    )}
+
+    </View>
+  );
+}
+
+const styles = StyleSheet.create({
+  container: {
+    width: wp(540),
+    height: hp(90),
+    paddingHorizontal: wp(14),
+    flexDirection: 'row',
+    alignItems: 'center',
+    gap: px(8),
+    flexShrink: 0,
+    shadowColor: 'rgba(0, 0, 0, 0.05)',
+    shadowOffset: { width: 0, height: 2 },
+    shadowOpacity: 1,
+    shadowRadius: 6,
+    elevation: 3,
+  },
+  input: {
+    flex: 1,
+    fontSize: px(24),
+    fontFamily:'Pretendard-Medium',
+    fontWeight:500,
+    lineHeight: px(34),
+  },
+  suggestionItemText:{
+    fontSize:px(22),
+    fontFamily:'Pretendard-Regular',
+    fontWeight:400,
+    lineHeight:px(34)
+  }
+});

@@ -1,4 +1,5 @@
 import { axiosInstance } from '@/apis/axios';
+import { useAuth } from '@/context/AuthContext';
 import React, { createContext, useContext, useEffect, useState } from 'react';
 
 export interface StationInfo {
@@ -18,6 +19,7 @@ const StationContext = createContext<StationContextType | undefined>(undefined);
 export const StationProvider = ({ children }: { children: React.ReactNode }) => {
   const [stations, setStations] = useState<StationInfo[]>([]);
   const [loading, setLoading] = useState(true);
+  const { user } = useAuth();
 
   useEffect(() => {
     const fetchStationInfo = async () => {
@@ -31,9 +33,10 @@ export const StationProvider = ({ children }: { children: React.ReactNode }) => 
         setLoading(false);
       }
     };
-
-    fetchStationInfo();
-  }, []);
+    if (user) {
+      fetchStationInfo(); // ✅ 로그인된 경우만 실행
+    }
+  }, [user]);
 
   // 🔍 헬퍼 함수
   const getStationIdByNameAndLine = (name: string, line: string): number | null => {
