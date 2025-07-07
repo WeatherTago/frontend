@@ -9,8 +9,11 @@ axiosInstance.interceptors.request.use(
   async config => {
     const accessToken = await SecureStore.getItemAsync('accessToken');
 
-    if (accessToken) {
+    if (accessToken && !config.headers?.skipAuth) {
       config.headers.Authorization = `Bearer ${accessToken}`;
+    }
+    if (config.headers?.skipAuth) {
+      delete config.headers.skipAuth;
     }
 
     return config;

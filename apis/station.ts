@@ -40,7 +40,7 @@ export const fetchStationByIdAndTime = async (params: {
           time: params.time,
         },
         headers: {
-        Authorization: undefined, 
+        skipAuth: true,
       },
       }
     );

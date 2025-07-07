@@ -87,13 +87,10 @@ export default function CongestionScreen() {
   const insets=useSafeAreaInsets();
 
   return (
-    <PaperProvider>
-      <ScrollView
-        contentContainerStyle={[
-          styles.container,
-          { paddingTop: insets.top },
-        ]}
-      >
+  <PaperProvider>
+    <View style={{ flex: 1 }}>
+      {/* 상단 검색창 + 자동완성 리스트 */}
+      <View style={{ paddingTop: insets.top}}>
         <SearchBar
           placeholder="혼잡도가 궁금한 역을 검색해보세요"
           value={stationName}
@@ -101,15 +98,14 @@ export default function CongestionScreen() {
             setStationName(text);
             setShowSuggestions(true);
           }}
-          onPressSearch={() => handleSearch()}
+          onPressSearch={handleSearch}
           ButtonIcon={mapImage}
           buttonLabel="혼잡예측"
         />
 
-        {/* 3. 중복 제거된 자동완성 렌더링 */}
         {showSuggestions && filteredStations.length > 0 && (
           <View style={styles.suggestionList}>
-            <ScrollView>
+            <ScrollView keyboardShouldPersistTaps="handled">
               {filteredStations.map((item) => (
                 <TouchableOpacity
                   key={item.stationName}
@@ -122,7 +118,10 @@ export default function CongestionScreen() {
             </ScrollView>
           </View>
         )}
+      </View>
 
+      {/* 나머지 UI */}
+      <ScrollView contentContainerStyle={styles.container}>
         {filteredLines.length > 0 && (
           <>
             <Text style={styles.label}>호선 선택</Text>
@@ -171,12 +170,15 @@ export default function CongestionScreen() {
           <View style={{ marginTop: 20 }}>
             <Text style={styles.resultTitle}>🔍 검색 결과</Text>
             <Text>📍 {result.name} ({result.line})</Text>
-            <Text>혼잡도: {result.congestion.level ?? '정보 없음'} / {result.congestion.rate ?? '--'}%</Text>
-            <Text>날씨: {result.weather?.temperature} / {result.weather?.condition}</Text>
+            <Text>
+              혼잡도: {result.congestion.level ?? '정보 없음'} / {result.congestion.rate ?? '--'}%
+            </Text>
+            <Text>
+              날씨: {result.weather?.temperature} / {result.weather?.condition}
+            </Text>
           </View>
         )}
 
-        {/* 날짜 모달 */}
         <DatePickerModal
           locale="ko"
           mode="single"
@@ -189,7 +191,6 @@ export default function CongestionScreen() {
           }}
         />
 
-        {/* 시간 모달 */}
         <TimePickerModal
           locale="ko"
           visible={timeOpen}
@@ -200,14 +201,30 @@ export default function CongestionScreen() {
           }}
         />
       </ScrollView>
-    </PaperProvider>
-  );
+    </View>
+  </PaperProvider>
+);
+
 }
 
 const styles = StyleSheet.create({
   container: {
    
   },
+  suggestionList: {
+  position: 'absolute',
+  top: 96, // SearchBar 높이에 맞게 조정
+  left: 20,
+  right: 20,
+  maxHeight: 160,
+  borderWidth: 1,
+  borderColor: '#ccc',
+  borderRadius: 4,
+  backgroundColor: '#FFF',
+  zIndex: 100,
+  elevation: 5,
+},
+
   label: {
     fontWeight: 'bold',
     fontSize: 16,
@@ -219,13 +236,7 @@ const styles = StyleSheet.create({
     borderRadius: 6,
     marginBottom: 12,
   },
-  suggestionList: {
-    maxHeight: 160,
-    borderWidth: 1,
-    borderColor: '#ccc',
-    borderRadius: 4,
-    marginBottom: 12,
-  },
+
   suggestionItem: {
     padding: 8,
     borderBottomWidth: 1,
