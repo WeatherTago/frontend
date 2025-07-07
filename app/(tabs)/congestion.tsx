@@ -5,15 +5,17 @@ import {
   ScrollView,
   StyleSheet,
   Text,
-  TextInput,
   TouchableOpacity,
-  View,
+  View
 } from 'react-native';
 import { PaperProvider } from 'react-native-paper';
 import { DatePickerModal, TimePickerModal } from 'react-native-paper-dates';
 
 import { fetchStationByIdAndTime, StationResult } from '@/apis/station';
+import mapImage from '@/assets/images/map.png';
+import SearchBar from '@/components/SearchBar';
 import { useStationContext } from '@/context/StationContext';
+import { useSafeAreaInsets } from 'react-native-safe-area-context';
 
 export default function CongestionScreen() {
   const { stations, loading, getStationIdByNameAndLine } = useStationContext();
@@ -82,19 +84,26 @@ export default function CongestionScreen() {
     setResult(res);
     setIsLoading(false);
   };
+  const insets=useSafeAreaInsets();
 
   return (
     <PaperProvider>
-      <ScrollView contentContainerStyle={styles.container}>
-        <Text style={styles.label}>역 이름</Text>
-        <TextInput
-          placeholder="예: 사당"
+      <ScrollView
+        contentContainerStyle={[
+          styles.container,
+          { paddingTop: insets.top },
+        ]}
+      >
+        <SearchBar
+          placeholder="혼잡도가 궁금한 역을 검색해보세요"
           value={stationName}
           onChangeText={(text) => {
             setStationName(text);
             setShowSuggestions(true);
           }}
-          style={styles.input}
+          onPressSearch={() => handleSearch()}
+          ButtonIcon={mapImage}
+          buttonLabel="혼잡예측"
         />
 
         {/* 3. 중복 제거된 자동완성 렌더링 */}
@@ -197,8 +206,7 @@ export default function CongestionScreen() {
 
 const styles = StyleSheet.create({
   container: {
-    padding: 20,
-    gap: 12,
+   
   },
   label: {
     fontWeight: 'bold',

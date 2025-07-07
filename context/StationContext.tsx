@@ -24,6 +24,7 @@ export const StationProvider = ({ children }: { children: React.ReactNode }) => 
       try {
         const response = await axiosInstance.get('/api/station/info');
         setStations(response.data.result);
+        console.log('✅ 역 정보 불러오기 성공');
       } catch (error) {
         console.error('🚨 역 정보 불러오기 실패:', error);
       } finally {
