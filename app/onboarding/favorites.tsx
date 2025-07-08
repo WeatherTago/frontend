@@ -1,6 +1,7 @@
 import LargeButton from '@/components/Button/LargeButton';
 import SmallThumbnail from '@/components/Favorites/SmallThumbnail';
 import Header from '@/components/Header/CommonHeader';
+import StarIcon from '@/components/Icons/StarIcon';
 import { useFavorite } from '@/context/FavoriteContext';
 import { useStationContext } from '@/context/StationContext';
 import { theme } from '@/styles/theme';
@@ -40,7 +41,10 @@ export default function Favorites() {
       </View>
       <View style={styles.searchStationContainer}>
         <View style={styles.searchStationBox}>
-          <Text style={styles.searchStationText}>자주 가는 역을 검색해보세요</Text>
+          <View style={styles.iconAndTextContainer}>
+            <StarIcon size={30} color={theme.colors.gray[400]} />
+            <Text style={styles.searchStationText}>자주 가는 역을 검색해보세요</Text>
+          </View>
         </View>
       </View>
       <View style={styles.flatListOuterContainer}>
@@ -110,7 +114,8 @@ const styles = StyleSheet.create({
   },
   searchStationBox: {
     height: hp(66),
-    padding: px(14) + wp(22),
+    paddingVertical: px(14),
+    paddingHorizontal: wp(22),
     flexDirection: 'column',
     justifyContent: 'center',
     alignItems: 'flex-start',
@@ -118,6 +123,11 @@ const styles = StyleSheet.create({
     alignSelf: 'stretch',
     borderRadius: px(16),
     backgroundColor: theme.colors.gray[50],
+  },
+  iconAndTextContainer: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    gap: px(6),
   },
   searchStationText: {
     color: theme.colors.gray[400],
