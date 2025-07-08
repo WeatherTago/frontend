@@ -26,7 +26,7 @@ export default function SearchBar({
   return (
     <View style={styles.container}>
       <View style={styles.inputWrapper}>
-        <TouchableOpacity onPress={onPressInput}>
+        <TouchableOpacity onPress={onPressInput} activeOpacity={1}>
           <TextInput
             style={styles.input}
             placeholder={placeholder}
@@ -34,7 +34,7 @@ export default function SearchBar({
             onChangeText={onChangeText}
             placeholderTextColor="#CFCFCF"
             editable={!onPressInput} // 👈 페이지 이동용이면 입력 비활성화
-            pointerEvents={onPressInput ? 'none' : 'auto'} // 👈 커서 제거용
+            pointerEvents="none"
           />
         </TouchableOpacity>
       </View>
@@ -48,7 +48,7 @@ export default function SearchBar({
 
 const styles = StyleSheet.create({
   container: {
-    width: wp(540),
+    width: '100%',
     height: hp(96),
     paddingVertical: hp(30),
     paddingHorizontal:wp(10),

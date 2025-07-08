@@ -4,7 +4,7 @@ import { hp, px, wp } from '@/utils/scale';
 import { useTheme } from '@emotion/react';
 import { useRouter } from 'expo-router';
 import Fuse from 'fuse.js';
-import React, { useMemo, useState } from 'react';
+import React, { useEffect, useMemo, useRef, useState } from 'react';
 import { Dimensions, FlatList, Keyboard, StyleSheet, Text, TextInput, TouchableOpacity, View } from 'react-native';
 import { useSafeAreaInsets } from 'react-native-safe-area-context';
 
@@ -14,6 +14,7 @@ export default function SearchScreen() {
   const [searchText, setSearchText] = useState('');
   const theme = useTheme();
   const {stations}=useStationContext();
+  const inputRef = useRef<TextInput>(null);
 
 // 중복 없는 역 이름 배열 만들기
   const uniqueStationNames = useMemo(() => {
@@ -30,11 +31,24 @@ const filteredStations = searchText
 
   const handleSelect = (name: string) => {
   setSearchText(name);
-  Keyboard.dismiss(); // 키보드 닫기
+  Keyboard.dismiss();
+
+  const selected = stations.find(s => s.stationName === name);
+  const line = selected?.stationLine  || '';
+
+  router.push({
+    pathname: '../infosearch-result',
+    params: { station: name, line: `${line}`},
+  });
 };
+
 const screenHeight = Dimensions.get('window').height;
 const listHeight = screenHeight * 0.5; // 화면의 절반 높이
 
+ useEffect(() => {
+    // 화면 진입 시 포커스
+    inputRef.current?.focus();
+  }, []);
 
  return (
     <View style={{ paddingTop: insets.top, backgroundColor: '#FFF' }}>
@@ -49,11 +63,25 @@ const listHeight = screenHeight * 0.5; // 화면의 절반 높이
           />
         </TouchableOpacity>
         <TextInput
+          ref={inputRef}
           style={[styles.input, { color: theme.colors.gray[950] }]}
           placeholder="편의시설이 궁금한 역을 검색해보세요"
           placeholderTextColor={theme.colors.gray[300]}
           value={searchText}
           onChangeText={setSearchText}
+          onSubmitEditing={() => {
+          if (searchText.trim()) {
+            const name = searchText.trim();
+            const selected = stations.find(s => s.stationName === name);
+            const line = selected?.stationLine  || '';
+
+            router.push({
+              pathname: '../infosearch-result',
+              params: { station: name, line: `${line}`},
+            });
+          }
+        }}
+
           returnKeyType="search"
         />
       </View>
