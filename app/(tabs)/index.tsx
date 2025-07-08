@@ -1,12 +1,10 @@
-import { myFavorite } from '@/apis/favorite';
 import DirectAccessCard from '@/components/DirectAccessCard';
 import FavoriteStationCard from '@/components/FavoriteStationCard';
 import WeatherHeader from '@/components/Header/WeatherHeader';
 import NoticeBanner from '@/components/NoticeBanner';
+import { useFavoriteCongestionFetcher } from '@/hooks/useFavoriteCongestionFetcher';
 import { hp, px, wp } from '@/utils/scale';
 import { useTheme } from '@emotion/react';
-import { useNavigation } from 'expo-router';
-import { useEffect } from 'react';
 import { Dimensions, FlatList, ScrollView, StyleSheet, Text, View } from 'react-native';
 
 const { width: SCREEN_WIDTH } = Dimensions.get('window');
@@ -17,17 +15,7 @@ const mockCards = [{ id: '1' }, { id: '2' }, { id: '3' }]; //임시 카드
 
 export default function HomeScreen() {
   const theme = useTheme();
-  const navigation = useNavigation();
-  useEffect(() => {
-    const unsubscribe = navigation.addListener('focus', () => {
-      const fetchFavorite = async () => {
-        const res = await myFavorite();
-        if (__DEV__) console.log('즐겨찾기 목록:', res.result.stations);
-      };
-      fetchFavorite();
-    });
-    return unsubscribe;
-  }, [navigation]);
+  useFavoriteCongestionFetcher();
 
   return (
     <View style={{ flex: 1 }}>

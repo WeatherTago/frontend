@@ -21,3 +21,5 @@ export interface StationResult {
   congestion: CongestionInfo;
   createdAt: string;
 }
+
+export type SearchStationResponse = CommonResponse<StationResult>;

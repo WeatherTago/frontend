@@ -1,8 +1,8 @@
-import { getStationInfo } from '@/apis/station';
 import LargeButton from '@/components/Button/LargeButton';
 import SmallThumbnail from '@/components/Favorites/SmallThumbnail';
 import Header from '@/components/Header/CommonHeader';
 import { useFavorite } from '@/context/FavoriteContext';
+import { useStationContext } from '@/context/StationContext';
 import { theme } from '@/styles/theme';
 import { StationInfo } from '@/types/common';
 import { hp, wp } from '@/utils/scale';
@@ -13,13 +13,13 @@ import { useSafeAreaInsets } from 'react-native-safe-area-context';
 
 export default function Favorites() {
   const insets = useSafeAreaInsets();
+  const { stations } = useStationContext();
   const { toggleFavorite, isFavorite } = useFavorite();
   const [popularStationList, setPopularStationList] = useState<StationInfo[]>([]);
 
   useEffect(() => {
     const fetchStationInfo = async () => {
-      const res = await getStationInfo();
-      setPopularStationList(res.result.slice(0, 12));
+      setPopularStationList(stations.slice(0, 12));
     };
     fetchStationInfo();
   }, []);

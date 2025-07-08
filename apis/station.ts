@@ -1,17 +1,10 @@
-import { StationInfoResponse, StationResult } from '@/types/station';
+import { SearchStationResponse, StationInfoResponse, StationResult } from '@/types/station';
 import { axiosInstance } from './axios';
 
 export const getStationInfo = async (): Promise<StationInfoResponse> => {
   const { data } = await axiosInstance.get('/api/station/info');
   return data;
 };
-
-interface SearchStationResponse {
-  isSuccess: boolean;
-  code: string;
-  message: string;
-  result: StationResult;
-}
 
 export const fetchStationByIdAndTime = async (params: {
   stationId: number;
