@@ -3,8 +3,10 @@ import FavoriteStationCard from '@/components/FavoriteStationCard';
 import WeatherHeader from '@/components/Header/WeatherHeader';
 import NoticeBanner from '@/components/NoticeBanner';
 import { useFavoriteCongestionFetcher } from '@/hooks/useFavoriteCongestionFetcher';
+import { StationResult } from '@/types/station';
 import { hp, px, wp } from '@/utils/scale';
 import { useTheme } from '@emotion/react';
+import { useEffect, useState } from 'react';
 import { Dimensions, FlatList, ScrollView, StyleSheet, Text, View } from 'react-native';
 
 const { width: SCREEN_WIDTH } = Dimensions.get('window');
@@ -15,7 +17,19 @@ const mockCards = [{ id: '1' }, { id: '2' }, { id: '3' }]; //임시 카드
 
 export default function HomeScreen() {
   const theme = useTheme();
-  useFavoriteCongestionFetcher();
+  const [favoriteStations, setFavoriteStations] = useState<StationResult[]>([]);
+  const [isLoading, setIsLoading] = useState(false);
+  const { fetch } = useFavoriteCongestionFetcher();
+
+  useEffect(() => {
+    const loadData = async () => {
+      setIsLoading(true);
+      const response = await fetch();
+      setFavoriteStations(response);
+      setIsLoading(false);
+    };
+    loadData();
+  }, []);
 
   return (
     <View style={{ flex: 1 }}>
@@ -44,8 +58,8 @@ export default function HomeScreen() {
         </Text>
 
         <FlatList
-          data={mockCards}
-          keyExtractor={item => item.id}
+          data={favoriteStations}
+          keyExtractor={item => item.stationId.toString()}
           horizontal
           pagingEnabled
           showsHorizontalScrollIndicator={false}
@@ -55,10 +69,10 @@ export default function HomeScreen() {
           renderItem={({ item, index }) => (
             <View
               style={{
-                marginRight: index === mockCards.length - 1 ? 0 : wp(32), // 카드 간 시각적 간격, 마지막 카드에는 간격 없음
+                marginRight: index === favoriteStations.length - 1 ? 0 : wp(32), // 카드 간 시각적 간격, 마지막 카드에는 간격 없음
               }}
             >
-              <FavoriteStationCard />
+              <FavoriteStationCard station={item} />
             </View>
           )}
         />
