@@ -1,4 +1,4 @@
-import { axiosInstance } from '@/apis/axios';
+import { getStationInfo } from '@/apis/station';
 import { useAuth } from '@/context/AuthContext';
 import React, { createContext, useContext, useEffect, useState } from 'react';
 
@@ -24,8 +24,8 @@ export const StationProvider = ({ children }: { children: React.ReactNode }) => 
   useEffect(() => {
     const fetchStationInfo = async () => {
       try {
-        const response = await axiosInstance.get('/api/station/info');
-        setStations(response.data.result);
+        const response = await getStationInfo();
+        setStations(response.result);
         console.log('✅ 역 정보 불러오기 성공');
       } catch (error) {
         console.error('🚨 역 정보 불러오기 실패:', error);
@@ -41,7 +41,7 @@ export const StationProvider = ({ children }: { children: React.ReactNode }) => 
   // 🔍 헬퍼 함수
   const getStationIdByNameAndLine = (name: string, line: string): number | null => {
     const found = stations.find(
-      (station) => station.stationName === name && station.stationLine === line
+      station => station.stationName === name && station.stationLine === line,
     );
     return found?.stationId ?? null;
   };

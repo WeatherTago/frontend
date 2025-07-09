@@ -1,14 +1,15 @@
+import { addFavorite, deleteFavorite } from '@/apis/favorite';
 import { theme } from '@/styles/theme';
 import { hp, px, wp } from '@/utils/scale';
-import { useEffect } from 'react';
 import { Dimensions, StyleSheet, Text, TouchableOpacity, View } from 'react-native';
 import StarIcon from '../Icons/StarIcon';
 
 type SmallThumbnailProps = {
-  isFavorite?: boolean;
+  stationId: number;
   stationName: string;
   stationLine: string;
-  onToggleFavorite?: () => void;
+  isFavorite: (stationId: number) => boolean;
+  onToggleFavorite: (stationId: number) => void;
 };
 
 // 화면 너비 가져오기
@@ -24,26 +25,30 @@ const columnGap = wp(12); // 컬럼 간 간격
 const thumbnailWidth = Math.floor((screenWidth - horizontalPadding * 2 - columnGap * 2) / 3);
 
 const SmallThumbnail = ({
-  isFavorite = false,
-  stationName = '한강진역',
-  stationLine = '6호선',
+  stationId,
+  stationName,
+  stationLine,
+  isFavorite,
   onToggleFavorite,
 }: SmallThumbnailProps) => {
-  useEffect(() => {
-    console.log(`${stationName} 즐겨찾기 상태:`, isFavorite);
-  }, [isFavorite]);
+  const handleFavorites = async () => {
+    const newFavorite = !isFavorite(stationId);
+    onToggleFavorite(stationId);
 
-  const handleFavorites = () => {
-    if (onToggleFavorite) {
-      onToggleFavorite();
+    if (newFavorite) {
+      const res = await addFavorite({ stationId });
+      if (__DEV__) console.log('즐겨찾기 등록:', res, '즐겨찾기 여부:', newFavorite);
+    } else {
+      const res = await deleteFavorite({ stationId });
+      if (__DEV__) console.log('즐겨찾기 삭제:', res, '즐겨찾기 여부:', newFavorite);
     }
   };
   return (
-    <TouchableOpacity style={styles.container} onPress={handleFavorites}>
+    <TouchableOpacity style={styles.container} onPress={() => handleFavorites()}>
       <View style={styles.contentContainer}>
         <StarIcon
           size={px(42)}
-          color={isFavorite ? theme.colors.primary[700] : theme.colors.gray[300]}
+          color={isFavorite(stationId) ? theme.colors.primary[700] : theme.colors.gray[300]}
         />
         <View style={styles.textContainer}>
           <View style={styles.stationNameContainer}>
