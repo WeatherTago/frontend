@@ -1,5 +1,5 @@
-const DATA_GOKR_BASE = 'https://apis.data.go.kr/B553766/wksn';
-const DATA_GOKR_API_KEY ='pgmyKATGH8RLIpL9NJrieoJSETiSC2yNoU8FIvtSZr/cB46QOSbGE8fU7WI+1m9M9Rp47Cpggvo2zq/cKgvicg==';
+const DATA_GOKR_BASE = process.env.EXPO_PUBLIC_DATA_GOKR_BASE!;
+const DATA_GOKR_API_KEY = process.env.EXPO_PUBLIC_DATA_GOKR_API_KEY!;
 
 /**
  * 공통 API 호출 함수
