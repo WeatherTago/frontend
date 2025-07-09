@@ -8,8 +8,10 @@ import { theme } from '@/styles/theme';
 import { StationInfo } from '@/types/common';
 import { hp, px, wp } from '@/utils/scale';
 import { router } from 'expo-router';
-import { useEffect, useState } from 'react';
-import { FlatList, StyleSheet, Text, View } from 'react-native';
+import Fuse from 'fuse.js';
+import debounce from 'lodash.debounce';
+import { useEffect, useMemo, useState } from 'react';
+import { FlatList, StyleSheet, Text, TextInput, View } from 'react-native';
 import { useSafeAreaInsets } from 'react-native-safe-area-context';
 
 export default function Favorites() {
@@ -17,6 +19,39 @@ export default function Favorites() {
   const { stations } = useStationContext();
   const { toggleFavorite, isFavorite } = useFavorite();
   const [popularStationList, setPopularStationList] = useState<StationInfo[]>([]);
+  const [inputValue, setInputValue] = useState('');
+  const [debouncedValue, setDebouncedValue] = useState('');
+
+  // 디바운스 함수: 입력 후 150ms 지연
+  const debounceInput = useMemo(
+    () =>
+      debounce((val: string) => {
+        setDebouncedValue(val);
+      }, 150),
+    [],
+  );
+
+  // inputValue가 변경될 때마다 debounceInput 실행
+  useEffect(() => {
+    debounceInput(inputValue);
+  }, [inputValue]);
+
+  // Fuse 인스턴스 생성
+  const fuse = useMemo(() => {
+    return new Fuse(stations, {
+      keys: ['stationName'],
+      threshold: 0.45, // 오차 허용도 설정 (낮을수록 엄격)
+    });
+  }, [stations]);
+
+  // 검색어 기반 필터링된 리스트 (실시간 반응)
+  const filteredStations = useMemo(() => {
+    if (!debouncedValue.trim()) return stations.slice(0, 12); // 기본 12개
+    return fuse.search(debouncedValue.trim()).map(res => res.item);
+  }, [debouncedValue, fuse]);
+
+  const isSearching = debouncedValue.trim().length > 0;
+  const dataToRender = isSearching ? filteredStations : popularStationList;
 
   useEffect(() => {
     const fetchStationInfo = async () => {
@@ -43,13 +78,19 @@ export default function Favorites() {
         <View style={styles.searchStationBox}>
           <View style={styles.iconAndTextContainer}>
             <StarIcon size={30} color={theme.colors.gray[400]} />
-            <Text style={styles.searchStationText}>자주 가는 역을 검색해보세요</Text>
+            <TextInput
+              style={styles.searchStationText}
+              placeholder="자주 가는 역을 검색해보세요"
+              placeholderTextColor={theme.colors.gray[400]}
+              value={inputValue}
+              onChangeText={setInputValue}
+            />
           </View>
         </View>
       </View>
       <View style={styles.flatListOuterContainer}>
         <FlatList
-          data={popularStationList}
+          data={dataToRender}
           keyExtractor={(_, idx) => idx.toString()}
           renderItem={({ item }) => (
             <SmallThumbnail
@@ -114,7 +155,6 @@ const styles = StyleSheet.create({
   },
   searchStationBox: {
     height: hp(66),
-    paddingVertical: px(14),
     paddingHorizontal: wp(22),
     flexDirection: 'column',
     justifyContent: 'center',
@@ -130,6 +170,7 @@ const styles = StyleSheet.create({
     gap: px(6),
   },
   searchStationText: {
+    flex: 1,
     color: theme.colors.gray[400],
     fontFamily: 'Pretendard-Medium',
     fontSize: px(20),
