@@ -1,3 +1,7 @@
+import { CommonResponse, StationInfo } from './common';
+
+export type StationInfoResponse = CommonResponse<StationInfo[]>;
+
 export interface CongestionInfo {
   level: string | null;
   rate: number | null;
@@ -17,3 +21,5 @@ export interface StationResult {
   congestion: CongestionInfo;
   createdAt: string;
 }
+
+export type SearchStationResponse = CommonResponse<StationResult>;

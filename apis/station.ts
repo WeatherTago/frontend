@@ -1,30 +1,25 @@
-import { StationResult } from '@/types/station';
+import { SearchStationResponse, StationInfoResponse, StationResult } from '@/types/station';
 import { axiosInstance } from './axios';
 
-interface SearchStationResponse {
-  isSuccess: boolean;
-  code: string;
-  message: string;
-  result: StationResult;
-}
+export const getStationInfo = async (): Promise<StationInfoResponse> => {
+  const { data } = await axiosInstance.get('/api/station/info');
+  return data;
+};
 
 export const fetchStationByIdAndTime = async (params: {
   stationId: number;
   time: string; // ISO 8601 string
 }): Promise<StationResult | null> => {
   try {
-    const response = await axiosInstance.get<SearchStationResponse>(
-      '/api/station/search',
-      {
-        params: {
-          stationId: params.stationId,
-          time: params.time,
-        },
-        headers: {
-          skipAuth: true,
-        },
-      }
-    );
+    const response = await axiosInstance.get<SearchStationResponse>('/api/station/search', {
+      params: {
+        stationId: params.stationId,
+        time: params.time,
+      },
+      headers: {
+        skipAuth: true,
+      },
+    });
 
     if (response?.data?.result) {
       return response.data.result;

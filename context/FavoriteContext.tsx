@@ -1,50 +1,38 @@
-import React, { createContext, useContext, useState } from 'react';
+import { myFavorite } from '@/apis/favorite';
+import { StationInfo } from '@/types/common';
+import React, { createContext, useContext, useEffect, useState } from 'react';
 
-export type SmallThumbnailProps = {
-  isFavorite?: boolean;
-  stationName: string;
-  stationLine: string;
+type FavoriteContextType = {
+  favoriteStationIds: number[];
+  toggleFavorite: (stationId: number) => void;
+  isFavorite: (stationId: number) => boolean;
 };
 
-const initialStations: SmallThumbnailProps[] = [
-  { stationName: '강남', stationLine: '2호선', isFavorite: false },
-  { stationName: '홍대입구', stationLine: '2호선', isFavorite: false },
-  { stationName: '서울역', stationLine: '1호선', isFavorite: false },
-  { stationName: '사당', stationLine: '2호선', isFavorite: false },
-  { stationName: '잠실', stationLine: '2호선', isFavorite: false },
-  { stationName: '신림', stationLine: '2호선', isFavorite: false },
-  { stationName: '건대입구', stationLine: '2호선', isFavorite: false },
-  { stationName: '동대문역사문화공원', stationLine: '2호선', isFavorite: false },
-  { stationName: '왕십리', stationLine: '2호선', isFavorite: false },
-  { stationName: '강남', stationLine: '2호선', isFavorite: false },
-  { stationName: '홍대입구', stationLine: '2호선', isFavorite: false },
-  { stationName: '서울역', stationLine: '1호선', isFavorite: false },
-  { stationName: '사당', stationLine: '2호선', isFavorite: false },
-  { stationName: '잠실', stationLine: '2호선', isFavorite: false },
-  { stationName: '신림', stationLine: '2호선', isFavorite: false },
-  { stationName: '건대입구', stationLine: '2호선', isFavorite: false },
-  { stationName: '동대문역사문화공원', stationLine: '2호선', isFavorite: false },
-  { stationName: '왕십리', stationLine: '2호선', isFavorite: false },
-];
-
-const FavoriteContext = createContext<{
-  stations: SmallThumbnailProps[];
-  toggleFavorite: (index: number) => void;
-} | null>(null);
+const FavoriteContext = createContext<FavoriteContextType | null>(null);
 
 export const FavoriteProvider = ({ children }: { children: React.ReactNode }) => {
-  const [stations, setStations] = useState<SmallThumbnailProps[]>(initialStations);
+  const [favoriteStationIds, setFavoriteStationIds] = useState<number[]>([]);
 
-  const toggleFavorite = (index: number) => {
-    setStations(prev =>
-      prev.map((station, i) =>
-        i === index ? { ...station, isFavorite: !station.isFavorite } : station,
-      ),
+  const toggleFavorite = (stationId: number) => {
+    setFavoriteStationIds(prev =>
+      prev.includes(stationId) ? prev.filter(id => id !== stationId) : [...prev, stationId],
     );
   };
 
+  const isFavorite = (stationId: number) => favoriteStationIds.includes(stationId);
+
+  useEffect(() => {
+    const fetchFavorites = async () => {
+      const res = await myFavorite();
+      const ids = res.result.stations.map((station: StationInfo) => station.stationId);
+      setFavoriteStationIds(ids);
+    };
+
+    fetchFavorites();
+  }, []);
+
   return (
-    <FavoriteContext.Provider value={{ stations, toggleFavorite }}>
+    <FavoriteContext.Provider value={{ favoriteStationIds, toggleFavorite, isFavorite }}>
       {children}
     </FavoriteContext.Provider>
   );

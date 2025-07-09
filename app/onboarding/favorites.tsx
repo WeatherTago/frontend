@@ -1,25 +1,45 @@
 import LargeButton from '@/components/Button/LargeButton';
 import SmallThumbnail from '@/components/Favorites/SmallThumbnail';
+import Header from '@/components/Header/CommonHeader';
 import { useFavorite } from '@/context/FavoriteContext';
+import { useStationContext } from '@/context/StationContext';
 import { theme } from '@/styles/theme';
+import { StationInfo } from '@/types/common';
 import { hp, wp } from '@/utils/scale';
 import { router } from 'expo-router';
+import { useEffect, useState } from 'react';
 import { FlatList, StyleSheet, View } from 'react-native';
 import { useSafeAreaInsets } from 'react-native-safe-area-context';
 
 export default function Favorites() {
   const insets = useSafeAreaInsets();
+  const { stations } = useStationContext();
+  const { toggleFavorite, isFavorite } = useFavorite();
+  const [popularStationList, setPopularStationList] = useState<StationInfo[]>([]);
 
-  const { stations, toggleFavorite } = useFavorite();
+  useEffect(() => {
+    const fetchStationInfo = async () => {
+      setPopularStationList(stations.slice(0, 12));
+    };
+    fetchStationInfo();
+  }, []);
 
   return (
     <View style={[styles.container, { paddingTop: insets.top }]}>
+      <Header title="즐겨찾는 역" onPressLeft={() => router.back()} />
       <View style={styles.flatListOuterContainer}>
         <FlatList
-          data={stations}
+          data={popularStationList}
           keyExtractor={(_, idx) => idx.toString()}
-          renderItem={({ item, index }) => (
-            <SmallThumbnail {...item} onToggleFavorite={() => toggleFavorite(index)} />
+          renderItem={({ item }) => (
+            <SmallThumbnail
+              key={item.stationId}
+              stationId={item.stationId}
+              stationName={item.stationName}
+              stationLine={item.stationLine}
+              isFavorite={isFavorite}
+              onToggleFavorite={() => toggleFavorite(item.stationId)}
+            />
           )}
           numColumns={3}
           contentContainerStyle={styles.flatListContainer}

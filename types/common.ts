@@ -4,3 +4,9 @@ export type CommonResponse<T = any> = {
   message: string;
   result: T;
 };
+
+export type StationInfo = {
+  stationId: number;
+  stationName: string;
+  stationLine: string;
+};
