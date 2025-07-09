@@ -40,7 +40,6 @@ export default function InfoSearchResultScreen() {
         fetchWheelchairLifts(parsedStation),
         fetchMovingWalkways(parsedStation),
       ]);
-      console.log('🎯 현재 선택된 역:', parsedStation);
 
       setElevators(e);
       setEscalators(s);
@@ -51,8 +50,10 @@ export default function InfoSearchResultScreen() {
     }
   };
 
-  fetchAll();
-}, []);
+    if (parsedStation) {
+      fetchAll();
+    }
+  }, []);
 
 
 

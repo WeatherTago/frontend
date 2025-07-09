@@ -5,7 +5,7 @@ import { useTheme } from '@emotion/react';
 import { useRouter } from 'expo-router';
 import Fuse from 'fuse.js';
 import React, { useEffect, useMemo, useRef, useState } from 'react';
-import { Dimensions, FlatList, Keyboard, StyleSheet, Text, TextInput, TouchableOpacity, View } from 'react-native';
+import { Alert, Dimensions, FlatList, Keyboard, StyleSheet, Text, TextInput, TouchableOpacity, View } from 'react-native';
 import { useSafeAreaInsets } from 'react-native-safe-area-context';
 
 export default function SearchScreen() {
@@ -30,17 +30,26 @@ const filteredStations = searchText
   : [];
 
   const handleSelect = (name: string) => {
-  setSearchText(name);
+  const trimmedName = name.trim();
+  const isValid = stations.some(s => s.stationName === trimmedName);
+
+  if (!isValid) {
+    Alert.alert('역 정보 없음', `'${trimmedName}' 역은 존재하지 않습니다.`);
+    return;
+  }
+
+  setSearchText(trimmedName);
   Keyboard.dismiss();
 
-  const selected = stations.find(s => s.stationName === name);
-  const line = selected?.stationLine  || '';
+  const selected = stations.find(s => s.stationName === trimmedName);
+  const line = selected?.stationLine || '';
 
   router.push({
     pathname: '../infosearch-result',
-    params: { station: name, line: `${line}`},
+    params: { station: trimmedName, line: `${line}` },
   });
 };
+
 
 const screenHeight = Dimensions.get('window').height;
 const listHeight = screenHeight * 0.5; // 화면의 절반 높이
@@ -70,19 +79,35 @@ const listHeight = screenHeight * 0.5; // 화면의 절반 높이
           value={searchText}
           onChangeText={setSearchText}
           onSubmitEditing={() => {
-          if (searchText.trim()) {
-            const name = searchText.trim();
-            const selected = stations.find(s => s.stationName === name);
-            const line = selected?.stationLine  || '';
+            const trimmed = searchText.trim();
+            if (!trimmed) return;
+
+            const isValid = stations.some(s => s.stationName === trimmed);
+            if (!isValid) {
+              Alert.alert(
+                '역 정보 없음',
+                `'${trimmed}' 역은 존재하지 않습니다.`,
+                [
+                  {
+                    text: '확인',
+                    onPress: () => {
+                      inputRef.current?.focus(); // 포커스 다시 줌
+                    },
+                  },
+                ]
+              );
+              return;
+            }
+
+            const selected = stations.find(s => s.stationName === trimmed);
+            const line = selected?.stationLine || '';
 
             router.push({
               pathname: '../infosearch-result',
-              params: { station: name, line: `${line}`},
+              params: { station: trimmed, line: `${line}` },
             });
-          }
-        }}
+          }}
 
-          returnKeyType="search"
         />
       </View>
 
