@@ -10,7 +10,7 @@ import { useSafeAreaInsets } from 'react-native-safe-area-context';
 
 export default function InformationScreen() {
   const [searchText, setSearchText] = useState('');
-  const [selectedLine, setSelectedLine] = useState<string | null>(null);
+  const [selectedLine, setSelectedLine] = useState('1'); //  1호선 기본 선택
    const handleSearch = (text: string) => {
     console.log('검색 실행:', text);
     // 검색 로직 처리
@@ -26,14 +26,14 @@ export default function InformationScreen() {
 }));
   const getLineMapImage = (line: string) => {
   switch (line) {
-    case '1': return require('@/assets/images/subway-map-line1.jpg');
-    case '2': return require('@/assets/images/subway-map-line2.jpg');
-    case '3': return require('@/assets/images/subway-map-line3.jpg');
-    case '4': return require('@/assets/images/subway-map-line4.jpg');
-    case '5': return require('@/assets/images/subway-map-line5.jpg');
-    case '6': return require('@/assets/images/subway-map-line6.jpg');
-    case '7': return require('@/assets/images/subway-map-line7.jpg');
-    case '8': return require('@/assets/images/subway-map-line8.jpg');
+    case '1': return require('@/assets/images/subway/subway-map-line1.jpg');
+    case '2': return require('@/assets/images/subway/subway-map-line2.jpg');
+    case '3': return require('@/assets/images/subway/subway-map-line3.jpg');
+    case '4': return require('@/assets/images/subway/subway-map-line4.jpg');
+    case '5': return require('@/assets/images/subway/subway-map-line5.jpg');
+    case '6': return require('@/assets/images/subway/subway-map-line6.jpg');
+    case '7': return require('@/assets/images/subway/subway-map-line7.jpg');
+    case '8': return require('@/assets/images/subway/subway-map-line8.jpg');
     default: return null;
   }
 };
