@@ -1,11 +1,12 @@
 import ArrowIcon from '@/components/Icons/ArrowIcon';
+import { theme } from '@/styles/theme';
 import { hp, px } from '@/utils/scale';
 import * as Font from 'expo-font';
 import React from 'react';
 import { Image, StyleSheet, Text, TouchableOpacity, View } from 'react-native';
 
 interface HeaderProps {
-  title: string;
+  title?: string;
   showLeft?: boolean;
   onPressLeft?: () => void;
   rightType?: 'text' | 'close';
@@ -14,10 +15,10 @@ interface HeaderProps {
 }
 
 export default function Header({
-  title,  //가운데 제목
-  showLeft = true,  //왼쪽 버튼 showLeft가 false이면 숨김
+  title, //가운데 제목
+  showLeft = true, //왼쪽 버튼 showLeft가 false이면 숨김
   onPressLeft,
-  rightType,  //rightType이 없으면 버튼 자체를 렌더링하지 않음
+  rightType, //rightType이 없으면 버튼 자체를 렌더링하지 않음
   rightText,
   onPressRight,
 }: HeaderProps) {
@@ -34,14 +35,14 @@ export default function Header({
         </TouchableOpacity>
       )}
 
-      <Text style={styles.title}>{title}</Text>
+      {title && <Text style={styles.title}>{title}</Text>}
 
       {rightType && (
         <TouchableOpacity onPress={onPressRight} style={styles.rightButton}>
           {rightType === 'close' ? (
             <Image
               source={require('@/assets/images/Multiply.png')}
-              style={styles.image}
+              style={styles.rightImage}
               resizeMode="contain"
             />
           ) : rightType === 'text' && rightText ? (
@@ -62,6 +63,7 @@ const styles = StyleSheet.create({
     position: 'relative',
     backgroundColor: '#fff',
     paddingHorizontal: px(14),
+    alignSelf: 'stretch',
   },
   leftButton: {
     position: 'absolute',
@@ -80,18 +82,20 @@ const styles = StyleSheet.create({
   },
   rightButton: {
     position: 'absolute',
-    right: px(14),
+    right: px(25),
     justifyContent: 'center',
     alignItems: 'center',
+  },
+  rightImage: {
     width: px(36),
     height: px(36),
   },
   rightText: {
+    fontFamily: 'Pretendard-Regular',
     fontSize: px(24),
-    color: '#0A0A0A',
-  },
-  image: {
-    width: px(36),
-    height: px(36),
+    fontWeight: '400',
+    lineHeight: px(28),
+    color: theme.colors.gray[950],
+    paddingRight: px(3),
   },
 });

@@ -37,6 +37,7 @@
     "expo-system-ui": "~5.0.7",
     "expo-web-browser": "~14.1.6",
     "fuse.js": "^7.1.0",
+    "lodash.debounce": "^4.0.8",
     "miragejs": "^0.1.48",
     "react": "19.0.0",
     "react-dom": "19.0.0",
@@ -53,6 +54,7 @@
     "react-native-webview": "13.13.5"
   },
   "devDependencies": {
+    "@types/lodash.debounce": "^4.0.9",
     "@types/react": "~19.0.10",
     "@types/react-native": "^0.72.8",
     "@typescript-eslint/eslint-plugin": "^8.32.1",
