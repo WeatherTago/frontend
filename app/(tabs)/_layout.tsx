@@ -30,7 +30,6 @@ export default function TabsLayout() {
 
   if (!fontsLoaded) return null;
 
-
   return (
     <Tabs
       screenOptions={({ route }) => ({
@@ -49,43 +48,42 @@ export default function TabsLayout() {
           shadowRadius: px(4),
           elevation: 4,
         },
-       tabBarIcon: ({ focused }) => {
-        const label = getLabel(route.name);
-        const tintColor = focused ? theme.colors.primary[700] : theme.colors.gray[300];
-        const iconSource = icons[route.name as keyof typeof icons];
-        const isSmallIcon = route.name === 'index' || route.name === 'mypage';
+        tabBarIcon: ({ focused }) => {
+          const label = getLabel(route.name);
+          const tintColor = focused ? theme.colors.primary[700] : theme.colors.gray[300];
+          const iconSource = icons[route.name as keyof typeof icons];
+          const isSmallIcon = route.name === 'index' || route.name === 'mypage';
 
-  return (
-    <View style={styles.tabItem}>
-      <Image
-        source={iconSource}
-        style={[
-          styles.icon,
-          {
-            tintColor,
-            width: isSmallIcon ? px(30) : px(38),
-            height: isSmallIcon ? px(30) : px(38),
-            marginTop : isSmallIcon ? 28 : 25
-          },
-        ]}
-      />
-      <Text
-          numberOfLines={1}
-          ellipsizeMode="clip"
-          style={[
-            styles.label,
-            {
-              color: tintColor,
-              marginTop: route.name === 'index' || route.name === 'mypage' ? hp(4) : 0,
-            },
-          ]}
-        >
-          {label}
-        </Text>
-    </View>
-  );
-}
-
+          return (
+            <View style={styles.tabItem}>
+              <Image
+                source={iconSource}
+                style={[
+                  styles.icon,
+                  {
+                    tintColor,
+                    width: isSmallIcon ? px(30) : px(38),
+                    height: isSmallIcon ? px(30) : px(38),
+                    marginTop: isSmallIcon ? 28 : 25,
+                  },
+                ]}
+              />
+              <Text
+                numberOfLines={1}
+                ellipsizeMode="clip"
+                style={[
+                  styles.label,
+                  {
+                    color: tintColor,
+                    marginTop: route.name === 'index' || route.name === 'mypage' ? hp(4) : 0,
+                  },
+                ]}
+              >
+                {label}
+              </Text>
+            </View>
+          );
+        },
       })}
     >
       <Tabs.Screen name="index" />
@@ -124,7 +122,7 @@ const styles = StyleSheet.create({
   icon: {
     width: px(38),
     height: px(38),
-    marginTop:25
+    marginTop: 25,
   },
   label: {
     fontSize: theme.typography.body2.fontSize,

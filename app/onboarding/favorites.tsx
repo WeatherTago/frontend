@@ -63,7 +63,6 @@ export default function Favorites() {
   return (
     <View style={[styles.container, { paddingTop: insets.top, paddingBottom: insets.bottom }]}>
       <Header
-        onPressLeft={() => router.back()}
         rightType="text"
         rightText="건너뛰기"
         onPressRight={() => router.replace('/(tabs)')}
