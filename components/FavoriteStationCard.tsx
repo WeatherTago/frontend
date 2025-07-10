@@ -1,5 +1,6 @@
 import { theme } from '@/styles/theme';
 import { StationResult } from '@/types/station';
+import { formatKSTRoundedHour } from '@/utils/dateUtils';
 import { hp, px, wp } from '@/utils/scale';
 import React from 'react';
 import { StyleSheet, Text, View } from 'react-native';
@@ -8,16 +9,15 @@ const CARD_WIDTH = wp(400);
 const CARD_HEIGHT = hp(498);
 
 export default function FavoriteStationCard({ station }: { station: StationResult }) {
-  // console.log(typeof station.createdAt); // "string"인지 "number"인지 확인
-  // console.log(station.createdAt); // 실제 값 로그 확인
+  const kstTime = formatKSTRoundedHour();
 
   return (
     <View style={styles.card}>
       <View style={styles.upContainer}>
-        <Text style={styles.stationName}>{station.name}역</Text>
+        <Text style={styles.stationName}>{station.name}</Text>
         <Text style={styles.stationLine}>{station.line}</Text>
         <Text style={styles.congestionRate}>78%</Text>
-        <Text style={styles.dateText}>11/21 12:00 기준</Text>
+        <Text style={styles.dateText}>{kstTime}</Text>
       </View>
       <View style={styles.downContainer}>
         <View style={styles.weatherContainer}>
