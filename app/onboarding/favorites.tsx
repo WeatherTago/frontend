@@ -17,7 +17,7 @@ import { useSafeAreaInsets } from 'react-native-safe-area-context';
 export default function Favorites() {
   const insets = useSafeAreaInsets();
   const { stations, loading: stationsLoading } = useStationContext();
-  const { toggleFavorite, isFavorite } = useFavorite();
+  const { toggleFavorite, isFavorite, isLoading: favoriteLoading } = useFavorite();
   const [popularStationList, setPopularStationList] = useState<StationInfo[]>([]);
   const [inputValue, setInputValue] = useState('');
   const [debouncedValue, setDebouncedValue] = useState('');
@@ -58,7 +58,7 @@ export default function Favorites() {
       setPopularStationList(stations.slice(0, 12));
     };
     fetchStationInfo();
-  }, [stations]);
+  }, [stationsLoading, favoriteLoading]);
 
   return (
     <View style={[styles.container, { paddingTop: insets.top, paddingBottom: insets.bottom }]}>
