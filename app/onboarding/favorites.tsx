@@ -11,12 +11,12 @@ import { router } from 'expo-router';
 import Fuse from 'fuse.js';
 import debounce from 'lodash.debounce';
 import { useEffect, useMemo, useState } from 'react';
-import { FlatList, StyleSheet, Text, TextInput, View } from 'react-native';
+import { ActivityIndicator, FlatList, StyleSheet, Text, TextInput, View } from 'react-native';
 import { useSafeAreaInsets } from 'react-native-safe-area-context';
 
 export default function Favorites() {
   const insets = useSafeAreaInsets();
-  const { stations } = useStationContext();
+  const { stations, loading: stationsLoading } = useStationContext();
   const { toggleFavorite, isFavorite } = useFavorite();
   const [popularStationList, setPopularStationList] = useState<StationInfo[]>([]);
   const [inputValue, setInputValue] = useState('');
@@ -58,7 +58,7 @@ export default function Favorites() {
       setPopularStationList(stations.slice(0, 12));
     };
     fetchStationInfo();
-  }, []);
+  }, [stations]);
 
   return (
     <View style={[styles.container, { paddingTop: insets.top, paddingBottom: insets.bottom }]}>
@@ -87,25 +87,32 @@ export default function Favorites() {
           </View>
         </View>
       </View>
-      <View style={styles.flatListOuterContainer}>
-        <FlatList
-          data={dataToRender}
-          keyExtractor={(_, idx) => idx.toString()}
-          renderItem={({ item }) => (
-            <SmallThumbnail
-              key={item.stationId}
-              stationId={item.stationId}
-              stationName={item.stationName}
-              stationLine={item.stationLine}
-              isFavorite={isFavorite}
-              onToggleFavorite={() => toggleFavorite(item.stationId)}
-            />
-          )}
-          numColumns={3}
-          contentContainerStyle={styles.flatListContainer}
-          columnWrapperStyle={styles.columnWrapper}
-        />
-      </View>
+      {/* 로딩 상태에 따라 다른 컨테이너를 렌더링 */}
+      {stationsLoading ? (
+        <View style={styles.loadingContainer}>
+          <ActivityIndicator size="large" color={theme.colors.primary[700]} />
+        </View>
+      ) : (
+        <View style={styles.flatListOuterContainer}>
+          <FlatList
+            data={dataToRender}
+            keyExtractor={(_, idx) => idx.toString()}
+            renderItem={({ item }) => (
+              <SmallThumbnail
+                key={item.stationId}
+                stationId={item.stationId}
+                stationName={item.stationName}
+                stationLine={item.stationLine}
+                isFavorite={isFavorite}
+                onToggleFavorite={() => toggleFavorite(item.stationId)}
+              />
+            )}
+            numColumns={3}
+            contentContainerStyle={styles.flatListContainer}
+            columnWrapperStyle={styles.columnWrapper}
+          />
+        </View>
+      )}
       <View style={styles.buttonContainer}>
         <LargeButton
           text="웨더타고 시작하기"
@@ -201,5 +208,12 @@ const styles = StyleSheet.create({
     flexDirection: 'column',
     alignItems: 'flex-start',
     alignSelf: 'stretch',
+  },
+  loadingContainer: {
+    flex: 1,
+    justifyContent: 'center',
+    alignItems: 'center',
+    alignSelf: 'stretch',
+    backgroundColor: theme.colors.gray[0],
   },
 });
