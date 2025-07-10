@@ -44,7 +44,7 @@ const AlarmDotWrapper = styled.View`
 export default function WeatherHeader() {
   const insets = useSafeAreaInsets();
   const theme = useTheme();
-  const router= useRouter();
+  const router = useRouter();
 
   return (
     <OuterContainer style={{ paddingTop: insets.top }}>
@@ -60,27 +60,21 @@ export default function WeatherHeader() {
         >
           WEATHER
         </Text>
-          {/* ⭐ 별 아이콘 - 즐겨찾기 모달 */}
         <IconRow>
           <IconButton
             onPress={() => {
-              router.push('/favorite-modal')
+              router.push('/favorite-modal');
             }}
           >
-            <StarIcon/>
+            <StarIcon />
           </IconButton>
-            {/* 🔔 알림 아이콘 - 공지 모달 */}
           <BellWrapper>
             <IconButton
               onPress={() => {
-                router.push('/alert-modal')
+                router.push('/alert-modal');
               }}
             >
-              <Ionicons
-                name="notifications"
-                size={px(36)}
-                color={theme.colors.gray[300]}
-              />
+              <Ionicons name="notifications" size={px(36)} color={theme.colors.gray[300]} />
             </IconButton>
             <AlarmDotWrapper>
               <AlarmDot />
