@@ -7,7 +7,8 @@ interface SearchBarProps {
   placeholder: string;
   value: string;
   onChangeText: (text: string) => void;
-  onPressSearch: () => void;
+  onPressSearch: () => void;  //혼잡도 페이지도 검색창 옮기면 추후 삭제
+  onPressInput?: () => void;
   ButtonIcon?: any;
   buttonLabel: string;
 }
@@ -17,6 +18,7 @@ export default function SearchBar({
   value,
   onChangeText,
   onPressSearch,
+  onPressInput,
   ButtonIcon,
   buttonLabel,
 }: SearchBarProps) {
@@ -24,13 +26,17 @@ export default function SearchBar({
   return (
     <View style={styles.container}>
       <View style={styles.inputWrapper}>
-        <TextInput
-          style={styles.input}
-          placeholder={placeholder}
-          value={value}
-          onChangeText={onChangeText}
-          placeholderTextColor="#CFCFCF"
-        />
+        <TouchableOpacity onPress={onPressInput} activeOpacity={1}>
+          <TextInput
+            style={styles.input}
+            placeholder={placeholder}
+            value={value}
+            onChangeText={onChangeText}
+            placeholderTextColor="#CFCFCF"
+            editable={!onPressInput} // 👈 페이지 이동용이면 입력 비활성화
+            pointerEvents="none"
+          />
+        </TouchableOpacity>
       </View>
       <TouchableOpacity style={[styles.button, { backgroundColor: theme.colors.primary[800] }]} onPress={onPressSearch}>
         {ButtonIcon && <Image source={ButtonIcon} style={styles.buttonImage} resizeMode="contain" />}
@@ -42,7 +48,7 @@ export default function SearchBar({
 
 const styles = StyleSheet.create({
   container: {
-    width: wp(540),
+    width: '100%',
     height: hp(96),
     paddingVertical: hp(30),
     paddingHorizontal:wp(10),
