@@ -5,11 +5,13 @@ import WeatherHeader from '@/components/Header/WeatherHeader';
 import NoticeBanner from '@/components/NoticeBanner';
 import { useFavoriteCongestionFetcher } from '@/hooks/useFavoriteCongestionFetcher';
 import { StationResult } from '@/types/station';
+import { getReadNoticeIds } from '@/utils/noticeReadStorage';
 import { hp, px, wp } from '@/utils/scale';
 import { useTheme } from '@emotion/react';
+import { useFocusEffect } from '@react-navigation/native';
 import dayjs from 'dayjs';
 import { useRouter } from 'expo-router';
-import { useEffect, useState } from 'react';
+import { useCallback, useEffect, useState } from 'react';
 import { Dimensions, FlatList, ScrollView, StyleSheet, Text, View } from 'react-native';
 
 const { width: SCREEN_WIDTH } = Dimensions.get('window');
@@ -23,6 +25,8 @@ export default function HomeScreen() {
   const [isLoading, setIsLoading] = useState(false);
   const { fetch } = useFavoriteCongestionFetcher();
   const [latestNotice, setLatestNotice] = useState<Notice | null>(null);
+  const [readNoticeIds, setReadNoticeIds] = useState<number[]>([]);
+  const [notices, setNotices] = useState<Notice[]>([]);
 
   useEffect(() => {
     const loadData = async () => {
@@ -35,24 +39,37 @@ export default function HomeScreen() {
   }, []);
 
   useEffect(() => {
-  const getLatestNotice = async () => {
+  const getNotices = async () => {
     const data = await fetchNotices(); // 전체 공지 받아오기
     if (data.length > 0) {
       const sorted = data.sort((a, b) => new Date(b.createdAt).getTime() - new Date(a.createdAt).getTime());
-      setLatestNotice(sorted[0]); // 최신 공지 한 개만 저장
-      }
-    };
-    getLatestNotice();
-  }, []);
+      setNotices(sorted); // ✅ 공지 목록 전체 저장
+      setLatestNotice(sorted[0]); // ✅ 최신 공지 1개는 별도로 저장
+    }
+  };
+  getNotices();
+}, []);
 
-  const isNewNotice = latestNotice
-  ? dayjs().diff(dayjs(latestNotice.createdAt), 'day') <= 2
-  : false;
+  useFocusEffect(
+  useCallback(() => {
+    const fetchRead = async () => {
+      const ids = await getReadNoticeIds();
+      setReadNoticeIds(ids);
+    };
+    fetchRead();
+  }, [])
+);
+
+ const isNewUnreadExists = notices.some((n) => {
+  const createdDate = dayjs(n.createdAt);
+  const isNew = dayjs().diff(createdDate, 'day') <= 2;
+  const isRead = readNoticeIds.includes(n.noticeId);
+  return isNew && !isRead;
+});
 
   return (
     <View style={{ flex: 1 }}>
-      <WeatherHeader showAlarmDot={isNewNotice}/>
-      {/*  항상 고정되는 헤더 */}
+      <WeatherHeader showAlarmDot={isNewUnreadExists} />
 
       <ScrollView style={[styles.container, { backgroundColor: theme.colors.gray[50] }]}>
         {latestNotice && (
@@ -63,7 +80,6 @@ export default function HomeScreen() {
             backgroundColor={theme.colors.gray[700]}
             textColor={theme.colors.gray[0]}
             date={dayjs(latestNotice.createdAt).format('YYYY. MM. DD. A HH:mm')}
-            isNew={false}
           />
         )}
         <Text

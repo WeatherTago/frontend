@@ -1,6 +1,9 @@
 import type { Notice } from '@/apis/notice';
 import { fetchNoticeById } from '@/apis/notice';
 import Header from '@/components/Header/CommonHeader';
+import { markNoticeAsRead } from '@/utils/noticeReadStorage';
+import { hp, px } from '@/utils/scale';
+import { useTheme } from '@emotion/react';
 import dayjs from 'dayjs';
 import { useLocalSearchParams, useRouter } from 'expo-router';
 import { useEffect, useState } from 'react';
@@ -14,6 +17,7 @@ export default function NoticeDetailScreen() {
   const [notice, setNotice] = useState<Notice | null>(null);
   const insets=useSafeAreaInsets();
   const router=useRouter();
+  const theme=useTheme();
   const removeFooterNote = (html: string) => {
   return html.replace(/※ 자세한 내용은 첨부파일을 참고 부탁드립니다\./g, '');
 };
@@ -21,37 +25,66 @@ export default function NoticeDetailScreen() {
 
   useEffect(() => {
     const getNotice = async () => {
-      const data = await fetchNoticeById(Number(noticeId ));
+      const data = await fetchNoticeById(Number(noticeId));
       setNotice(data);
+
+      // ✅ 읽음 처리
+      if (data?.noticeId) {
+        await markNoticeAsRead(data.noticeId);
+      }
     };
     getNotice();
-  }, [noticeId ]);
-
+  }, [noticeId]);
   if (!notice) return null;
 
   return (
     <View style={[styles.container, { paddingTop: insets.top }]}>
       <Header title="공지사항" onPressLeft={() => router.back()} />
       <ScrollView 
-        contentContainerStyle={{ padding: 20, paddingBottom: insets.bottom }}>
-        <Text style={{ fontSize: 24, fontWeight: 'bold',marginBottom: 10  }}>{notice.title}</Text>
-        <Text style={{ fontSize:16, color: '#999', marginBottom: 15 }}>
+        contentContainerStyle={{ padding: px(20), paddingBottom: insets.bottom }}>
+        <Text style={{ 
+          fontSize: px(26), 
+          fontFamily:'Pretendard-SemiBold', 
+          lineHeight:px(44), 
+          color:theme.colors.gray[900],
+          fontWeight: 600,
+          }}>
+           {`🚨${notice.title}`}
+        </Text>
+        <Text style={{ 
+          fontSize:px(20), 
+          fontFamily:'Pretendard-Regular', 
+          lineHeight:px(32), 
+          color: theme.colors.gray[400], 
+          fontWeight: 400,
+        }}>
           {dayjs(notice.createdAt).format('YYYY. MM. DD. A HH:mm')}
         </Text>
+        <View
+          style={{
+            height: 1,
+            backgroundColor: theme.colors.gray[300],
+            marginVertical: hp(20),
+          }}
+        />
         <RenderHTML
           contentWidth={width}
           source={{ html: removeFooterNote(notice.content) }}
           ignoredDomTags={['font']}
           tagsStyles={{
             p: {
-              fontSize: 18,
-              lineHeight: 24,
-              color: '#333',
+              fontFamily: 'Pretendard-Regular',
+              fontWeight: 400,
+              fontSize: px(24),
+              lineHeight: px(34),
+              color: theme.colors.gray[900],
             },
             span: {
-              fontSize: 18,
-              lineHeight: 24,
-              color: '#333',
+              fontFamily: 'Pretendard-Regular',
+              fontWeight: 400,
+              fontSize: px(24),
+              lineHeight: px(34),
+              color: theme.colors.gray[900],
             },
             div: {
               marginBottom: 8,

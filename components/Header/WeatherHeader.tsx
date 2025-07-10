@@ -82,11 +82,11 @@ export default function WeatherHeader({ showAlarmDot }: { showAlarmDot?: boolean
                 color={theme.colors.gray[300]}
               />
             </IconButton>
-            <AlarmDotWrapper>
-              {showAlarmDot && (
+            {showAlarmDot && (
+              <AlarmDotWrapper>
                 <AlarmDot />
-              )}
-            </AlarmDotWrapper>
+              </AlarmDotWrapper>
+            )}
           </BellWrapper>
         </IconRow>
       </InnerContainer>

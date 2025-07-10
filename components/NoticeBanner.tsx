@@ -11,7 +11,6 @@ interface NoticeBannerProps {
   backgroundColor: string;
   textColor: string;
   date?: string;
-  isNew?: boolean;
 }
 
 const Container = styled.View<{ backgroundColor: string }>(({ backgroundColor, theme }) => ({
@@ -44,7 +43,7 @@ const DateText = styled.Text(({ theme }) => ({
 }));
 const NewText = styled.Text({
   color: 'red',
-  fontSize: px(20),
+  fontSize: px(17),
   fontWeight: 'bold',
   marginRight: px(5)
 });
@@ -55,13 +54,11 @@ export default function NoticeBanner({
   backgroundColor,
   textColor,
   date,
-  isNew
 }: NoticeBannerProps) {
   return (
     <Container backgroundColor={backgroundColor}>
       <View style={{ flex: 1 }}>
         <View style={{ flexDirection: 'row', alignItems: 'center' }}>
-          {isNew && <NewText>NEW</NewText>}
           <NoticeText textColor={textColor}>
             {text}
           </NoticeText>
