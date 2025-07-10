@@ -1,7 +1,7 @@
 /** @jsxImportSource @emotion/react */
 import { px } from '@/utils/scale';
 import styled from '@emotion/native';
-import { TouchableOpacity } from 'react-native';
+import { TouchableOpacity, View } from 'react-native';
 import ArrowIcon from './Icons/ArrowIcon';
 
 interface NoticeBannerProps {
@@ -10,6 +10,7 @@ interface NoticeBannerProps {
   onPressArrow?: () => void; // 🔹 화살표 버튼 클릭 이벤트
   backgroundColor: string;
   textColor: string;
+  date?: string;
 }
 
 const Container = styled.View<{ backgroundColor: string }>`
@@ -29,18 +30,29 @@ const NoticeText = styled.Text<{ textColor: string }>(({ theme, textColor }) => 
     flexShrink: 0,
   };
 });
+const DateText = styled.Text(({ theme }) => ({
+  fontSize: px(20),
+  fontFamily: 'Pretendard-Regular',
+  fontWeight:600,
+  lineHeight: px(28),
+  color: theme.colors.gray[400],
+}));
 
 export default function NoticeBanner({
   text,
   onPressArrow,
   backgroundColor,
   textColor,
+  date
 }: NoticeBannerProps) {
   return (
     <Container backgroundColor={backgroundColor}>
-      <NoticeText textColor={textColor} numberOfLines={1}>
-        {text}
-      </NoticeText>
+      <View>
+        <NoticeText textColor={textColor} numberOfLines={1}>
+          {text}
+        </NoticeText>
+        {date && <DateText>{date}</DateText>}
+     </View>
 
       {onPressArrow && (
         <TouchableOpacity onPress={onPressArrow}>

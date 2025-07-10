@@ -43,6 +43,7 @@ export default function HomeScreen() {
           onPressArrow={() => console.log('알림 자세히 보기')}
           backgroundColor={theme.colors.gray[700]}
           textColor={theme.colors.gray[0]}
+          date="2025. 03. 20. 13:30"
         />
         <Text
           style={[
