@@ -11,9 +11,7 @@ export default function Index() {
   const insets = useSafeAreaInsets();
 
   return (
-    <View
-      style={[styles.container, { paddingTop: insets.top, paddingBottom: insets.bottom + hp(16) }]}
-    >
+    <View style={[styles.container, { paddingTop: insets.top, paddingBottom: insets.bottom }]}>
       <View style={styles.contentContainer}>
         <View style={styles.imageContainer} />
         <StepIndicator totalSteps={4} currentStep={1} />
@@ -67,6 +65,7 @@ const styles = StyleSheet.create({
     flexGrow: 1,
   },
   buttonContainer: {
+    height: hp(108),
     paddingHorizontal: wp(24),
     paddingVertical: hp(10),
     gap: hp(10),
