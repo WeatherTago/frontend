@@ -61,7 +61,7 @@ export default function Favorites() {
   }, []);
 
   return (
-    <View style={[styles.container, { paddingTop: insets.top }]}>
+    <View style={[styles.container, { paddingTop: insets.top, paddingBottom: insets.bottom }]}>
       <Header
         onPressLeft={() => router.back()}
         rightType="text"
@@ -122,13 +122,13 @@ export default function Favorites() {
 
 const styles = StyleSheet.create({
   container: {
+    flex: 1,
     flexDirection: 'column',
     alignItems: 'center',
     justifyContent: 'center',
     backgroundColor: theme.colors.gray[0],
   },
   textContainer: {
-    height: hp(160),
     padding: px(24),
     alignItems: 'flex-start',
     alignSelf: 'stretch',
@@ -170,7 +170,6 @@ const styles = StyleSheet.create({
     gap: px(6),
   },
   searchStationText: {
-    flex: 1,
     color: theme.colors.gray[400],
     fontFamily: 'Pretendard-Medium',
     fontSize: px(20),
@@ -178,10 +177,9 @@ const styles = StyleSheet.create({
     lineHeight: px(28),
   },
   flatListOuterContainer: {
-    height: hp(721), // 829 - 108
+    flex: 1,
     justifyContent: 'space-between',
     alignItems: 'flex-start',
-    flexShrink: 0,
     alignSelf: 'stretch',
   },
   flatListContainer: {
@@ -197,6 +195,7 @@ const styles = StyleSheet.create({
     marginBottom: hp(20), // 행 간 간격 (row-gap)
   },
   buttonContainer: {
+    height: hp(108),
     paddingHorizontal: wp(24),
     paddingVertical: hp(10),
     gap: hp(10),
