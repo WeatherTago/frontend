@@ -11,15 +11,20 @@ interface NoticeBannerProps {
   backgroundColor: string;
   textColor: string;
   date?: string;
+  isNew?: boolean;
 }
 
-const Container = styled.View<{ backgroundColor: string }>`
-  flex-direction: row;
-  align-items: center;
-  justify-content: space-between;
-  padding: 28px 12px 28px 30px;
-  background-color: ${({ backgroundColor }) => backgroundColor};
-`;
+const Container = styled.View<{ backgroundColor: string }>(({ backgroundColor, theme }) => ({
+  flexDirection: 'row',
+  alignItems: 'center',
+  justifyContent: 'space-between',
+  paddingVertical: 28,
+  paddingHorizontal: 30,
+  backgroundColor,
+  borderBottomWidth: 1,
+  borderBottomColor: theme.colors.gray[200],
+}));
+
 
 const NoticeText = styled.Text<{ textColor: string }>(({ theme, textColor }) => {
   return {
@@ -27,7 +32,7 @@ const NoticeText = styled.Text<{ textColor: string }>(({ theme, textColor }) => 
     lineHeight: theme.typography.subtitle1.lineHeight,
     fontFamily: theme.typography.subtitle1.fontFamily,
     color: textColor,
-    flexShrink: 0,
+    flexShrink: 1,
   };
 });
 const DateText = styled.Text(({ theme }) => ({
@@ -37,22 +42,32 @@ const DateText = styled.Text(({ theme }) => ({
   lineHeight: px(28),
   color: theme.colors.gray[400],
 }));
+const NewText = styled.Text({
+  color: 'red',
+  fontSize: px(20),
+  fontWeight: 'bold',
+  marginRight: px(5)
+});
 
 export default function NoticeBanner({
   text,
   onPressArrow,
   backgroundColor,
   textColor,
-  date
+  date,
+  isNew
 }: NoticeBannerProps) {
   return (
     <Container backgroundColor={backgroundColor}>
-      <View>
-        <NoticeText textColor={textColor} numberOfLines={1}>
-          {text}
-        </NoticeText>
+      <View style={{ flex: 1 }}>
+        <View style={{ flexDirection: 'row', alignItems: 'center' }}>
+          {isNew && <NewText>NEW</NewText>}
+          <NoticeText textColor={textColor}>
+            {text}
+          </NoticeText>
+        </View>
         {date && <DateText>{date}</DateText>}
-     </View>
+      </View>
 
       {onPressArrow && (
         <TouchableOpacity onPress={onPressArrow}>

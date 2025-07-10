@@ -1,3 +1,4 @@
+import { fetchNotices, Notice } from '@/apis/notice';
 import DirectAccessCard from '@/components/DirectAccessCard';
 import FavoriteStationCard from '@/components/FavoriteStationCard';
 import WeatherHeader from '@/components/Header/WeatherHeader';
@@ -6,20 +7,22 @@ import { useFavoriteCongestionFetcher } from '@/hooks/useFavoriteCongestionFetch
 import { StationResult } from '@/types/station';
 import { hp, px, wp } from '@/utils/scale';
 import { useTheme } from '@emotion/react';
+import dayjs from 'dayjs';
+import { useRouter } from 'expo-router';
 import { useEffect, useState } from 'react';
 import { Dimensions, FlatList, ScrollView, StyleSheet, Text, View } from 'react-native';
 
 const { width: SCREEN_WIDTH } = Dimensions.get('window');
 const CARD_WIDTH = px(400);
 const SIDE_SPACING = (SCREEN_WIDTH - CARD_WIDTH) / 2;
-
-const mockCards = [{ id: '1' }, { id: '2' }, { id: '3' }]; //임시 카드
+const router=useRouter();
 
 export default function HomeScreen() {
   const theme = useTheme();
   const [favoriteStations, setFavoriteStations] = useState<StationResult[]>([]);
   const [isLoading, setIsLoading] = useState(false);
   const { fetch } = useFavoriteCongestionFetcher();
+  const [latestNotice, setLatestNotice] = useState<Notice | null>(null);
 
   useEffect(() => {
     const loadData = async () => {
@@ -31,20 +34,38 @@ export default function HomeScreen() {
     loadData();
   }, []);
 
+  useEffect(() => {
+  const getLatestNotice = async () => {
+    const data = await fetchNotices(); // 전체 공지 받아오기
+    if (data.length > 0) {
+      const sorted = data.sort((a, b) => new Date(b.createdAt).getTime() - new Date(a.createdAt).getTime());
+      setLatestNotice(sorted[0]); // 최신 공지 한 개만 저장
+      }
+    };
+    getLatestNotice();
+  }, []);
+
+  const isNewNotice = latestNotice
+  ? dayjs().diff(dayjs(latestNotice.createdAt), 'day') <= 2
+  : false;
+
   return (
     <View style={{ flex: 1 }}>
-      <WeatherHeader />
+      <WeatherHeader showAlarmDot={isNewNotice}/>
       {/*  항상 고정되는 헤더 */}
 
       <ScrollView style={[styles.container, { backgroundColor: theme.colors.gray[50] }]}>
-        <NoticeBanner
-          text="지하철 1호선 파업 시위 관련 안내"
-          showArrowButton
-          onPressArrow={() => console.log('알림 자세히 보기')}
-          backgroundColor={theme.colors.gray[700]}
-          textColor={theme.colors.gray[0]}
-          date="2025. 03. 20. 13:30"
-        />
+        {latestNotice && (
+          <NoticeBanner
+            text={latestNotice.title}
+            showArrowButton
+            onPressArrow={() => router.push(`/notice/${latestNotice.noticeId}`)}
+            backgroundColor={theme.colors.gray[700]}
+            textColor={theme.colors.gray[0]}
+            date={dayjs(latestNotice.createdAt).format('YYYY. MM. DD. A HH:mm')}
+            isNew={false}
+          />
+        )}
         <Text
           style={[
             styles.sectionTitle,

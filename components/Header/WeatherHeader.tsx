@@ -41,7 +41,7 @@ const AlarmDotWrapper = styled.View`
   right: 9px;
 `;
 
-export default function WeatherHeader() {
+export default function WeatherHeader({ showAlarmDot }: { showAlarmDot?: boolean }) {
   const insets = useSafeAreaInsets();
   const theme = useTheme();
   const router= useRouter();
@@ -73,7 +73,7 @@ export default function WeatherHeader() {
           <BellWrapper>
             <IconButton
               onPress={() => {
-                router.push('/alert-modal')
+                router.push('../notice')
               }}
             >
               <Ionicons
@@ -83,7 +83,9 @@ export default function WeatherHeader() {
               />
             </IconButton>
             <AlarmDotWrapper>
-              <AlarmDot />
+              {showAlarmDot && (
+                <AlarmDot />
+              )}
             </AlarmDotWrapper>
           </BellWrapper>
         </IconRow>
