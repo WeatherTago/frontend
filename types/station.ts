@@ -12,14 +12,32 @@ export interface WeatherInfo {
   condition: string;
 }
 
+
 export interface StationResult {
-  stationId: number;
   name: string;
   line: string;
+  stationId: number;
   stationCode: string;
-  weather?: WeatherInfo;
-  congestion: CongestionInfo;
   createdAt: string;
+  direction: string | null;
+  weather?: {
+    tmp?: number;
+    pcp?: number;
+    reh?: number;
+    sno?: number;
+    vec?: number;
+    wsd?: number;
+  };
+  congestionByDirection?: {
+  [direction: string]: {
+    stationId: number;
+    congestion: {
+      level: string;
+      rate: number;
+    }; 
+  };
+};
 }
+
 
 export type SearchStationResponse = CommonResponse<StationResult>;

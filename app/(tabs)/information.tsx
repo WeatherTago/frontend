@@ -47,7 +47,6 @@ const TAB_BAR_HEIGHT = hp(82) + insets.bottom;
         placeholder="편의시설이 궁금한 역을 검색해보세요"
         value={searchText}
         onChangeText={setSearchText}
-        onPressSearch={() => handleSearch(searchText)}
         onPressInput={() => router.push('../infosearch')}
         ButtonIcon={subwayImage}
         buttonLabel="편의시설"
