@@ -9,7 +9,7 @@ import { useLocalSearchParams, useRouter } from 'expo-router';
 import { useEffect, useState } from 'react';
 import { ScrollView, StyleSheet, Text, View, useWindowDimensions } from 'react-native';
 import RenderHTML from 'react-native-render-html';
-import { useSafeAreaInsets } from 'react-native-safe-area-context';
+import { SafeAreaView, useSafeAreaInsets } from 'react-native-safe-area-context';
 
 export default function NoticeDetailScreen() {
   const { noticeId  } = useLocalSearchParams();
@@ -38,7 +38,7 @@ export default function NoticeDetailScreen() {
   if (!notice) return null;
 
   return (
-    <View style={[styles.container, { paddingTop: insets.top }]}>
+    <SafeAreaView  style={{ flex: 1, backgroundColor: '#fff' }} edges={['top', 'bottom']}>
       <Header title="공지사항" onPressLeft={() => router.back()} />
       <ScrollView 
         contentContainerStyle={{ padding: px(20), paddingBottom: insets.bottom }}>
@@ -92,7 +92,7 @@ export default function NoticeDetailScreen() {
           }}
       />
       </ScrollView>
-    </View>
+    </SafeAreaView>
   );
 }
 

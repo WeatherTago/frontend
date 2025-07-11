@@ -6,8 +6,8 @@ import { useTheme } from '@emotion/react';
 import dayjs from 'dayjs';
 import { useRouter } from 'expo-router';
 import { useEffect, useState } from 'react';
-import { FlatList, StyleSheet, TouchableOpacity, View } from 'react-native';
-import { useSafeAreaInsets } from 'react-native-safe-area-context';
+import { FlatList, StyleSheet, TouchableOpacity } from 'react-native';
+import { SafeAreaView, useSafeAreaInsets } from 'react-native-safe-area-context';
 
 export default function NotificationScreen() {
   const insets = useSafeAreaInsets();
@@ -41,7 +41,7 @@ export default function NotificationScreen() {
   };
 
   return (
-    <View style={[styles.container, { paddingTop: insets.top }]}>
+    <SafeAreaView  style={{ flex: 1, backgroundColor: '#fff' }} edges={['top', 'bottom']}>
       <Header title="공지사항" onPressLeft={() => router.back()} />
 
       <FlatList
@@ -54,8 +54,8 @@ export default function NotificationScreen() {
           return (
             <TouchableOpacity
               onPress={async () => {
-                await markNoticeAsRead(item.noticeId); // ✅ 읽음 저장
-                setReadNoticeIds((prev) => [...prev, item.noticeId]); // ✅ UI 업데이트
+                await markNoticeAsRead(item.noticeId); //읽음 저장
+                setReadNoticeIds((prev) => [...prev, item.noticeId]); //UI 업데이트
                 router.push(`../notice/${item.noticeId}`);
               }}
             >
@@ -74,7 +74,7 @@ export default function NotificationScreen() {
           );
         }}
       />
-    </View>
+    </SafeAreaView>
   );
 }
 

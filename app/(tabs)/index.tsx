@@ -76,7 +76,7 @@ export default function HomeScreen() {
           <NoticeBanner
             text={latestNotice.title}
             showArrowButton
-            onPressArrow={() => router.push(`/notice/${latestNotice.noticeId}`)}
+            onPressArrow={() => router.push(`../notice/${latestNotice.noticeId}`)}
             backgroundColor={theme.colors.gray[700]}
             textColor={theme.colors.gray[0]}
             date={dayjs(latestNotice.createdAt).format('YYYY. MM. DD. A HH:mm')}
