@@ -6,7 +6,15 @@ import { StationInfo } from '@/types/common';
 import { hp, px, wp } from '@/utils/scale';
 import BottomSheet, { BottomSheetView } from '@gorhom/bottom-sheet';
 import { useCallback, useEffect, useMemo, useRef, useState } from 'react';
-import { ActivityIndicator, Image, StyleSheet, Text, TouchableOpacity, View } from 'react-native';
+import {
+  ActivityIndicator,
+  Image,
+  ScrollView,
+  StyleSheet,
+  Text,
+  TouchableOpacity,
+  View,
+} from 'react-native';
 
 // 앱 내부에서 사용할 역 데이터 타입 (StationApiData와 매핑)
 interface SelectedStationInfo {
@@ -179,8 +187,8 @@ export default function AlarmScreen() {
   const [selectedDirection, setSelectedDirection] = useState<string | null>(null);
   const [selectedDay, setSelectedDay] = useState<string>('매일'); // 기본값 '매일'
   const [selectedDateOption, setSelectedDateOption] = useState<string>('전날');
-  const [selectedCongestionTime, setSelectedCongestionTime] = useState<string>('오전 8:00'); // 혼잡도 기준 시간
-  const [selectedNotificationTime, setSelectedNotificationTime] = useState<string>('오전 8:00'); // 알림 수신 시간
+  const [selectedCongestionTime, setSelectedCongestionTime] = useState<string>('08:00'); // 혼잡도 기준 시간
+  const [selectedNotificationTime, setSelectedNotificationTime] = useState<string>('08:00'); // 알림 수신 시간
 
   // --- 2. 현재 BottomSheet에 보여줄 뷰 타입 상태 ---
   const [currentBottomSheetView, setCurrentBottomSheetView] =
@@ -417,6 +425,7 @@ export default function AlarmScreen() {
         index={-1}
         snapPoints={snapPoints}
         enablePanDownToClose={true}
+        enableContentPanningGesture={false}
         backgroundStyle={styles.bottomSheetBackground}
         handleIndicatorStyle={styles.bottomSheetHandleIndicator}
       >
@@ -441,17 +450,17 @@ export default function AlarmScreen() {
             <View style={styles.alarmOptionsContainer}>
               <View style={styles.alarmRow}>
                 <AlarmSettingButton
-                  text={selectedStation ? selectedStation.name : '역 선택'}
+                  text={selectedStation ? selectedStation.name : '역'}
                   onPress={handleOpenStationSelection}
                   isSelected={!!selectedStation} // 역이 선택되었는지 여부로 강조
                 />
                 <AlarmSettingButton
-                  text={selectedLine ? `${selectedLine}` : '호선 선택'} // '1호선' 형태로 표시
+                  text={selectedLine ? `${selectedLine}` : '호선'} // '1호선' 형태로 표시
                   onPress={handleOpenLineSelection}
                   isSelected={!!selectedLine}
                 />
                 <AlarmSettingButton
-                  text={selectedDirection ? selectedDirection : '방향 선택'}
+                  text={selectedDirection ? selectedDirection : '방향'}
                   onPress={handleOpenDirectionSelection}
                   isSelected={!!selectedDirection}
                 />
@@ -467,7 +476,7 @@ export default function AlarmScreen() {
                   onPress={handleOpenTimeSelectionForCongestion}
                   isSelected={true}
                 />
-                <Text style={styles.alarmRowText}>의 혼잡도를</Text>
+                <Text style={styles.alarmRowText}>시 혼잡도를</Text>
               </View>
               <View style={styles.alarmRow}>
                 <AlarmSettingButton
@@ -480,7 +489,7 @@ export default function AlarmScreen() {
                   onPress={handleOpenTimeSelectionForNotification}
                   isSelected={true}
                 />
-                <Text style={styles.alarmRowText}>에 알고 싶어요</Text>
+                <Text style={styles.alarmRowText}>시에 알고 싶어요</Text>
               </View>
             </View>
           )}
@@ -569,29 +578,33 @@ export default function AlarmScreen() {
           )}
 
           {currentBottomSheetView === 'timeSelectionForCongestion' && (
-            <View style={styles.timeSelectionContainer}>
-              {timeOptions.map(time => (
-                <TimeChip
-                  key={time}
-                  time={time}
-                  onPress={handleSelectCongestionTime}
-                  isSelected={selectedCongestionTime === time}
-                />
-              ))}
-            </View>
+            <ScrollView style={styles.scrollableTimeOptionsContainer}>
+              <View style={styles.timeSelectionContainer}>
+                {timeOptions.map(time => (
+                  <TimeChip
+                    key={time}
+                    time={time}
+                    onPress={handleSelectCongestionTime}
+                    isSelected={selectedCongestionTime === time}
+                  />
+                ))}
+              </View>
+            </ScrollView>
           )}
 
           {currentBottomSheetView === 'timeSelectionForNotification' && (
-            <View style={styles.timeSelectionContainer}>
-              {timeOptions.map(time => (
-                <TimeChip
-                  key={time}
-                  time={time}
-                  onPress={handleSelectNotificationTime}
-                  isSelected={selectedNotificationTime === time}
-                />
-              ))}
-            </View>
+            <ScrollView style={styles.scrollableTimeOptionsContainer}>
+              <View style={styles.timeSelectionContainer}>
+                {timeOptions.map(time => (
+                  <TimeChip
+                    key={time}
+                    time={time}
+                    onPress={handleSelectNotificationTime}
+                    isSelected={selectedNotificationTime === time}
+                  />
+                ))}
+              </View>
+            </ScrollView>
           )}
         </BottomSheetView>
       </BottomSheet>
@@ -854,6 +867,10 @@ const styles = StyleSheet.create({
   dayOptionTextSelected: {
     color: theme.colors.primary[700],
   },
+  scrollableTimeOptionsContainer: {
+    flex: 1,
+    maxHeight: hp(400),
+  },
 
   // 시간 선택 스타일
   timeSelectionContainer: {
@@ -861,6 +878,7 @@ const styles = StyleSheet.create({
     gap: hp(10),
   },
   timeOptionChip: {
+    width: '100%',
     backgroundColor: theme.colors.gray[100],
     paddingVertical: hp(14),
     paddingHorizontal: wp(14),
