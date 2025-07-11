@@ -22,7 +22,9 @@ type BottomSheetViewType =
   | 'lineSelection'
   | 'directionSelection'
   | 'daySelection'
-  | 'timeSelection';
+  | 'dateOptionSelection'
+  | 'timeSelectionForCongestion' // 혼잡도 기준 시간 선택 뷰
+  | 'timeSelectionForNotification'; // 알림 수신 시간 선택 뷰
 
 // 알림 설정 버튼 컴포넌트 (이미지에서 보이는 필터 버튼들과 유사한 형태)
 interface AlarmSettingButtonProps {
@@ -150,6 +152,24 @@ const TimeChip: React.FC<TimeChipProps> = ({ time, onPress, isSelected }) => (
   </TouchableOpacity>
 );
 
+// 날짜 옵션 칩 컴포넌트 (날짜 옵션 선택 BottomSheet용) - TimeChip과 유사한 스타일 재활용
+interface DateOptionChipProps {
+  option: string;
+  onPress: (option: string) => void;
+  isSelected: boolean;
+}
+
+const DateOptionChip: React.FC<DateOptionChipProps> = ({ option, onPress, isSelected }) => (
+  <TouchableOpacity
+    style={[styles.timeOptionChip, isSelected && styles.timeOptionChipSelected]} // timeOptionChip 스타일 재활용
+    onPress={() => onPress(option)}
+  >
+    <Text style={[styles.timeOptionText, isSelected && styles.timeOptionTextSelected]}>
+      {option}
+    </Text>
+  </TouchableOpacity>
+);
+
 export default function AlarmScreen() {
   const bottomSheetRef = useRef<BottomSheet>(null);
 
@@ -158,7 +178,9 @@ export default function AlarmScreen() {
   const [selectedLine, setSelectedLine] = useState<string | null>(null);
   const [selectedDirection, setSelectedDirection] = useState<string | null>(null);
   const [selectedDay, setSelectedDay] = useState<string>('매일'); // 기본값 '매일'
-  const [selectedTime, setSelectedTime] = useState<string>('오전 8:00'); // 기본값 '오전 8:00'
+  const [selectedDateOption, setSelectedDateOption] = useState<string>('전날');
+  const [selectedCongestionTime, setSelectedCongestionTime] = useState<string>('오전 8:00'); // 혼잡도 기준 시간
+  const [selectedNotificationTime, setSelectedNotificationTime] = useState<string>('오전 8:00'); // 알림 수신 시간
 
   // --- 2. 현재 BottomSheet에 보여줄 뷰 타입 상태 ---
   const [currentBottomSheetView, setCurrentBottomSheetView] =
@@ -299,8 +321,20 @@ export default function AlarmScreen() {
     bottomSheetRef.current?.snapToIndex(2);
   }, []);
 
-  const handleOpenTimeSelection = useCallback(() => {
-    setCurrentBottomSheetView('timeSelection');
+  const handleOpenDateOptionSelection = useCallback(() => {
+    setCurrentBottomSheetView('dateOptionSelection');
+    bottomSheetRef.current?.snapToIndex(2);
+  }, []);
+
+  // 혼잡도 기준 시간 선택 뷰 전환 핸들러
+  const handleOpenTimeSelectionForCongestion = useCallback(() => {
+    setCurrentBottomSheetView('timeSelectionForCongestion');
+    bottomSheetRef.current?.snapToIndex(2);
+  }, []);
+
+  // 알림 수신 시간 선택 뷰 전환 핸들러
+  const handleOpenTimeSelectionForNotification = useCallback(() => {
+    setCurrentBottomSheetView('timeSelectionForNotification');
     bottomSheetRef.current?.snapToIndex(2);
   }, []);
 
@@ -331,8 +365,19 @@ export default function AlarmScreen() {
     setCurrentBottomSheetView('mainAlarmSettings');
   }, []);
 
-  const handleSelectTime = useCallback((time: string) => {
-    setSelectedTime(time);
+  const handleSelectDateOption = useCallback((option: string) => {
+    setSelectedDateOption(option);
+    setCurrentBottomSheetView('mainAlarmSettings');
+  }, []);
+
+  const handleSelectCongestionTime = useCallback((time: string) => {
+    setSelectedCongestionTime(time);
+    setCurrentBottomSheetView('mainAlarmSettings');
+  }, []);
+
+  // 알림 수신 시간 선택 핸들러
+  const handleSelectNotificationTime = useCallback((time: string) => {
+    setSelectedNotificationTime(time);
     setCurrentBottomSheetView('mainAlarmSettings');
   }, []);
 
@@ -383,7 +428,9 @@ export default function AlarmScreen() {
               {currentBottomSheetView === 'lineSelection' && '호선 선택'}
               {currentBottomSheetView === 'directionSelection' && '방향 선택'}
               {currentBottomSheetView === 'daySelection' && '요일 선택'}
-              {currentBottomSheetView === 'timeSelection' && '시간 설정'}
+              {currentBottomSheetView === 'timeSelectionForCongestion' && '혼잡도 기준 시간 선택'}
+              {currentBottomSheetView === 'timeSelectionForNotification' && '알림 수신 시간 선택'}
+              {currentBottomSheetView === 'dateOptionSelection' && '날짜 옵션 선택'}
             </Text>
             <TouchableOpacity style={styles.bottomSheetDoneButton} onPress={handleCloseModalPress}>
               <Text style={styles.bottomSheetDoneButtonText}>완료</Text>
@@ -416,15 +463,23 @@ export default function AlarmScreen() {
                   isSelected={true}
                 />
                 <AlarmSettingButton
-                  text={selectedTime}
-                  onPress={handleOpenTimeSelection}
+                  text={selectedCongestionTime}
+                  onPress={handleOpenTimeSelectionForCongestion}
                   isSelected={true}
                 />
                 <Text style={styles.alarmRowText}>의 혼잡도를</Text>
               </View>
               <View style={styles.alarmRow}>
-                <AlarmSettingButton text="전날" onPress={() => {}} />
-                <AlarmSettingButton text="오전 8:00" onPress={() => {}} />
+                <AlarmSettingButton
+                  text={selectedDateOption}
+                  onPress={handleOpenDateOptionSelection}
+                  isSelected={true}
+                />
+                <AlarmSettingButton
+                  text={selectedNotificationTime}
+                  onPress={handleOpenTimeSelectionForNotification}
+                  isSelected={true}
+                />
                 <Text style={styles.alarmRowText}>에 알고 싶어요</Text>
               </View>
             </View>
@@ -500,14 +555,40 @@ export default function AlarmScreen() {
             </View>
           )}
 
-          {currentBottomSheetView === 'timeSelection' && (
+          {currentBottomSheetView === 'dateOptionSelection' && (
+            <View style={styles.weekDaysContainer}>
+              {['전날', '당일'].map(option => (
+                <DateOptionChip
+                  key={option}
+                  option={option}
+                  onPress={handleSelectDateOption}
+                  isSelected={selectedDateOption === option}
+                />
+              ))}
+            </View>
+          )}
+
+          {currentBottomSheetView === 'timeSelectionForCongestion' && (
             <View style={styles.timeSelectionContainer}>
               {timeOptions.map(time => (
                 <TimeChip
                   key={time}
                   time={time}
-                  onPress={handleSelectTime}
-                  isSelected={selectedTime === time}
+                  onPress={handleSelectCongestionTime}
+                  isSelected={selectedCongestionTime === time}
+                />
+              ))}
+            </View>
+          )}
+
+          {currentBottomSheetView === 'timeSelectionForNotification' && (
+            <View style={styles.timeSelectionContainer}>
+              {timeOptions.map(time => (
+                <TimeChip
+                  key={time}
+                  time={time}
+                  onPress={handleSelectNotificationTime}
+                  isSelected={selectedNotificationTime === time}
                 />
               ))}
             </View>
