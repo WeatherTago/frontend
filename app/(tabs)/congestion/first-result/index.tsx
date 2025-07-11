@@ -20,56 +20,58 @@ export default function FirstResultScreen() {
   const [loading, setLoading] = useState(true);
 
   useEffect(() => {
-    const fetchData = async () => {
-      console.log('📥 [1] 전달받은 params:', { station, line, date, time });
+  const fetchData = async () => {
+    console.log('📥 [1] 전달받은 params:', { station, line, date, time });
 
-      if (!station || !line || !date || !time) {
-        console.log('❗ [2] 누락된 param 있음');
-        return;
-      }
+    if (!station || !line || !date || !time) {
+      console.log('❗ [2] 누락된 param 있음');
+      setLoading(false);
+      return;
+    }
 
-      const stationId = getStationIdByNameAndLine(station, line);
-      console.log('🧭 [3] 계산된 stationId:', stationId);
+    const isoDate = new Date(date);
+    const [hourStr, minuteStr] = time.split(':');
+    const hour = parseInt(hourStr, 10);
+    const minute = parseInt(minuteStr, 10);
 
-      if (!stationId) {
-        console.log('❌ [4] stationId 찾지 못함');
-        setResult(null);
-        setLoading(false);
-        return;
-      }
+    const dateObj = new Date(
+      isoDate.getFullYear(),
+      isoDate.getMonth(),
+      isoDate.getDate(),
+      hour,
+      minute,
+      59,
+      999
+    );
 
-      const dateObj = new Date(date);
-      const [hour, minute] = time.split(':').map(Number);
-      dateObj.setHours(hour);
-      dateObj.setMinutes(minute);
-      dateObj.setSeconds(59);
-      dateObj.setMilliseconds(999);
+    const isoTime = dateObj.toISOString();
 
-      const isoTime = dateObj.toISOString();
-      console.log('⏰ [5] 변환된 ISO 시간:', isoTime);
 
-      try {
-        const res = await fetchStationByIdAndTime({ stationId, time: isoTime });
-        console.log('📦 [6] API 응답 result:', res);
+    const stationId = getStationIdByNameAndLine(station, line);
+    console.log('🧭 [3] 계산된 stationId:', stationId);
+    console.log('⏰ [5] 변환된 ISO 시간:', isoTime);
 
-        if (!res) {
-          console.log('❗ [7] 응답은 왔지만 null 또는 구조 이상');
-        } else if (!res.congestionByDirection) {
-          console.log('⚠️ [8] congestionByDirection 없음:', res);
-        } else if (!res.weather) {
-          console.log('⚠️ [9] weather 없음:', res);
-        }
+    if (!stationId) {
+      console.log('❌ [4] stationId 찾지 못함');
+      setLoading(false);
+      return;
+    }
 
-        setResult(res);
-      } catch (e) {
-        console.log('🔥 [10] fetchStationByIdAndTime 오류:', e);
-      } finally {
-        setLoading(false);
-      }
-    };
+    try {
+      const res = await fetchStationByIdAndTime({ stationId, time: isoTime });
+      console.log('📦 [6] API 응답 result:', JSON.stringify(res, null, 2));
+      setResult(res);
+    } catch (e) {
+      console.log('🔥 [10] fetchStationByIdAndTime 오류:', e);
+    } finally {
+      console.log('✅ [11] setLoading(false) 실행됨');
+      setLoading(false);
+    }
+  };
 
-    fetchData();
-  }, [station, line, date, time]);
+  fetchData();
+}, [station, line, date, time]);
+
 
   if (loading) {
     return (

@@ -1,12 +1,16 @@
 import mapImage from '@/assets/images/map.png';
+import subwayImage from '@/assets/images/subway/subway-all.png';
 import SearchBar from '@/components/SearchBar';
 import { useRouter } from 'expo-router';
-import { View } from 'react-native';
+import { Dimensions, Image, ScrollView, StyleSheet, View } from 'react-native';
 import { useSafeAreaInsets } from 'react-native-safe-area-context';
-
 export default function CongestionMainScreen() {
   const insets = useSafeAreaInsets();
   const router = useRouter();
+  const { height: SCREEN_HEIGHT, width: SCREEN_WIDTH } = Dimensions.get('window');
+  const safeHeight = SCREEN_HEIGHT - insets.top - insets.bottom;
+  const imageHeight = safeHeight;
+  const imageWidth = (4635 / 3685) * imageHeight;
 
   return (
     <View style={{ flex: 1, paddingTop: insets.top }}>
@@ -18,7 +22,42 @@ export default function CongestionMainScreen() {
         ButtonIcon={mapImage}
         buttonLabel="혼잡예측"
       />
-      {/* 추후 즐겨찾기 혼잡도나 최근 검색 등을 추가할 수 있음 */}
+      <ScrollView
+        style={styles.mapWrapper}
+        contentContainerStyle={styles.mapZoomContainer}
+        minimumZoomScale={1}
+        maximumZoomScale={3}
+        pinchGestureEnabled={true}
+        showsHorizontalScrollIndicator={true}
+        showsVerticalScrollIndicator={true}
+        bounces={false}
+        horizontal={true}
+      >
+        <ScrollView
+          contentContainerStyle={{ flexGrow: 1 }}
+          showsVerticalScrollIndicator={false}
+        >
+          <Image
+            source={subwayImage}
+            style={{
+              width: imageWidth,
+              height: imageHeight,
+            }}
+            resizeMode="contain"
+          />
+        </ScrollView>
+      </ScrollView>
     </View>
   );
 }
+
+const styles = StyleSheet.create({
+  mapWrapper: {
+    flex: 1,
+  },
+  mapZoomContainer: {
+    flexGrow: 1,
+    alignItems: 'center',
+    justifyContent: 'center',
+  },
+});
