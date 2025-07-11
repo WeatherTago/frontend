@@ -41,7 +41,7 @@ export default function NoticeDetailScreen() {
     <SafeAreaView  style={{ flex: 1, backgroundColor: '#fff' }} edges={['top', 'bottom']}>
       <Header title="공지사항" onPressLeft={() => router.back()} />
       <ScrollView 
-        contentContainerStyle={{ padding: px(20), paddingBottom: insets.bottom }}>
+        contentContainerStyle={{ padding: px(20)}}>
         <Text style={{ 
           fontSize: px(26), 
           fontFamily:'Pretendard-SemiBold', 
