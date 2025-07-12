@@ -29,7 +29,7 @@ export default function HomeScreen() {
       setIsLoading(false);
     };
     loadData();
-  }, []);
+  }, [favoriteStations]);
 
   return (
     <View style={{ flex: 1 }}>
