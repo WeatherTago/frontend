@@ -77,32 +77,32 @@ export default function FirstSearchScreen() {
     return;
   }
 
-  // 📌 날짜 + 시간 조합
+
   const combinedDate = new Date(date);
   combinedDate.setHours(time.hours);
-  combinedDate.setMinutes(time.minutes || 0);
+  combinedDate.setMinutes(time.minutes);
   combinedDate.setSeconds(0);
   combinedDate.setMilliseconds(0);
 
-  // ✅ "2025-07-13T07:00:00" 형태로 변환
-  const formatLocalISOString = (date: Date) => {
-    const y = date.getFullYear();
-    const m = String(date.getMonth() + 1).padStart(2, '0');
-    const d = String(date.getDate()).padStart(2, '0');
-    const h = String(date.getHours()).padStart(2, '0');
-    const min = String(date.getMinutes()).padStart(2, '0');
-    return `${y}-${m}-${d}T${h}:${min}:00`; // 초까지 명시
+ 
+  const formatLocalISOString = (d: Date) => {
+    const y = d.getFullYear();
+    const m = String(d.getMonth() + 1).padStart(2, '0');
+    const day = String(d.getDate()).padStart(2, '0');
+    const h = String(d.getHours()).padStart(2, '0');
+    const min = String(d.getMinutes()).padStart(2, '0');
+    return `${y}-${m}-${day}T${h}:${min}:00`;
   };
-
-  const formattedTime = formatLocalISOString(combinedDate);
+  const formattedDate = formatLocalISOString(date);          // 예: 2025-07-13T00:00:00
+  const formattedTime = formatLocalISOString(combinedDate);  // 예: 2025-07-13T17:00:00
 
   router.push({
     pathname: '../congestion/first-result',
     params: {
       station: stationName,
       line: selectedLine,
-      date: date.toISOString(),  // 선택 날짜 그대로
-      time: formattedTime,       // ✅ 정확한 ISO local string
+      date: formattedDate, 
+      time: formattedTime,
     },
   });
 };
@@ -121,16 +121,32 @@ export default function FirstSearchScreen() {
     { label: '모레', value: dayAfter },
   ];
 
-  const hourOptions = Array.from({ length: 24 }, (_, i) => i);
+  const isToday = date?.toDateString() === today.toDateString();
+  const now = new Date();
+  const currentHour = now.getHours();
+  const hourOptions = useMemo(() => {
+  const now = new Date();
+  const currentHour = now.getHours();
+  const isToday = date?.toDateString() === today.toDateString();
+
+  return Array.from({ length: 24 }, (_, i) => i).filter((hour) => {
+    if (hour < 5) return false;
+    if (isToday) return hour >= currentHour;
+    return true;
+  });
+}, [date]);
+
+
 
   const getSelectedTimeLabel = () => {
   if (!date || !time) return '출발 시각 선택';
-  const dateLabel = dateOptions.find((opt) => opt.value.toDateString() === date.toDateString())?.label ?? date.toLocaleDateString();
-  return `${dateLabel} ${time.hours}시 `;
+  const dateLabel = dateOptions.find((opt) => opt.value.toDateString() === date.toDateString())?.label
+    ?? date.toLocaleDateString();
+  return `${dateLabel} ${time.hours}:00`;
 };
   useEffect(() => {
     setDate(today); 
-    setTime({ hours: 9, minutes: 0 }); // 0시
+    setTime({ hours: 9, minutes: 0 }); 
   }, []);
 
 
@@ -157,7 +173,7 @@ export default function FirstSearchScreen() {
         <TouchableOpacity onPress={() => setSheetOpen(true)} style={styles.dateButton}>
           <View style={styles.dateRow}>
             <Text style={[styles.dateButtonText, { color: theme.colors.primary[700] }]}>
-              {getSelectedTimeLabel().replace('기준', '')}
+              {getSelectedTimeLabel()}
             </Text>
             <Text style={[styles.dateButtonText, { color: theme.colors.gray[950] }]}> 기준</Text>
             <Image source={downArrow} style={styles.arrowIcon} resizeMode="contain" />
@@ -243,12 +259,12 @@ export default function FirstSearchScreen() {
 const styles = StyleSheet.create({
   headerContainer: {
     width: wp(540), height: hp(90), paddingHorizontal: wp(14),
-    flexDirection: 'row', alignItems: 'center', gap: px(8), flexShrink: 0,
+    flexDirection: 'row', alignItems: 'center',alignSelf:'stretch', gap: px(8), flexShrink: 0,
     shadowColor: 'rgba(0, 0, 0, 0.05)', shadowOffset: { width: 0, height: 2 },
     shadowOpacity: 1, shadowRadius: 6, elevation: 3,
   },
   searchInput: {
-    flex: 1, fontSize: px(24), fontFamily: 'Pretendard-Medium', fontWeight: '500', lineHeight: px(34),
+   fontSize: px(24), fontFamily: 'Pretendard-Medium', fontWeight: '500'
   },
   choiceContainer: {
     height: hp(57), paddingHorizontal: wp(24), paddingVertical: hp(10),
@@ -289,7 +305,7 @@ const styles = StyleSheet.create({
     height: 120, marginVertical: 10,
   },
   wheelItemText: {
-    fontSize: 20, textAlign: 'center', paddingVertical: 10,
+    fontSize: 18, textAlign: 'center', paddingVertical: 10,
   },
   modalCloseButton: {
     marginTop: 16, backgroundColor: '#00C4B8', paddingVertical: 10, paddingHorizontal: 30, borderRadius: 8,

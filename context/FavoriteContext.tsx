@@ -1,17 +1,21 @@
 import { myFavorite } from '@/apis/favorite';
 import { StationInfo } from '@/types/common';
 import React, { createContext, useContext, useEffect, useState } from 'react';
+import { useAuth } from './AuthContext';
 
 type FavoriteContextType = {
   favoriteStationIds: number[];
   toggleFavorite: (stationId: number) => void;
   isFavorite: (stationId: number) => boolean;
+  isLoading: boolean;
 };
 
 const FavoriteContext = createContext<FavoriteContextType | null>(null);
 
 export const FavoriteProvider = ({ children }: { children: React.ReactNode }) => {
   const [favoriteStationIds, setFavoriteStationIds] = useState<number[]>([]);
+  const [isLoading, setLoading] = useState(true);
+  const { user } = useAuth();
 
   const toggleFavorite = (stationId: number) => {
     setFavoriteStationIds(prev =>
@@ -23,16 +27,23 @@ export const FavoriteProvider = ({ children }: { children: React.ReactNode }) =>
 
   useEffect(() => {
     const fetchFavorites = async () => {
-      const res = await myFavorite();
-      const ids = res.result.stations.map((station: StationInfo) => station.stationId);
-      setFavoriteStationIds(ids);
+      try {
+        const res = await myFavorite();
+        const ids = res.result.stations.map((station: StationInfo) => station.stationId);
+        setFavoriteStationIds(ids);
+      } catch (error) {
+        console.error('Failed to fetch favorites', error);
+      } finally {
+        setLoading(false);
+      }
     };
-
-    fetchFavorites();
-  }, []);
+    if (user) {
+      fetchFavorites();
+    }
+  }, [user]);
 
   return (
-    <FavoriteContext.Provider value={{ favoriteStationIds, toggleFavorite, isFavorite }}>
+    <FavoriteContext.Provider value={{ favoriteStationIds, toggleFavorite, isFavorite, isLoading }}>
       {children}
     </FavoriteContext.Provider>
   );

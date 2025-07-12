@@ -32,38 +32,36 @@ export default function TabsLayout() {
 
   return (
     <Tabs
-      screenOptions={({ route }) => {
-        const routeKey = route.name;
-        const label = getLabel(routeKey);
-        const tintColor = (focused: boolean) =>
-          focused ? theme.colors.primary[700] : theme.colors.gray[300];
-        const iconSource = icons[routeKey as keyof typeof icons];
-        const isSmallIcon = routeKey === 'index' || routeKey === 'mypage';
+      screenOptions={({ route }) => ({
+        headerShown: false,
+        tabBarShowLabel: false,
+        tabBarStyle: {
+          height: hp(82) + insets.bottom,
+          backgroundColor: theme.colors.gray[0],
+          borderTopWidth: 0,
+          paddingBottom: insets.bottom,
+          justifyContent: 'center',
+          alignItems: 'center',
+          shadowColor: '#000',
+          shadowOffset: { width: px(4), height: 0 },
+          shadowOpacity: 0.05,
+          shadowRadius: px(4),
+          elevation: 4,
+        },
+        tabBarIcon: ({ focused }) => {
+          const label = getLabel(route.name);
+          const tintColor = focused ? theme.colors.primary[700] : theme.colors.gray[300];
+          const iconSource = icons[route.name as keyof typeof icons];
+          const isSmallIcon = route.name === 'index' || route.name === 'mypage';
 
-        return {
-          headerShown: false,
-          tabBarShowLabel: false,
-          tabBarStyle: {
-            height: hp(82) + insets.bottom,
-            backgroundColor: theme.colors.gray[0],
-            borderTopWidth: 0,
-            paddingBottom: insets.bottom,
-            justifyContent: 'center',
-            alignItems: 'center',
-            shadowColor: '#000',
-            shadowOffset: { width: px(4), height: 0 },
-            shadowOpacity: 0.05,
-            shadowRadius: px(4),
-            elevation: 4,
-          },
-          tabBarIcon: ({ focused }) => (
+          return (
             <View style={styles.tabItem}>
               <Image
                 source={iconSource}
                 style={[
                   styles.icon,
                   {
-                    tintColor: tintColor(focused),
+                    tintColor,
                     width: isSmallIcon ? px(30) : px(38),
                     height: isSmallIcon ? px(30) : px(38),
                     marginTop: isSmallIcon ? 28 : 25,
@@ -76,17 +74,17 @@ export default function TabsLayout() {
                 style={[
                   styles.label,
                   {
-                    color: tintColor(focused),
-                    marginTop: isSmallIcon ? hp(4) : 0,
+                    color: tintColor,
+                    marginTop: route.name === 'index' || route.name === 'mypage' ? hp(4) : 0,
                   },
                 ]}
               >
                 {label}
               </Text>
             </View>
-          ),
-        };
-      }}
+          );
+        },
+      })}
     >
       <Tabs.Screen name="index" />
       <Tabs.Screen name="alert" />
