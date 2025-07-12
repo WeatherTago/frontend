@@ -55,7 +55,11 @@ const AlarmSettingButton: React.FC<AlarmSettingButtonProps> = ({
     </Text>
     <View style={styles.alarmSettingChipArrow}>
       <Image
-        source={require('@/assets/images/right-arrow.png')}
+        source={
+          isSelected
+            ? require('@/assets/images/right-arrow-mint.png')
+            : require('@/assets/images/right-arrow.png')
+        }
         style={styles.alarmSettingChipArrowImage}
         resizeMode="contain"
       />
@@ -279,6 +283,7 @@ export default function AlarmScreen() {
   const timeOptions = useMemo(() => {
     const times: string[] = [];
     for (let h = 0; h < 24; h++) {
+      if (1 <= h && h <= 4) continue;
       const hour = h < 10 ? `0${h}` : `${h}`;
       times.push(`${hour}:00`);
     }
