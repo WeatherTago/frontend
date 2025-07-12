@@ -91,7 +91,6 @@ export default function TabsLayout() {
       <Tabs.Screen name="congestion" />
       <Tabs.Screen name="information" />
       <Tabs.Screen name="mypage" />
-      <Tabs.Screen name="favorite-modal" options={{ href: null }} />
     </Tabs>
   );
 }
@@ -108,8 +107,6 @@ function getLabel(name: string) {
       return '편의시설';
     case 'mypage':
       return 'MY';
-    case 'favorite-modal':
-      return '즐겨찾는 역';
     default:
       return '';
   }
