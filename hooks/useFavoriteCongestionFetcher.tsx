@@ -22,8 +22,9 @@ export const useFavoriteCongestionFetcher = () => {
           name: r.name,
           line: r.line,
           stationCode: r.stationCode,
+          direction: r.direction,
           weather: r.weather,
-          congestion: r.congestion,
+          congestionByDirection: r.congestionByDirection,
           createdAt: r.createdAt,
         });
       }
