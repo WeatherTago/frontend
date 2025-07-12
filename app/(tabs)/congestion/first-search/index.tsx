@@ -7,6 +7,7 @@ import Fuse from 'fuse.js';
 import { useEffect, useMemo, useRef, useState } from 'react';
 import {
   Dimensions,
+  FlatList,
   Keyboard,
   ScrollView,
   StyleSheet,
@@ -127,21 +128,32 @@ export default function FirstSearchScreen() {
           </TouchableOpacity>
         </View>
 
-        {showSuggestions && filteredStations.length > 0 && (
-          <View style={styles.suggestionList}>
-            <ScrollView keyboardShouldPersistTaps="handled">
-              {filteredStations.map((item) => (
-                <TouchableOpacity
-                  key={item.stationName}
-                  onPress={() => handleStationSelect(item.stationName)}
-                  style={styles.suggestionItem}
-                >
-                  <Text>{item.stationName}</Text>
-                </TouchableOpacity>
-              ))}
-            </ScrollView>
-          </View>
-        )}
+       {showSuggestions && filteredStations.length > 0 && (
+        <FlatList
+          data={filteredStations}
+          keyExtractor={(item) => item.stationName}
+          renderItem={({ item }) => (
+            <TouchableOpacity
+              onPress={() => handleStationSelect(item.stationName)}
+              style={styles.suggestionItem}
+            >
+              <Text style={[styles.suggestionItemText, { color: theme.colors.gray[900] }]}>
+                {item.stationName}
+              </Text>
+            </TouchableOpacity>
+          )}
+          ItemSeparatorComponent={() => (
+            <View style={{ height: 1, backgroundColor: theme.colors.gray[100] }} />
+          )}
+          style={{
+            backgroundColor: '#FFF',
+            borderBottomWidth: px(1),
+            borderBottomColor: '#F5F5F5',
+            maxHeight: listHeight,
+          }}
+          keyboardShouldPersistTaps="handled"
+        />
+      )}
 
         <ScrollView contentContainerStyle={{ paddingVertical: 16 }}>
           {filteredLines.length > 0 && (
@@ -274,4 +286,10 @@ const styles = StyleSheet.create({
     fontWeight: 'bold',
     fontSize: 16,
   },
+  suggestionItemText:{
+    fontSize:px(22),
+    fontFamily:'Pretendard-Regular',
+    fontWeight:400,
+    lineHeight:px(34)
+  }
 });

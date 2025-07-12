@@ -11,10 +11,6 @@ import { useSafeAreaInsets } from 'react-native-safe-area-context';
 export default function InformationScreen() {
   const [searchText, setSearchText] = useState('');
   const [selectedLine, setSelectedLine] = useState('1'); //  1호선 기본 선택
-   const handleSearch = (text: string) => {
-    console.log('검색 실행:', text);
-    // 검색 로직 처리
-  };
   const insets = useSafeAreaInsets();
   const router = useRouter();
   const theme=useTheme();

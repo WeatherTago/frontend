@@ -1,13 +1,14 @@
 import { fetchStationByIdAndTime } from '@/apis/station';
 import { useStationContext } from '@/context/StationContext';
 import { StationResult } from '@/types/station';
-import { useLocalSearchParams } from 'expo-router';
+import { useLocalSearchParams, useRouter } from 'expo-router';
 import { useEffect, useState } from 'react';
-import { ActivityIndicator, StyleSheet, Text, View } from 'react-native';
+import { ActivityIndicator, StyleSheet, Text, TouchableOpacity, View } from 'react-native';
 import { useSafeAreaInsets } from 'react-native-safe-area-context';
 
 export default function FirstResultScreen() {
   const insets = useSafeAreaInsets();
+  const router=useRouter();
   const { station, line, date, time } = useLocalSearchParams<{
     station: string;
     line: string;
@@ -15,7 +16,6 @@ export default function FirstResultScreen() {
     time: string;
   }>();
   const { getStationIdByNameAndLine } = useStationContext();
-
   const [result, setResult] = useState<StationResult | null>(null);
   const [loading, setLoading] = useState(true);
 
@@ -86,7 +86,7 @@ export default function FirstResultScreen() {
     return (
       <View style={[styles.container, { paddingTop: insets.top }]}>
         <Text>❌ 결과를 불러오지 못했습니다.</Text>
-        <Text>{station} / {line}호선</Text>
+        <Text>{station} / {line}</Text>
       </View>
     );
   }
@@ -97,9 +97,9 @@ export default function FirstResultScreen() {
 
   return (
   <View style={[styles.container, { paddingTop: insets.top }]}>
-    <Text style={styles.title}>🚇 혼잡도 예측 결과</Text>
-    <Text>📍 역: {result.name} ({result.line})</Text>
-    <Text>🕒 시간: {date} {time}</Text>
+    <Text style={styles.title}> 혼잡도 예측 결과</Text>
+    <Text> 역: {result.name} ({result.line})</Text>
+    <Text> 시간: {date} {time}</Text>
 
     {directionKeys.length > 0 ? (
       directionKeys.map((dirKey) => {
@@ -124,7 +124,7 @@ export default function FirstResultScreen() {
     )}
 
     <View style={styles.weatherBlock}>
-      <Text style={styles.weatherTitle}>🌤️ 날씨 정보</Text>
+      <Text style={styles.weatherTitle}>날씨 정보</Text>
       {result.weather ? (
         <>
           <Text>🌡️ 기온: {result.weather.tmp ?? '--'}℃</Text>
@@ -138,6 +138,44 @@ export default function FirstResultScreen() {
         <Text>날씨 데이터가 없습니다.</Text>
       )}
     </View>
+    <View style={styles.buttonRow}>
+  <TouchableOpacity
+    style={styles.setButton}
+    onPress={() =>
+      router.push({
+        pathname: '../congestion/second-search',
+        params: {
+          from: 'departure',
+          station: result.name,
+          line: result.line,
+          date,
+          time,
+        },
+      })
+    }
+  >
+    <Text style={styles.setButtonText}>출발역 설정</Text>
+  </TouchableOpacity>
+
+  <TouchableOpacity
+    style={styles.setButton}
+    onPress={() =>
+      router.push({
+        pathname: '../congestion/second-search',
+        params: {
+          from: 'arrival',
+          station: result.name,
+          line: result.line,
+          date,
+          time,
+        },
+      })
+    }
+  >
+    <Text style={styles.setButtonText}>도착역 설정</Text>
+  </TouchableOpacity>
+</View>
+
   </View>
 );
 }
@@ -175,4 +213,23 @@ const styles = StyleSheet.create({
     fontWeight: '600',
     marginBottom: 6,
   },
+  buttonRow: {
+  flexDirection: 'row',
+  justifyContent: 'space-between',
+  marginTop: 24,
+  gap: 12,
+},
+setButton: {
+  flex: 1,
+  backgroundColor: '#F2F2F2',
+  paddingVertical: 12,
+  borderRadius: 8,
+  alignItems: 'center',
+},
+setButtonText: {
+  fontSize: 16,
+  fontWeight: '600',
+  color: '#333',
+},
+
 });
