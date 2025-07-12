@@ -1,5 +1,6 @@
 import { AuthProvider } from '@/context/AuthContext';
 import { FavoriteProvider } from '@/context/FavoriteContext';
+import { NoticeProvider } from '@/context/NoticeContext';
 import { StationProvider } from '@/context/StationContext';
 import { theme } from '@/styles/theme';
 import { ThemeProvider } from '@emotion/react';
@@ -122,9 +123,11 @@ export default function RootLayout() {
           <AuthProvider>
             <StationProvider>
               <FavoriteProvider>
-                <ThemeProvider theme={theme}>
-                  <Stack screenOptions={{ headerShown: false }} />
-                </ThemeProvider>
+                <NoticeProvider> 
+                  <ThemeProvider theme={theme}>
+                    <Stack screenOptions={{ headerShown: false }} />
+                  </ThemeProvider>
+                </NoticeProvider>
               </FavoriteProvider>
             </StationProvider>
           </AuthProvider>
