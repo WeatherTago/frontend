@@ -3,6 +3,7 @@ import { FavoriteProvider } from '@/context/FavoriteContext';
 import { StationProvider } from '@/context/StationContext';
 import { theme } from '@/styles/theme';
 import { ThemeProvider } from '@emotion/react';
+import { BottomSheetModalProvider } from '@gorhom/bottom-sheet';
 import { Asset } from 'expo-asset';
 import Constants from 'expo-constants';
 import * as Font from 'expo-font';
@@ -123,7 +124,9 @@ export default function RootLayout() {
             <StationProvider>
               <FavoriteProvider>
                 <ThemeProvider theme={theme}>
-                  <Stack screenOptions={{ headerShown: false }} />
+                  <BottomSheetModalProvider>
+                    <Stack screenOptions={{ headerShown: false }} />
+                  </BottomSheetModalProvider>
                 </ThemeProvider>
               </FavoriteProvider>
             </StationProvider>

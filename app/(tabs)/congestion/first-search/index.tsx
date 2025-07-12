@@ -145,7 +145,7 @@ export default function FirstSearchScreen() {
   return `${dateLabel} ${time.hours}:00`;
 };
   useEffect(() => {
-    setDate(today); 
+    setDate(tomorrow); 
     setTime({ hours: 9, minutes: 0 }); 
   }, []);
 
@@ -284,7 +284,7 @@ const styles = StyleSheet.create({
     color: 'white', fontWeight: 'bold', fontSize: 16,
   },
   suggestionItem: {
-    padding: 8, borderBottomWidth: 1, borderColor: '#ccc', maxHeight: listHeight,
+    padding: px(24), borderBottomWidth: 1, borderColor: '#ccc', maxHeight: listHeight,gap:px(34), alignSelf:'stretch'
   },
   suggestionItemText: {
     fontSize: px(22), fontFamily: 'Pretendard-Regular', fontWeight: '400', lineHeight: px(34)
