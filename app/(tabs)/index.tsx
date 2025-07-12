@@ -1,32 +1,31 @@
-import { fetchNotices, Notice } from '@/apis/notice';
+import { useTheme } from '@emotion/react';
+import dayjs from 'dayjs';
+import { useRouter } from 'expo-router';
+import { useEffect, useState } from 'react';
+import { Dimensions, FlatList, ScrollView, StyleSheet, Text, View } from 'react-native';
+
 import DirectAccessCard from '@/components/DirectAccessCard';
 import FavoriteStationCard from '@/components/FavoriteStationCard';
 import WeatherHeader from '@/components/Header/WeatherHeader';
 import NoticeBanner from '@/components/NoticeBanner';
+import { useNoticeContext } from '@/context/NoticeContext';
 import { useFavoriteCongestionFetcher } from '@/hooks/useFavoriteCongestionFetcher';
 import { StationResult } from '@/types/station';
-import { getReadNoticeIds } from '@/utils/noticeReadStorage';
 import { hp, px, wp } from '@/utils/scale';
-import { useTheme } from '@emotion/react';
-import { useFocusEffect } from '@react-navigation/native';
-import dayjs from 'dayjs';
-import { useRouter } from 'expo-router';
-import { useCallback, useEffect, useState } from 'react';
-import { Dimensions, FlatList, ScrollView, StyleSheet, Text, View } from 'react-native';
 
 const { width: SCREEN_WIDTH } = Dimensions.get('window');
 const CARD_WIDTH = px(400);
 const SIDE_SPACING = (SCREEN_WIDTH - CARD_WIDTH) / 2;
-const router=useRouter();
 
 export default function HomeScreen() {
   const theme = useTheme();
+  const router = useRouter();
+  const { fetch } = useFavoriteCongestionFetcher();
   const [favoriteStations, setFavoriteStations] = useState<StationResult[]>([]);
   const [isLoading, setIsLoading] = useState(false);
-  const { fetch } = useFavoriteCongestionFetcher();
-  const [latestNotice, setLatestNotice] = useState<Notice | null>(null);
-  const [readNoticeIds, setReadNoticeIds] = useState<number[]>([]);
-  const [notices, setNotices] = useState<Notice[]>([]);
+
+  const { notices, isNewUnreadExists } = useNoticeContext();
+  const latestNotice = notices.length > 0 ? notices[0] : null;
 
   useEffect(() => {
     const loadData = async () => {
@@ -38,34 +37,6 @@ export default function HomeScreen() {
     loadData();
   }, []);
 
-  useEffect(() => {
-  const getNotices = async () => {
-    const data = await fetchNotices(); // 전체 공지 받아오기
-    if (data.length > 0) {
-      const sorted = data.sort((a, b) => new Date(b.createdAt).getTime() - new Date(a.createdAt).getTime());
-      setNotices(sorted); // ✅ 공지 목록 전체 저장
-      setLatestNotice(sorted[0]); // ✅ 최신 공지 1개는 별도로 저장
-    }
-  };
-  getNotices();
-}, []);
-
-  useFocusEffect(
-  useCallback(() => {
-    const fetchRead = async () => {
-      const ids = await getReadNoticeIds();
-      setReadNoticeIds(ids);
-    };
-    fetchRead();
-  }, [])
-);
-
- const isNewUnreadExists = notices.some((n) => {
-  const createdDate = dayjs(n.createdAt);
-  const isNew = dayjs().diff(createdDate, 'day') <= 2;
-  const isRead = readNoticeIds.includes(n.noticeId);
-  return isNew && !isRead;
-});
 
   return (
     <View style={{ flex: 1 }}>

@@ -1,5 +1,6 @@
 import { AuthProvider } from '@/context/AuthContext';
 import { FavoriteProvider } from '@/context/FavoriteContext';
+import { NoticeProvider } from '@/context/NoticeContext';
 import { StationProvider } from '@/context/StationContext';
 import { theme } from '@/styles/theme';
 import { ThemeProvider } from '@emotion/react';
@@ -116,19 +117,21 @@ function AnimatedSplashScreen({ children, image }: { children: React.ReactNode; 
 export default function RootLayout() {
   return (
 
-      <SafeAreaProvider>
-      <AnimatedAppLoader image={require('../assets/images/react-logo.png')}>
-        <AuthProvider>
-          <StationProvider>
-            <FavoriteProvider>
-              <ThemeProvider theme={theme}>
-                <Stack screenOptions={{ headerShown: false }} />
-              </ThemeProvider>
-            </FavoriteProvider>
-          </StationProvider>
-        </AuthProvider>
-      </AnimatedAppLoader>
-    </SafeAreaProvider>
+<SafeAreaProvider>
+  <AnimatedAppLoader image={require('../assets/images/react-logo.png')}>
+    <AuthProvider>
+      <StationProvider>
+        <FavoriteProvider>
+          <NoticeProvider>
+            <ThemeProvider theme={theme}>
+              <Stack screenOptions={{ headerShown: false }} />
+            </ThemeProvider>
+          </NoticeProvider>
+        </FavoriteProvider>
+      </StationProvider>
+    </AuthProvider>
+  </AnimatedAppLoader>
+</SafeAreaProvider>
 
   );
 }
