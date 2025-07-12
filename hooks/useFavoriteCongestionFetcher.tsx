@@ -1,12 +1,16 @@
 import { myFavorite } from '@/apis/favorite';
 import { fetchStationByIdAndTime } from '@/apis/station';
 import { StationResult } from '@/types/station';
+import dayjs from 'dayjs';
 
 export const useFavoriteCongestionFetcher = () => {
   const fetch = async (): Promise<StationResult[]> => {
-    const res = await myFavorite();
-    const stations = res?.result?.stations || [];
-    const currentTime = new Date().toISOString();
+    const stations = (await myFavorite())?.result?.stations || [];
+
+    const now = dayjs();
+    const roundedTime =
+      now.second() === 0 && now.minute() === 0 ? now : now.add(1, 'hour').startOf('hour');
+    const currentTime = roundedTime.format('YYYY-MM-DDTHH:mm:ss');
 
     const results: StationResult[] = [];
 
@@ -22,8 +26,9 @@ export const useFavoriteCongestionFetcher = () => {
           name: r.name,
           line: r.line,
           stationCode: r.stationCode,
+          direction: r.direction,
           weather: r.weather,
-          congestion: r.congestion,
+          congestionByDirection: r.congestionByDirection,
           createdAt: r.createdAt,
         });
       }
