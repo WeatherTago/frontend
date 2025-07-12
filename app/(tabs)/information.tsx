@@ -10,7 +10,11 @@ import { useSafeAreaInsets } from 'react-native-safe-area-context';
 
 export default function InformationScreen() {
   const [searchText, setSearchText] = useState('');
-  const [selectedLine, setSelectedLine] = useState('1'); //  1호선 기본 선택
+  const [selectedLine, setSelectedLine] = useState('1'); //  1호선 기본 선택s c
+   const handleSearch = (text: string) => {
+    console.log('검색 실행:', text);
+    // 검색 로직 처리
+  };
   const insets = useSafeAreaInsets();
   const router = useRouter();
   const theme=useTheme();
@@ -38,7 +42,7 @@ const TOP_BAR_HEIGHT = hp(96) + px(74) + insets.top;
 const TAB_BAR_HEIGHT = hp(82) + insets.bottom;
 
   return (
-    <View style={{ paddingTop: insets.top }}>
+    <View style={{ paddingTop: insets.top ,backgroundColor:theme.colors.gray[0]}}>
       <SearchBar
         placeholder="편의시설이 궁금한 역을 검색해보세요"
         value={searchText}

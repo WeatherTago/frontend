@@ -1,6 +1,7 @@
 import mapImage from '@/assets/images/map.png';
 import subwayImage from '@/assets/images/subway/subway-all.png';
 import SearchBar from '@/components/SearchBar';
+import { useTheme } from '@emotion/react';
 import { useRouter } from 'expo-router';
 import { Dimensions, Image, ScrollView, StyleSheet, View } from 'react-native';
 import { useSafeAreaInsets } from 'react-native-safe-area-context';
@@ -11,9 +12,10 @@ export default function CongestionMainScreen() {
   const safeHeight = SCREEN_HEIGHT - insets.top - insets.bottom;
   const imageHeight = safeHeight;
   const imageWidth = (4635 / 3685) * imageHeight;
+  const theme=useTheme();
 
   return (
-    <View style={{ flex: 1, paddingTop: insets.top }}>
+    <View style={{ flex: 1, paddingTop: insets.top, backgroundColor:theme.colors.gray[0]}}>
       <SearchBar
         placeholder="혼잡도가 궁금한 역을 검색해보세요"
         value=""
