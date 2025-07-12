@@ -10,8 +10,9 @@ import { Image } from 'expo-image';
 import { Stack } from 'expo-router';
 import * as SplashScreen from 'expo-splash-screen';
 import { Server } from 'miragejs';
-import { useEffect, useRef, useState } from 'react';
+import React, { useEffect, useRef, useState } from 'react';
 import { Animated, StyleSheet, View } from 'react-native';
+import { GestureHandlerRootView } from 'react-native-gesture-handler';
 import { ko, registerTranslation } from 'react-native-paper-dates';
 import { SafeAreaProvider } from 'react-native-safe-area-context';
 
@@ -115,20 +116,20 @@ function AnimatedSplashScreen({ children, image }: { children: React.ReactNode; 
 
 export default function RootLayout() {
   return (
-
-      <SafeAreaProvider>
-      <AnimatedAppLoader image={require('../assets/images/react-logo.png')}>
-        <AuthProvider>
-          <StationProvider>
-            <FavoriteProvider>
-              <ThemeProvider theme={theme}>
-                <Stack screenOptions={{ headerShown: false }} />
-              </ThemeProvider>
-            </FavoriteProvider>
-          </StationProvider>
-        </AuthProvider>
-      </AnimatedAppLoader>
+    <SafeAreaProvider>
+      <GestureHandlerRootView style={{ flex: 1 }}>
+        <AnimatedAppLoader image={require('../assets/images/react-logo.png')}>
+          <AuthProvider>
+            <StationProvider>
+              <FavoriteProvider>
+                <ThemeProvider theme={theme}>
+                  <Stack screenOptions={{ headerShown: false }} />
+                </ThemeProvider>
+              </FavoriteProvider>
+            </StationProvider>
+          </AuthProvider>
+        </AnimatedAppLoader>
+      </GestureHandlerRootView>
     </SafeAreaProvider>
-
   );
 }

@@ -24,22 +24,17 @@ export default function FavoriteStationCard({ station }: { station: StationResul
           <View style={styles.weatherBox}>
             <View style={styles.weatherIconContainer} />
             <Text style={styles.weatherText}>기온</Text>
-            <Text style={styles.weatherValueText}>36.5</Text>
+            <Text style={styles.weatherValueText}>{station.weather?.tmp ?? '-'}</Text>
           </View>
           <View style={styles.weatherBox}>
             <View style={styles.weatherIconContainer} />
             <Text style={styles.weatherText}>강수량</Text>
-            <Text style={styles.weatherValueText}>0%</Text>
+            <Text style={styles.weatherValueText}>{station.weather?.pcp ?? '-'}</Text>
           </View>
           <View style={styles.weatherBox}>
             <View style={styles.weatherIconContainer} />
             <Text style={styles.weatherText}>습도</Text>
-            <Text style={styles.weatherValueText}>65%</Text>
-          </View>
-          <View style={styles.weatherBox}>
-            <View style={styles.weatherIconContainer} />
-            <Text style={styles.weatherText}>미세먼지</Text>
-            <Text style={styles.weatherValueText}>12㎍/㎥</Text>
+            <Text style={styles.weatherValueText}>{station.weather?.reh ?? '-'}</Text>
           </View>
         </View>
       </View>

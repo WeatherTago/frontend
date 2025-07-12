@@ -3,13 +3,22 @@ import { CommonResponse, StationInfo } from './common';
 export type StationInfoResponse = CommonResponse<StationInfo[]>;
 
 export interface CongestionInfo {
-  level: string | null;
-  rate: number | null;
+  congestionScore: number;
+  congestionLevel: string;
+}
+
+export interface DirectionCongestionInfo {
+  stationId: number;
+  congestion: CongestionInfo;
 }
 
 export interface WeatherInfo {
-  temperature: string;
-  condition: string;
+  tmp: number;
+  reh: number;
+  pcp: number;
+  wsd: number;
+  sno: number;
+  vec: number;
 }
 
 export interface StationResult {
@@ -17,8 +26,12 @@ export interface StationResult {
   name: string;
   line: string;
   stationCode: string;
-  weather?: WeatherInfo;
-  congestion: CongestionInfo;
+  direction: string;
+  weather: WeatherInfo | null;
+  congestionByDirection: {
+    상행?: DirectionCongestionInfo;
+    하행?: DirectionCongestionInfo;
+  };
   createdAt: string;
 }
 
