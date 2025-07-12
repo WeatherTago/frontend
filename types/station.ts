@@ -3,41 +3,35 @@ import { CommonResponse, StationInfo } from './common';
 export type StationInfoResponse = CommonResponse<StationInfo[]>;
 
 export interface CongestionInfo {
-  level: string | null;
-  rate: number | null;
+  congestionScore: number;
+  congestionLevel: string;
+}
+
+export interface DirectionCongestionInfo {
+  stationId: number;
+  congestion: CongestionInfo;
 }
 
 export interface WeatherInfo {
-  temperature: string;
-  condition: string;
+  tmp: number;
+  reh: number;
+  pcp: number;
+  wsd: number;
+  sno: number;
+  vec: number;
 }
-
 
 export interface StationResult {
+  stationId: number;
   name: string;
   line: string;
-  stationId: number;
   stationCode: string;
-  createdAt: string;
-  direction: string | null;
-  weather?: {
-    tmp?: number;
-    pcp?: number;
-    reh?: number;
-    sno?: number;
-    vec?: number;
-    wsd?: number;
-  };
+  direction: string;
+  weather: WeatherInfo | null;
   congestionByDirection?: {
-  [direction: string]: {
-    stationId: number;
-    congestion: {
-      level: string;
-      rate: number;
-    }; 
+    [direction: string]: DirectionCongestionInfo;
   };
-};
+  createdAt: string;
 }
-
 
 export type SearchStationResponse = CommonResponse<StationResult>;

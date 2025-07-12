@@ -72,21 +72,42 @@ export default function FirstSearchScreen() {
   };
 
   const handleSubmit = () => {
-    if (!stationName || !selectedLine || !date || !time) {
-      alert('모든 항목을 입력해주세요.');
-      return;
-    }
+  if (!stationName || !selectedLine || !date || !time) {
+    alert('모든 항목을 입력해주세요.');
+    return;
+  }
 
-    router.push({
-      pathname: '../congestion/first-result',
-      params: {
-        station: stationName,
-        line: selectedLine,
-        date: date.toISOString(),
-        time: `${time.hours}:${time.minutes}`,
-      },
-    });
+  // 📌 날짜 + 시간 조합
+  const combinedDate = new Date(date);
+  combinedDate.setHours(time.hours);
+  combinedDate.setMinutes(time.minutes || 0);
+  combinedDate.setSeconds(0);
+  combinedDate.setMilliseconds(0);
+
+  // ✅ "2025-07-13T07:00:00" 형태로 변환
+  const formatLocalISOString = (date: Date) => {
+    const y = date.getFullYear();
+    const m = String(date.getMonth() + 1).padStart(2, '0');
+    const d = String(date.getDate()).padStart(2, '0');
+    const h = String(date.getHours()).padStart(2, '0');
+    const min = String(date.getMinutes()).padStart(2, '0');
+    return `${y}-${m}-${d}T${h}:${min}:00`; // 초까지 명시
   };
+
+  const formattedTime = formatLocalISOString(combinedDate);
+
+  router.push({
+    pathname: '../congestion/first-result',
+    params: {
+      station: stationName,
+      line: selectedLine,
+      date: date.toISOString(),  // 선택 날짜 그대로
+      time: formattedTime,       // ✅ 정확한 ISO local string
+    },
+  });
+};
+
+
 
   const today = new Date();
   const tomorrow = new Date(today);
