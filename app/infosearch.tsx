@@ -60,7 +60,7 @@ const listHeight = screenHeight * 0.5; // 화면의 절반 높이
   }, []);
 
  return (
-    <View style={{ paddingTop: insets.top, backgroundColor: '#FFF' }}>
+    <View style={{ flex:1, paddingTop: insets.top, backgroundColor: '#FFF' }}>
       {/* 상단 검색바 */}
       <View style={[styles.container, {backgroundColor:theme.colors.gray[0]}]}>
         <TouchableOpacity onPress={() => router.back()}>
@@ -116,7 +116,7 @@ const listHeight = screenHeight * 0.5; // 화면의 절반 높이
         data={filteredStations}
         keyExtractor={(item) => item}
         renderItem={({ item }) => (
-          <TouchableOpacity onPress={() => handleSelect(item)} style={{ padding: 12 }}>
+          <TouchableOpacity onPress={() => handleSelect(item)} style={{ padding: px(24) }}>
             <Text style={[styles.suggestionItemText, { color: theme.colors.gray[900] }]}>{item}</Text>
           </TouchableOpacity>
         )}
@@ -125,8 +125,6 @@ const listHeight = screenHeight * 0.5; // 화면의 절반 높이
         )}
         style={{
           backgroundColor: '#FFF',
-          borderColor: '#DDD',
-          borderWidth: 1,
           maxHeight: listHeight,
         }}
         keyboardShouldPersistTaps="handled"
@@ -157,7 +155,6 @@ const styles = StyleSheet.create({
     fontSize: px(24),
     fontFamily:'Pretendard-Medium',
     fontWeight:500,
-    lineHeight: px(34),
   },
   suggestionItemText:{
     fontSize:px(22),

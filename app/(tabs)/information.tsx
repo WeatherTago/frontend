@@ -42,7 +42,7 @@ const TOP_BAR_HEIGHT = hp(96) + px(74) + insets.top;
 const TAB_BAR_HEIGHT = hp(82) + insets.bottom;
 
   return (
-    <View style={{ paddingTop: insets.top ,backgroundColor:theme.colors.gray[0]}}>
+    <View style={{ flex:1, paddingTop: insets.top ,backgroundColor:theme.colors.gray[0]}}>
       <SearchBar
         placeholder="편의시설이 궁금한 역을 검색해보세요"
         value={searchText}
@@ -115,7 +115,7 @@ const styles = StyleSheet.create({
   },
  mapWrapper: {
   width: '100%',
-  backgroundColor: 'white',
+  backgroundColor: '#FFF',
 },
 
 mapZoomContainer: {

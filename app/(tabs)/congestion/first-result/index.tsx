@@ -1,6 +1,8 @@
 import { fetchStationByIdAndTime, fetchStationDetailInfo } from '@/apis/station';
 import subwayImage from '@/assets/images/subway/subway-all.png';
 import Header from '@/components/Header/CommonHeader';
+import InfoBox from '@/components/InfoBox';
+import SmallInfoBox from '@/components/smallInfoBox';
 import StationHeader from '@/components/StationHeader';
 import { useStationContext } from '@/context/StationContext';
 import { StationDetail, StationResult } from '@/types/station';
@@ -9,7 +11,7 @@ import { useTheme } from '@emotion/react';
 import { BottomSheetModal, BottomSheetView } from '@gorhom/bottom-sheet';
 import { useLocalSearchParams, useRouter } from 'expo-router';
 import { useEffect, useRef, useState } from 'react';
-import { ActivityIndicator, Dimensions, Image, ScrollView, StyleSheet, Text, View } from 'react-native';
+import { ActivityIndicator, Dimensions, Image, ScrollView, StyleSheet, Text, TouchableOpacity, View } from 'react-native';
 import { useSafeAreaInsets } from 'react-native-safe-area-context';
 
 export default function FirstResultScreen() {
@@ -27,10 +29,11 @@ export default function FirstResultScreen() {
   const [loading, setLoading] = useState(true);
 
   const bottomSheetRef = useRef<BottomSheetModal>(null);
-  const snapPoints = ['25%', '80%'];
+  const snapPoints = ['20%', '90%'];
 
   const [address, setAddress] = useState('');
   const [phoneNumber, setPhoneNumber] = useState('');
+  const [selectedButton, setSelectedButton] = useState<'button1' | 'button2'>('button1');
 
   useEffect(() => {
   const fetchData = async () => {
@@ -101,7 +104,63 @@ export default function FirstResultScreen() {
           lines={[result.line]}
           address={address}
           phoneNumber={phoneNumber}
-        />   
+        /> 
+
+        <View style={styles.clickBox}>
+          <TouchableOpacity
+            style={[
+              styles.button,
+              selectedButton === 'button1' ? styles.selected : styles.unselected,
+            ]}
+            onPress={() => setSelectedButton('button1')}
+          >
+            <Text
+              style={[
+                styles.buttonText,
+                {color : selectedButton === 'button1' ? theme.colors.gray[800] : theme.colors.gray[400]},
+              ]}
+            >
+              상행 노선
+            </Text>
+          </TouchableOpacity>
+
+          <TouchableOpacity
+            style={[
+              styles.button,
+              selectedButton === 'button2' ? styles.selected : styles.unselected,
+            ]}
+            onPress={() => setSelectedButton('button2')}
+          >
+            <Text
+              style={[
+                styles.buttonText,
+                {color:selectedButton === 'button2'? theme.colors.gray[800] : theme.colors.gray[400],},
+              ]}
+            >
+              하행 노선
+            </Text>
+          </TouchableOpacity>
+
+        </View> 
+          {/* InfoBox 사용예시 */}
+        <InfoBox
+           specialColor='#02AAF8'
+           backgroundColor='#D9F2FE'
+           topText='이동할 때 다른 승객들과 부딪힐 수 있어요'
+           number='127'
+           rate='주의 필요'
+           time='오후 12:00'
+         />  
+          <SmallInfoBox
+            time='14시'
+            image={require('@/assets/images/Multiply.png')}
+            text1="흐림"
+            text2="50%"
+            textColor="#8a2323ff"
+          />
+
+        {/* 응답 활용예시 */}
+
         <Text>역: {result.name} ({result.line})</Text>
         <Text>시간: {date} {time}</Text>
 
@@ -135,6 +194,7 @@ export default function FirstResultScreen() {
               <Text>❄️ 적설: {result.weather.sno ?? '--'}mm</Text>
               <Text>🌬️ 풍향: {result.weather.vec ?? '--'}°</Text>
               <Text>💨 풍속: {result.weather.wsd ?? '--'}m/s</Text>
+              <Text>상태: {result.weather.status ?? '--'}</Text>
             </>
           ) : (
             <Text>날씨 데이터가 없습니다.</Text>
@@ -230,90 +290,64 @@ const styles = StyleSheet.create({
   bottomSheetContent: {
     
   },
+  directionBlock: { marginBottom: 16, paddingVertical: 8},
+
+  directionTitle: { fontSize: 18, fontWeight: '600', marginBottom: 4 },
+
+  weatherBlock: { marginTop: 24, paddingTop: 8, borderTopWidth: 1, borderColor: '#ddd' },
+
+  weatherTitle: { fontSize: 18, fontWeight: '600', marginBottom: 6 },
   
-  directionBlock: {
-    marginBottom: 16,
-    paddingVertical: 8,
-    borderBottomWidth: 1,
-    borderColor: '#eee',
-  },
-  directionTitle: {
-    fontSize: 18,
-    fontWeight: '600',
-    marginBottom: 4,
-  },
-  weatherBlock: {
-    marginTop: 24,
-    paddingTop: 8,
-    borderTopWidth: 1,
-    borderColor: '#ddd',
-  },
-  weatherTitle: {
-    fontSize: 18,
-    fontWeight: '600',
-    marginBottom: 6,
-  },
-  buttonRow: {
-    flexDirection: 'row',
-    justifyContent: 'space-between',
-    marginTop: 24,
-    gap: 12,
-  },
-  setButton: {
-    flex: 1,
-    backgroundColor: '#F2F2F2',
-    paddingVertical: 12,
-    borderRadius: 8,
-    alignItems: 'center',
-  },
-  setButtonText: {
-    fontSize: 16,
-    fontWeight: '600',
-    color: '#333',
-  },
-  mapWrapper: {
-    flex: 1,
-  },
-  mapZoomContainer: {
-    flexGrow: 1,
-    alignItems: 'center',
+  buttonRow: { flexDirection: 'row', justifyContent: 'space-between', marginTop: 24, gap: 12 },
+
+  setButton: { flex: 1, backgroundColor: '#F2F2F2', paddingVertical: 12, borderRadius: 8, alignItems: 'center' },
+
+  setButtonText: { fontSize: 16, fontWeight: '600', color: '#333' },
+
+  mapWrapper: { flex: 1 },
+
+  mapZoomContainer: { flexGrow: 1, alignItems: 'center', justifyContent: 'center' },
+
+  stationBox: { height: hp(98), paddingHorizontal: wp(24), flexDirection: 'column', justifyContent: 'center', alignItems: 'center', alignSelf: 'stretch' },
+
+  centerStationBox: { width: wp(262), height: hp(60), paddingHorizontal: wp(24), justifyContent: 'center', alignItems: 'center', gap: px(10), borderRadius: 999, borderWidth: px(8), shadowColor: 'rgba(0, 0, 0, 0.05)', shadowOffset: { width: 4, height: 4 }, shadowOpacity: 1, shadowRadius: 4, elevation: 4 },
+  
+  centerStationWrapper: { flexDirection: 'row', alignItems: 'center', justifyContent: 'center' },
+
+  TailBox: { position: 'absolute', top: '50%', transform: [{ translateY: -hp(20) }], width: '100%', height: hp(40), borderRadius: px(999), zIndex: 0 },
+  
+  clickBox:{
+  flexDirection: 'row',
+  paddingTop: hp(30),
+  paddingRight: wp(24),
+  paddingBottom: hp(24),
+  paddingLeft: wp(24),
+  alignItems: 'flex-start',
+  alignSelf: 'stretch',
+},
+  button: {
+    height: px(60),
+    paddingVertical: px(12),
+    paddingHorizontal: px(15),
     justifyContent: 'center',
+    alignItems: 'center',
+    gap: px(15),
+    flex: 1, 
+    borderRadius:px(9),
+    borderWidth: px(3),
   },
-  stationBox: {
-      height: hp(98),
-      paddingHorizontal: wp(24),
-      flexDirection: 'column',
-      justifyContent: 'center',
-      alignItems: 'center',
-      alignSelf: 'stretch',
-    },
-    centerStationBox: {
-      width: wp(262),
-      height: hp(60),
-      paddingHorizontal: wp(24),
-      justifyContent: 'center',
-      alignItems: 'center',
-      gap: px(10),
-      borderRadius: 999,
-      borderWidth: px(8),
-      shadowColor: 'rgba(0, 0, 0, 0.05)',
-      shadowOffset: { width: 4, height: 4 },
-      shadowOpacity: 1,
-      shadowRadius: 4,
-      elevation: 4,
-    },
-    centerStationWrapper: {
-      flexDirection: 'row',
-      alignItems: 'center',
-      justifyContent: 'center',
-    },
-    TailBox: {
-      position: 'absolute',
-      top: '50%',
-      transform: [{ translateY: -hp(20) }],
-      width: '100%',
-      height: hp(40),
-      borderRadius: px(999),
-      zIndex: 0,
-    },
+  selected: {
+    borderColor: '#E5E5E5',
+    backgroundColor: '#FFF',
+  },
+  unselected: {
+    borderColor: 'transparent',
+    backgroundColor: '#F5F5F5',
+  },
+  buttonText: {
+    fontSize: px(22),
+    fontWeight: '600',
+    fontFamily:'Pretendard-SemiBold',
+    lineHeight:px(30)
+  },
 });

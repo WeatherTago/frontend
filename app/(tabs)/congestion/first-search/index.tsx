@@ -186,16 +186,16 @@ export default function FirstSearchScreen() {
           data={filteredStations}
           keyExtractor={(item) => item.stationName}
           renderItem={({ item }) => (
-            <TouchableOpacity onPress={() => handleStationSelect(item.stationName)} style={styles.suggestionItem}>
+            <TouchableOpacity onPress={() => handleStationSelect(item.stationName)} style={[styles.suggestionItem, {borderColor:theme.colors.gray[100]}]}>
               <Text style={[styles.suggestionItemText, { color: theme.colors.gray[900] }]}>{item.stationName}</Text>
             </TouchableOpacity>
           )}
-          style={{ backgroundColor: '#FFF', borderBottomWidth: px(1), borderBottomColor: theme.colors.gray[100], maxHeight: listHeight }}
+          style={{ backgroundColor: theme.colors.gray[0], maxHeight: listHeight }}
           keyboardShouldPersistTaps="handled"
         />
       )}
 
-      <ScrollView contentContainerStyle={{ paddingVertical: 16 }}>
+      <ScrollView contentContainerStyle={{ paddingVertical: px(24) }}>
         {filteredLines.length > 0 && (
           <>
             <Text>호선 선택</Text>
@@ -215,7 +215,7 @@ export default function FirstSearchScreen() {
       <Modal visible={sheetOpen} transparent animationType="fade" onRequestClose={() => setSheetOpen(false)}>
         <View style={styles.modalOverlay}>
           <View style={styles.wheelModalContainer}>
-            <Text style={styles.modalTitle}>날짜/시간 설정</Text>
+            <Text style={[styles.modalTitle, {fontFamily:'Pretendard-SemiBold'}]}>날짜/시간 설정</Text>
           <View style={styles.modalBox}>
             <FlatList
               data={dateOptions}
@@ -225,13 +225,13 @@ export default function FirstSearchScreen() {
               snapToInterval={40}
               decelerationRate="fast"
               renderItem={({ item }) => {
-              const isSelected = date?.toDateString() === item.value.toDateString(); // ✅ 선언 필요
+              const isSelected = date?.toDateString() === item.value.toDateString(); //
               return (
                 <TouchableOpacity onPress={() => setDate(item.value)}>
                   <Text
                     style={[
                       styles.wheelItemText,
-                      { color: isSelected ? theme.colors.primary[700] : theme.colors.gray[900] }, // ✅ 글자 색상만 조건부
+                      { color: isSelected ? theme.colors.primary[700] : theme.colors.gray[900] },
                     ]}
                   >
                     {item.label}
@@ -297,13 +297,13 @@ const styles = StyleSheet.create({
    fontFamily: 'Pretendard-Medium', fontWeight: '500', lineHeight: px(34), fontSize: px(22)
   },
   searchButton: {
-    marginTop: 24, backgroundColor: '#00C4B8', borderRadius: 8, paddingVertical: 14, alignItems: 'center',
+    width:100, marginTop: 24, backgroundColor: '#00C4B8', borderRadius: 8, paddingVertical: 14, alignItems: 'center',
   },
   searchButtonText: {
     color: 'white', fontWeight: 'bold', fontSize: 16,
   },
   suggestionItem: {
-    padding: px(24), borderBottomWidth: 1, borderColor: '#ccc', maxHeight: listHeight,gap:px(34), alignSelf:'stretch'
+    padding: px(24), borderBottomWidth: 1, maxHeight: listHeight,gap:px(34), alignSelf:'stretch'
   },
   suggestionItemText: {
     fontSize: px(22), fontFamily: 'Pretendard-Regular', fontWeight: '400', lineHeight: px(34)
@@ -318,7 +318,7 @@ const styles = StyleSheet.create({
     flexDirection:'row'
   },
   modalTitle: {
-    fontSize: 18, fontWeight: 'bold',
+    fontSize: 18,
   },
   wheelList: {
     height: 120, marginVertical: 10,
@@ -342,14 +342,4 @@ arrowIcon: {
   marginLeft: px(4),
   marginTop: px(4)
 },
-wheelItem: {
-  paddingVertical: 10,
-  paddingHorizontal: 20,
-  marginVertical: 4,
-},
-wheelItemSelected: {
-  backgroundColor: '#00C4B8', // 선택된 배경색
-  borderRadius: 6,
-},
-
 });

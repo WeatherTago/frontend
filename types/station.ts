@@ -19,6 +19,7 @@ export interface WeatherInfo {
   wsd: number;
   sno: number;
   vec: number;
+  status:string;
 }
 
 export interface StationResult {
