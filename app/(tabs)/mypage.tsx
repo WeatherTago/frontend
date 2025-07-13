@@ -1,8 +1,11 @@
+import { readUser } from '@/apis/user';
 import Header from '@/components/Header/CommonHeader';
 import { useAuth } from '@/context/AuthContext';
 import { theme } from '@/styles/theme';
+import { UserInfo } from '@/types/user';
 import { hp, px, wp } from '@/utils/scale';
 import { router } from 'expo-router';
+import { useEffect, useState } from 'react';
 import {
   Image,
   ScrollView,
@@ -16,10 +19,21 @@ import { SafeAreaView } from 'react-native-safe-area-context';
 
 export default function MyPageScreen() {
   const { logout } = useAuth();
+  const [userInfo, setUserInfo] = useState<UserInfo | null>(null);
   const handleLogout = () => {
     logout();
     router.replace('/onboarding');
   };
+
+  useEffect(() => {
+    fetchUser();
+  }, []);
+
+  const fetchUser = async () => {
+    const res = await readUser();
+    setUserInfo(res.result);
+  };
+
   return (
     <SafeAreaView style={styles.container}>
       <Header title="마이페이지" />
@@ -32,11 +46,12 @@ export default function MyPageScreen() {
             <View style={styles.userInfoContainer}>
               <View style={styles.userNameContainer}>
                 <Text style={styles.userNameText}>
-                  김철수<Text style={styles.userNameSubText}>님</Text>
+                  {userInfo?.nickname}
+                  <Text style={styles.userNameSubText}>님</Text>
                 </Text>
               </View>
               <View style={styles.emailContainer}>
-                <Text style={styles.emailText}>chul@naver.com</Text>
+                <Text style={styles.emailText}>{userInfo?.email}</Text>
               </View>
             </View>
           </View>
