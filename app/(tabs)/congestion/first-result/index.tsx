@@ -1,9 +1,9 @@
-import { fetchStationByIdAndTime } from '@/apis/station';
+import { fetchStationByIdAndTime, fetchStationDetailInfo } from '@/apis/station';
 import subwayImage from '@/assets/images/subway/subway-all.png';
 import Header from '@/components/Header/CommonHeader';
 import StationHeader from '@/components/StationHeader';
 import { useStationContext } from '@/context/StationContext';
-import { StationResult } from '@/types/station';
+import { StationDetail, StationResult } from '@/types/station';
 import { hp, px, wp } from '@/utils/scale';
 import { useTheme } from '@emotion/react';
 import { BottomSheetModal, BottomSheetView } from '@gorhom/bottom-sheet';
@@ -29,31 +29,49 @@ export default function FirstResultScreen() {
   const bottomSheetRef = useRef<BottomSheetModal>(null);
   const snapPoints = ['25%', '80%'];
 
+  const [address, setAddress] = useState('');
+  const [phoneNumber, setPhoneNumber] = useState('');
+
   useEffect(() => {
-    const fetchData = async () => {
-      if (!station || !line || !date || !time) {
-        setLoading(false);
-        return;
-      }
+  const fetchData = async () => {
+    if (!station || !line || !date || !time) {
+      setLoading(false);
+      return;
+    }
 
-      const stationId = getStationIdByNameAndLine(station, line);
-      if (!stationId) {
-        setLoading(false);
-        return;
-      }
+    const stationId = getStationIdByNameAndLine(station, line);
+    if (!stationId) {
+      setLoading(false);
+      return;
+    }
 
-      try {
-        const res = await fetchStationByIdAndTime({ stationId, time: time as string });
-        setResult(res);
-      } catch (e) {
-        console.error(e);
-      } finally {
-        setLoading(false);
-      }
-    };
+    try {
+      const [res, detailRes] = await Promise.all([
+        fetchStationByIdAndTime({ stationId, time: time as string }),
+        fetchStationDetailInfo(),
+      ]);
 
-    fetchData();
-  }, [station, line, date, time]);
+      setResult(res);
+
+      const matchedDetails = detailRes.result.filter(
+        (item: StationDetail) => item.stationName === station
+      );
+      const base = matchedDetails.reduce<StationDetail | null>(
+        (min, curr) => !min || curr.stationId < min.stationId ? curr : min,
+        null
+      );
+
+      setAddress(base?.address ?? '아직 주소를 업데이트하고 있어요');
+      setPhoneNumber(base?.phoneNumber ?? '02-0000-0000');
+    } catch (e) {
+      console.error(e);
+    } finally {
+      setLoading(false);
+    }
+  };
+
+  fetchData();
+}, [station, line, date, time]);
 
   useEffect(() => {
     if (!loading && bottomSheetRef.current) {
@@ -78,7 +96,12 @@ export default function FirstResultScreen() {
 
     return (
       <>
-       <StationHeader stationName={result.name} lines={[result.line]} />     
+       <StationHeader
+          stationName={result.name}
+          lines={[result.line]}
+          address={address}
+          phoneNumber={phoneNumber}
+        />   
         <Text>역: {result.name} ({result.line})</Text>
         <Text>시간: {date} {time}</Text>
 

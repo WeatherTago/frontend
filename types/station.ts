@@ -35,3 +35,13 @@ export interface StationResult {
 }
 
 export type SearchStationResponse = CommonResponse<StationResult>;
+
+export interface StationDetail {
+  stationId: number;
+  stationName: string;
+  stationLine: string;
+  phoneNumber: string;
+  address: string;
+}
+
+export type StationDetailInfoResponse = CommonResponse<StationDetail[]>;

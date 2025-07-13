@@ -5,10 +5,12 @@ import { StyleSheet, Text, View } from 'react-native';
 
 interface StationHeaderProps {
   stationName: string;
-  lines: string[]; // 🔹 수정됨
+  lines: string[];
+  address: string;
+  phoneNumber: string;
 }
 
-export default function StationHeader({ stationName, lines }: StationHeaderProps) {
+export default function StationHeader({ stationName, lines,address,phoneNumber }: StationHeaderProps) {
   const theme = useTheme();
 
   return (
@@ -38,22 +40,31 @@ export default function StationHeader({ stationName, lines }: StationHeaderProps
         </View>
       </View>
 
-      <View style={styles.lineCircleWrapper}>
-        {lines.map((lineName, index) => {
-          const lineKey = `line${lineName.replace('호선', '')}`;
-          const color = theme.colors.subway[lineKey as keyof typeof theme.colors.subway];
+    <View style={styles.lineCircleWrapper}>
 
-          return (
-            <LineCircle
-              key={index}
-              lineNumber={lineName}
-              backgroundColor={color}
-              isSelected={false}
-              showUnderline={false}
-            />
-          );
-        })}
-      </View>
+  <View style={styles.textBox}>
+    <Text style={[styles.addressText, {color:theme.colors.gray[950]}]}>{address}</Text>
+    <Text style={[styles.phoneText, {color:theme.colors.secondary['blue']}]}>{phoneNumber}</Text>
+  </View>
+  
+    <View style={styles.lineItemWrapper}>
+    {lines.map((lineName, index) => {
+      const lineKey = `line${lineName.replace('호선', '')}`;
+      const color = theme.colors.subway[lineKey as keyof typeof theme.colors.subway];
+      return (
+        <LineCircle
+          key={index}
+          lineNumber={lineName}
+          backgroundColor={color}
+          isSelected={false}
+          showUnderline={false}
+        />
+      );
+    })}
+  </View>
+
+  </View>
+
     </>
   );
 }
@@ -100,10 +111,31 @@ const styles = StyleSheet.create({
     paddingVertical: hp(10),
     paddingHorizontal: wp(24),
     flexDirection: 'row',
-    justifyContent: 'flex-end',
     alignItems: 'center',
+    justifyContent:'space-between',
     alignSelf: 'stretch',
     gap: px(8),
     backgroundColor:'#FFF'
+  },
+  lineItemWrapper: {
+    flexDirection: 'row',
+    justifyContent: 'flex-end',
+    alignItems: 'center',
+    gap:px(10)
+  },
+  textBox: {
+    flexDirection: 'column',
+  },
+  addressText: {
+    fontSize: px(20),
+    fontFamily:'Pretendard-Regular',
+    fontWeight:'400',
+    lineHeight:px(26),
+  },
+  phoneText: {
+    fontSize:px(16),
+    fontFamily:'Pretendard-Regular',
+    fontWeight:'500',
+    lineHeight:px(24),
   },
 });
