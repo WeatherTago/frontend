@@ -1,16 +1,18 @@
 import AsyncStorage from '@react-native-async-storage/async-storage';
-const READ_NOTICE_KEY = 'READ_NOTICE_IDS';
+
+const READ_NOTICE_KEY = 'READ_NOTICE_MAP';
 
 export const markNoticeAsRead = async (id: number) => {
   const raw = await AsyncStorage.getItem(READ_NOTICE_KEY);
-  const ids = raw ? JSON.parse(raw) : [];
-  if (!ids.includes(id)) {
-    ids.push(id);
-    await AsyncStorage.setItem(READ_NOTICE_KEY, JSON.stringify(ids));
+  const readMap: Record<number, boolean> = raw ? JSON.parse(raw) : {};
+
+  if (!readMap[id]) {
+    readMap[id] = true;
+    await AsyncStorage.setItem(READ_NOTICE_KEY, JSON.stringify(readMap));
   }
 };
 
-export const getReadNoticeIds = async (): Promise<number[]> => {
+export const getReadNoticeMap = async (): Promise<Record<number, boolean>> => {
   const raw = await AsyncStorage.getItem(READ_NOTICE_KEY);
-  return raw ? JSON.parse(raw) : [];
+  return raw ? JSON.parse(raw) : {};
 };
