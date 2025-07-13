@@ -4,11 +4,12 @@ import Header from '@/components/Header/CommonHeader';
 import InfoBox from '@/components/InfoBox';
 import SmallInfoBox from '@/components/smallInfoBox';
 import StationHeader from '@/components/StationHeader';
+import StationInfo from '@/components/StationInfo';
 import { useStationContext } from '@/context/StationContext';
 import { StationDetail, StationResult } from '@/types/station';
 import { hp, px, wp } from '@/utils/scale';
 import { useTheme } from '@emotion/react';
-import { BottomSheetModal, BottomSheetView } from '@gorhom/bottom-sheet';
+import { BottomSheetModal, BottomSheetScrollView } from '@gorhom/bottom-sheet';
 import { useLocalSearchParams, useRouter } from 'expo-router';
 import { useEffect, useRef, useState } from 'react';
 import { ActivityIndicator, Dimensions, Image, ScrollView, StyleSheet, Text, TouchableOpacity, View } from 'react-native';
@@ -102,14 +103,13 @@ export default function FirstResultScreen() {
 
     return (
       <>
-       <StationHeader
+      <StationHeader
           stationName={result.name}
           lines={[result.line]}
           address={address}
           phoneNumber={phoneNumber}
         /> 
-
-        <View style={styles.clickBox}>
+        <View style={[styles.clickBox, {backgroundColor:theme.colors.gray[0]}]}>
           <TouchableOpacity
             style={[
               styles.button,
@@ -204,6 +204,8 @@ export default function FirstResultScreen() {
           )}
         </View>
 
+        <StationInfo/>
+
       </>
     );
   };
@@ -276,9 +278,9 @@ export default function FirstResultScreen() {
           snapPoints={snapPoints}
           onDismiss={handleDismiss}
         >
-          <BottomSheetView style={styles.bottomSheetContent}>
-            {renderBottomSheetContent()}
-          </BottomSheetView>
+            <BottomSheetScrollView style={{backgroundColor:theme.colors.gray[100]}}>
+              {renderBottomSheetContent()}
+            </BottomSheetScrollView>
         </BottomSheetModal>
       )}
     </View>
@@ -290,9 +292,7 @@ const styles = StyleSheet.create({
     flex: 1,
     backgroundColor: '#FFF',
   },
-  bottomSheetContent: {
-    
-  },
+
   directionBlock: { marginBottom: 16, paddingVertical: 8},
 
   directionTitle: { fontSize: 18, fontWeight: '600', marginBottom: 4 },
