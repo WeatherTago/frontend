@@ -19,6 +19,7 @@ export interface WeatherInfo {
   wsd: number;
   sno: number;
   vec: number;
+  status: string;
 }
 
 export interface StationResult {
@@ -29,8 +30,7 @@ export interface StationResult {
   direction: string;
   weather: WeatherInfo | null;
   congestionByDirection: {
-    상행?: DirectionCongestionInfo;
-    하행?: DirectionCongestionInfo;
+    [key in '상행' | '하행' | '외선' | '내선']?: DirectionCongestionInfo;
   };
   createdAt: string;
 }

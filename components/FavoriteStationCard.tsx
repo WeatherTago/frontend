@@ -97,8 +97,10 @@ const styles = StyleSheet.create({
     gap: wp(10),
     backgroundColor: theme.colors.gray[0],
     borderRadius: px(16),
+    flexShrink: 0,
   },
   weatherContainer: {
+    flex: 1,
     flexDirection: 'row',
     alignItems: 'center',
     alignSelf: 'stretch',
@@ -108,6 +110,7 @@ const styles = StyleSheet.create({
     flexDirection: 'column',
     alignItems: 'center',
     alignSelf: 'stretch',
+    flexGrow: 1,
   },
   weatherIconContainer: {
     width: px(50),

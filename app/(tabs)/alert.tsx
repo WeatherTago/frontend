@@ -1,6 +1,7 @@
 import { myFavorite } from '@/apis/favorite';
 import LargeButton from '@/components/Button/LargeButton';
 import WeatherHeader from '@/components/Header/WeatherHeader';
+import { useFavorite } from '@/context/FavoriteContext';
 import { useNoticeContext } from '@/context/NoticeContext';
 import { theme } from '@/styles/theme';
 import { StationInfo } from '@/types/common';
@@ -56,7 +57,11 @@ const AlarmSettingButton: React.FC<AlarmSettingButtonProps> = ({
     </Text>
     <View style={styles.alarmSettingChipArrow}>
       <Image
-        source={require('@/assets/images/right-arrow.png')}
+        source={
+          isSelected
+            ? require('@/assets/images/right-arrow-mint.png')
+            : require('@/assets/images/right-arrow.png')
+        }
         style={styles.alarmSettingChipArrowImage}
         resizeMode="contain"
       />
@@ -181,6 +186,7 @@ const DateOptionChip: React.FC<DateOptionChipProps> = ({ option, onPress, isSele
 
 export default function AlarmScreen() {
   const bottomSheetRef = useRef<BottomSheet>(null);
+  const { favoriteStationIds } = useFavorite();
 
   // --- 1. 선택된 알림 설정 값들 상태 ---
   const [selectedStation, setSelectedStation] = useState<SelectedStationInfo | null>(null);
@@ -231,7 +237,7 @@ export default function AlarmScreen() {
       setIsLoading(false);
     };
     loadData();
-  }, [fetchFavoriteStations]); // fetchFavoriteStations가 의존성 배열에 포함되도록 주의
+  }, [fetchFavoriteStations, favoriteStationIds]); // fetchFavoriteStations가 의존성 배열에 포함되도록 주의
 
   // BottomSheet의 스냅 포인트 정의 (높이, % 등)
   const snapPoints = useMemo(() => ['25%', '50%', '75%'], []); // 예시: 뷰포트 높이의 25%, 50%, 75%
@@ -280,6 +286,7 @@ export default function AlarmScreen() {
   const timeOptions = useMemo(() => {
     const times: string[] = [];
     for (let h = 0; h < 24; h++) {
+      if (1 <= h && h <= 4) continue;
       const hour = h < 10 ? `0${h}` : `${h}`;
       times.push(`${hour}:00`);
     }
