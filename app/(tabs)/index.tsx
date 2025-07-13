@@ -8,10 +8,12 @@ import DirectAccessCard from '@/components/DirectAccessCard';
 import FavoriteStationCard from '@/components/FavoriteStationCard';
 import WeatherHeader from '@/components/Header/WeatherHeader';
 import NoticeBanner from '@/components/NoticeBanner';
+import { useFavorite } from '@/context/FavoriteContext';
 import { useNoticeContext } from '@/context/NoticeContext';
 import { useFavoriteCongestionFetcher } from '@/hooks/useFavoriteCongestionFetcher';
 import { StationResult } from '@/types/station';
 import { hp, px, wp } from '@/utils/scale';
+import { useIsFocused } from '@react-navigation/native';
 
 const { width: SCREEN_WIDTH } = Dimensions.get('window');
 const CARD_WIDTH = px(400);
@@ -26,6 +28,8 @@ export default function HomeScreen() {
 
   const { notices, isNewUnreadExists } = useNoticeContext();
   const latestNotice = notices.length > 0 ? notices[0] : null;
+  const { favoriteStationIds } = useFavorite();
+  const isFocused = useIsFocused();
 
   useEffect(() => {
     const loadData = async () => {
@@ -35,8 +39,7 @@ export default function HomeScreen() {
       setIsLoading(false);
     };
     loadData();
-  }, []);
-
+  }, [isFocused, favoriteStationIds]);
 
   return (
     <View style={{ flex: 1 }}>

@@ -92,7 +92,10 @@ export default function FirstResultScreen() {
       );
     }
 
-    const directionKeys = Object.keys(result.congestionByDirection || {});
+    const directionKeys: ('상행' | '하행' | '외선' | '내선')[] = Object.keys(result.congestionByDirection || {}) as (
+    '상행' | '하행' | '외선' | '내선'
+  )[];
+
 
     const lineKey = `line${result.line.replace('호선', '')}`;
     const lineColor = theme.colors.subway[lineKey as keyof typeof theme.colors.subway];
@@ -165,7 +168,7 @@ export default function FirstResultScreen() {
         <Text>시간: {date} {time}</Text>
 
         {directionKeys.length > 0 ? (
-          directionKeys.map((dirKey) => {
+          directionKeys.map((dirKey: '상행' | '하행' | '외선' | '내선') => {
             const directionData = result.congestionByDirection?.[dirKey];
             const congestion = directionData?.congestion;
 
