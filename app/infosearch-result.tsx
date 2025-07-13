@@ -1,6 +1,6 @@
 import { fetchElevators, fetchEscalators, fetchMovingWalkways, fetchWheelchairLifts } from '@/apis/openapi';
 import Header from '@/components/Header/CommonHeader';
-import LineCircle from '@/components/LineCircle';
+import StationHeader from '@/components/StationHeader';
 import { useStationContext } from '@/context/StationContext';
 import { ElevatorItem, EscalatorItem, LiftItem, WalkwayItem } from '@/types/accessibility';
 import { hp, px, wp } from '@/utils/scale';
@@ -67,47 +67,7 @@ export default function InfoSearchResultScreen() {
       onPressRight={() => router.replace('/information')}
     />
 
-    {/* 중앙 역 이름 영역 */}
-      <View style={[styles.stationBox, { backgroundColor: theme.colors.gray[0] }]}>
-        <View style={styles.centerStationWrapper}>
-          <View style={[styles.TailBox, { backgroundColor: theme.colors.primary[800] }]} />
-          <View style={[styles.centerStationBox, {
-            backgroundColor: theme.colors.gray[0],
-            borderColor: theme.colors.primary[800],
-          }]}>
-            <Text
-              style={{
-                color: theme.colors.gray[950],
-                fontSize: theme.typography.subtitle1.fontSize,
-                fontWeight: theme.typography.subtitle1.fontWeight,
-                fontFamily: theme.typography.subtitle1.fontFamily,
-                textAlign: 'center',
-              }}
-              numberOfLines={1}
-              adjustsFontSizeToFit
-              ellipsizeMode="tail"
-            >
-              {parsedStation}
-            </Text>
-          </View>
-        </View>
-      </View>
-
-    <View style={[styles.LineCircleWrapper, { backgroundColor: theme.colors.gray[0] }]}>
-      {matchedLines.map((lineName, index) => {
-        const lineKey = `line${lineName.replace('호선', '')}`;
-        const color = theme.colors.subway[lineKey as keyof typeof theme.colors.subway];
-        return (
-          <LineCircle
-            key={index}
-            lineNumber={lineName}
-            backgroundColor={color}
-            isSelected={false}
-            showUnderline={false}
-          />
-        );
-      })}
-    </View>
+    <StationHeader stationName={parsedStation} lines={matchedLines} />
 
     <ScrollView contentContainerStyle={{ paddingBottom: 40 }}>
       <Text style={[styles.textField, theme.typography.body1, { color: theme.colors.gray[400] }]}>
@@ -165,53 +125,6 @@ export default function InfoSearchResultScreen() {
 }
 
 const styles = StyleSheet.create({
-  stationBox: {
-    height: hp(98),
-    paddingHorizontal: wp(24),
-    flexDirection: 'column',
-    justifyContent: 'center',
-    alignItems: 'center',
-    alignSelf: 'stretch',
-  },
-  centerStationBox: {
-    width: wp(262),
-    height: hp(60),
-    paddingHorizontal: wp(24),
-    justifyContent: 'center',
-    alignItems: 'center',
-    gap: px(10),
-    borderRadius: 999,
-    borderWidth: px(8),
-    shadowColor: 'rgba(0, 0, 0, 0.05)',
-    shadowOffset: { width: 4, height: 4 },
-    shadowOpacity: 1,
-    shadowRadius: 4,
-    elevation: 4,
-  },
-  centerStationWrapper: {
-    flexDirection: 'row',
-    alignItems: 'center',
-    justifyContent: 'center',
-  },
-  TailBox: {
-    position: 'absolute',
-    top: '50%',
-    transform: [{ translateY: -hp(20) }],
-    width: '100%',
-    height: hp(40),
-    borderRadius: px(999),
-    zIndex: 0,
-  },
-  LineCircleWrapper: {
-    height: hp(72),
-    paddingVertical: hp(10),
-    paddingHorizontal: wp(24),
-    flexDirection: 'row',          
-    justifyContent: 'flex-end', 
-    alignItems: 'center',
-    alignSelf: 'stretch',
-    gap: px(8),                    
-  },
   textField: {
     flexDirection: 'row',        
     paddingVertical: hp(14),

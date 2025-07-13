@@ -130,7 +130,7 @@ export default function FirstSearchScreen() {
   const isToday = date?.toDateString() === today.toDateString();
 
   return Array.from({ length: 24 }, (_, i) => i).filter((hour) => {
-    if (hour < 5) return false;
+    if (hour >= 1 && hour <= 4) return false;
     if (isToday) return hour >= currentHour;
     return true;
   });
@@ -190,8 +190,7 @@ export default function FirstSearchScreen() {
               <Text style={[styles.suggestionItemText, { color: theme.colors.gray[900] }]}>{item.stationName}</Text>
             </TouchableOpacity>
           )}
-          ItemSeparatorComponent={() => <View style={{ height: 1, backgroundColor: theme.colors.gray[100] }} />}
-          style={{ backgroundColor: '#FFF', borderBottomWidth: px(1), borderBottomColor: '#F5F5F5', maxHeight: listHeight }}
+          style={{ backgroundColor: '#FFF', borderBottomWidth: px(1), borderBottomColor: theme.colors.gray[100], maxHeight: listHeight }}
           keyboardShouldPersistTaps="handled"
         />
       )}
@@ -225,11 +224,21 @@ export default function FirstSearchScreen() {
               showsVerticalScrollIndicator={false}
               snapToInterval={40}
               decelerationRate="fast"
-              renderItem={({ item }) => (
+              renderItem={({ item }) => {
+              const isSelected = date?.toDateString() === item.value.toDateString(); // ✅ 선언 필요
+              return (
                 <TouchableOpacity onPress={() => setDate(item.value)}>
-                  <Text style={styles.wheelItemText}>{item.label}</Text>
+                  <Text
+                    style={[
+                      styles.wheelItemText,
+                      { color: isSelected ? theme.colors.primary[700] : theme.colors.gray[900] }, // ✅ 글자 색상만 조건부
+                    ]}
+                  >
+                    {item.label}
+                  </Text>
                 </TouchableOpacity>
-              )}
+              );
+            }}
             />
 
             <FlatList
@@ -239,12 +248,22 @@ export default function FirstSearchScreen() {
               showsVerticalScrollIndicator={false}
               snapToInterval={40}
               decelerationRate="fast"
-              renderItem={({ item }) => (
+              renderItem={({ item }) => {
+              const isSelected = time?.hours === item;
+              return (
                 <TouchableOpacity onPress={() => setTime({ hours: item, minutes: 0 })}>
-                  <Text style={styles.wheelItemText}>{item}:00</Text>
+                  <Text
+                    style={[
+                      styles.wheelItemText,
+                      { color: isSelected ? theme.colors.primary[700] : theme.colors.gray[900] },
+                    ]}
+                  >
+                    {item}:00
+                  </Text>
                 </TouchableOpacity>
-              )}
-            />
+              );
+            }}
+          />
             </View>
             <TouchableOpacity onPress={() => setSheetOpen(false)} style={styles.modalCloseButton}>
               <Text style={styles.modalCloseButtonText}>완료</Text>
@@ -322,6 +341,15 @@ arrowIcon: {
   height: px(24),
   marginLeft: px(4),
   marginTop: px(4)
+},
+wheelItem: {
+  paddingVertical: 10,
+  paddingHorizontal: 20,
+  marginVertical: 4,
+},
+wheelItemSelected: {
+  backgroundColor: '#00C4B8', // 선택된 배경색
+  borderRadius: 6,
 },
 
 });

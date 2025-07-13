@@ -1,16 +1,21 @@
 import { fetchStationByIdAndTime } from '@/apis/station';
+import subwayImage from '@/assets/images/subway/subway-all.png';
 import Header from '@/components/Header/CommonHeader';
+import StationHeader from '@/components/StationHeader';
 import { useStationContext } from '@/context/StationContext';
 import { StationResult } from '@/types/station';
+import { hp, px, wp } from '@/utils/scale';
+import { useTheme } from '@emotion/react';
 import { BottomSheetModal, BottomSheetView } from '@gorhom/bottom-sheet';
 import { useLocalSearchParams, useRouter } from 'expo-router';
 import { useEffect, useRef, useState } from 'react';
-import { ActivityIndicator, StyleSheet, Text, TouchableOpacity, View } from 'react-native';
+import { ActivityIndicator, Dimensions, Image, ScrollView, StyleSheet, Text, View } from 'react-native';
 import { useSafeAreaInsets } from 'react-native-safe-area-context';
 
 export default function FirstResultScreen() {
   const insets = useSafeAreaInsets();
   const router = useRouter();
+  const theme=useTheme();
   const { station, line, date, time } = useLocalSearchParams<{
     station: string;
     line: string;
@@ -68,9 +73,12 @@ export default function FirstResultScreen() {
 
     const directionKeys = Object.keys(result.congestionByDirection || {});
 
+    const lineKey = `line${result.line.replace('호선', '')}`;
+    const lineColor = theme.colors.subway[lineKey as keyof typeof theme.colors.subway];
+
     return (
       <>
-        <Text style={styles.title}>혼잡도 예측 결과</Text>
+       <StationHeader stationName={result.name} lines={[result.line]} />     
         <Text>역: {result.name} ({result.line})</Text>
         <Text>시간: {date} {time}</Text>
 
@@ -110,31 +118,6 @@ export default function FirstResultScreen() {
           )}
         </View>
 
-        <View style={styles.buttonRow}>
-          <TouchableOpacity
-            style={styles.setButton}
-            onPress={() =>
-              router.push({
-                pathname: '../congestion/second-search',
-                params: { from: 'departure', station: result.name, line: result.line, date, time },
-              })
-            }
-          >
-            <Text style={styles.setButtonText}>출발역 설정</Text>
-          </TouchableOpacity>
-
-          <TouchableOpacity
-            style={styles.setButton}
-            onPress={() =>
-              router.push({
-                pathname: '../congestion/second-search',
-                params: { from: 'arrival', station: result.name, line: result.line, date, time },
-              })
-            }
-          >
-            <Text style={styles.setButtonText}>도착역 설정</Text>
-          </TouchableOpacity>
-        </View>
       </>
     );
   };
@@ -154,13 +137,46 @@ export default function FirstResultScreen() {
       setIsDismissed(true);
     };
 
+    const { height: SCREEN_HEIGHT, width: SCREEN_WIDTH } = Dimensions.get('window');
+    const safeHeight = SCREEN_HEIGHT - insets.top - insets.bottom;
+    const imageHeight = safeHeight;
+    const imageWidth = (4635 / 3685) * imageHeight;
+
   return (
     <View style={[styles.container, { paddingTop: insets.top }]}>
       <Header
-        title={station}
+        title='상세정보'
         showLeft={true}
         onPressLeft={() => router.back()}
+        rightType="close"
+        onPressRight={() => router.replace('/congestion')}
       />
+
+      <ScrollView
+        style={styles.mapWrapper}
+        contentContainerStyle={styles.mapZoomContainer}
+        minimumZoomScale={1}
+        maximumZoomScale={3}
+        pinchGestureEnabled={true}
+        showsHorizontalScrollIndicator={true}
+        showsVerticalScrollIndicator={true}
+        bounces={false}
+        horizontal={true}
+      >
+        <ScrollView
+          contentContainerStyle={{ flexGrow: 1 }}
+          showsVerticalScrollIndicator={false}
+        >
+          <Image
+            source={subwayImage}
+            style={{
+              width: imageWidth,
+              height: imageHeight,
+            }}
+            resizeMode="contain"
+          />
+        </ScrollView>
+      </ScrollView>
 
       {loading ? (
         <View style={{ marginTop: 100 }}>
@@ -189,13 +205,9 @@ const styles = StyleSheet.create({
     backgroundColor: '#FFF',
   },
   bottomSheetContent: {
-    padding: 16,
+    
   },
-  title: {
-    fontSize: 22,
-    fontWeight: 'bold',
-    marginBottom: 16,
-  },
+  
   directionBlock: {
     marginBottom: 16,
     paddingVertical: 8,
@@ -236,4 +248,49 @@ const styles = StyleSheet.create({
     fontWeight: '600',
     color: '#333',
   },
+  mapWrapper: {
+    flex: 1,
+  },
+  mapZoomContainer: {
+    flexGrow: 1,
+    alignItems: 'center',
+    justifyContent: 'center',
+  },
+  stationBox: {
+      height: hp(98),
+      paddingHorizontal: wp(24),
+      flexDirection: 'column',
+      justifyContent: 'center',
+      alignItems: 'center',
+      alignSelf: 'stretch',
+    },
+    centerStationBox: {
+      width: wp(262),
+      height: hp(60),
+      paddingHorizontal: wp(24),
+      justifyContent: 'center',
+      alignItems: 'center',
+      gap: px(10),
+      borderRadius: 999,
+      borderWidth: px(8),
+      shadowColor: 'rgba(0, 0, 0, 0.05)',
+      shadowOffset: { width: 4, height: 4 },
+      shadowOpacity: 1,
+      shadowRadius: 4,
+      elevation: 4,
+    },
+    centerStationWrapper: {
+      flexDirection: 'row',
+      alignItems: 'center',
+      justifyContent: 'center',
+    },
+    TailBox: {
+      position: 'absolute',
+      top: '50%',
+      transform: [{ translateY: -hp(20) }],
+      width: '100%',
+      height: hp(40),
+      borderRadius: px(999),
+      zIndex: 0,
+    },
 });
