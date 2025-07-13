@@ -103,10 +103,16 @@ export default function HomeScreen() {
         </Text>
 
         <DirectAccessCard
-          title={`신사역의 엘리베이터 위치가\n알고 싶다면?`}
+          title={
+            <>
+              매일 아침 내가 가는 역의
+              {"\n"}
+              <Text style={{ color: theme.colors.primary[700] }}>엘리베이터 위치</Text>가 알고 싶다면
+            </>
+          }
           subText="편의시설 정보를 빠르게 확인해보세요"
           buttonText="편의시설 확인하기"
-          onPress={() => console.log('바로가기 눌림')}
+          onPress={() => router.push('/information')}
         />
 
         <Text
@@ -123,24 +129,17 @@ export default function HomeScreen() {
         </Text>
 
         <DirectAccessCard
-          title={`신사역의 혼잡도 알림을\n받고 싶다면?`}
-          subText="알림을 설정 해보세요"
+          title={
+            <>
+              매일 아침 내가 가는 역의
+              {"\n"}
+              혼잡도를 <Text style={{ color: theme.colors.primary[700] }}>알림으로 간단하게</Text>
+            </>
+          }
+          subText="즐겨찾는 역의 혼잡도를 알림으로 받아보세요"
           buttonText="알림 설정하기"
-          onPress={() => console.log('바로가기 눌림')}
+          onPress={() => router.push('/alert')}
         />
-
-        <Text
-          style={[
-            styles.sectionTitle,
-            {
-              color: theme.colors.gray[700],
-              fontFamily: theme.fonts.pretendard.semibold,
-              fontWeight: '600',
-            },
-          ]}
-        >
-          도착역까지 빠른 혼잡도 확인
-        </Text>
       </ScrollView>
     </View>
   );

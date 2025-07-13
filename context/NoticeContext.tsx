@@ -1,11 +1,11 @@
 import { fetchNotices, Notice } from '@/apis/notice';
-import { getReadNoticeIds } from '@/utils/noticeReadStorage';
+import { getReadNoticeMap } from '@/utils/noticeReadStorage';
 import dayjs from 'dayjs';
 import { createContext, useContext, useEffect, useState } from 'react';
 
 interface NoticeContextType {
   notices: Notice[];
-  readIds: number[];
+  readIds: number[]; // optional compatibility
   isNewUnreadExists: boolean;
   refetchNotices: () => void;
 }
@@ -14,7 +14,7 @@ const NoticeContext = createContext<NoticeContextType | null>(null);
 
 export const NoticeProvider = ({ children }: { children: React.ReactNode }) => {
   const [notices, setNotices] = useState<Notice[]>([]);
-  const [readIds, setReadIds] = useState<number[]>([]);
+  const [readMap, setReadMap] = useState<Record<number, boolean>>({});
 
   const loadNotices = async () => {
     const data = await fetchNotices();
@@ -22,28 +22,32 @@ export const NoticeProvider = ({ children }: { children: React.ReactNode }) => {
     setNotices(sorted);
   };
 
-  const loadReadIds = async () => {
-    const ids = await getReadNoticeIds();
-    setReadIds(ids);
+  const loadReadMap = async () => {
+    const map = await getReadNoticeMap();
+    setReadMap(map);
   };
 
-  const refetchNotices = () => {
-    loadNotices();
-    loadReadIds();
+  const refetchNotices = async () => {
+    await Promise.all([loadNotices(), loadReadMap()]);
   };
 
   useEffect(() => {
     refetchNotices();
   }, []);
 
-  const isNewUnreadExists = notices.some((n) => {
-    const isNew = dayjs().diff(dayjs(n.createdAt), 'day') <= 2;
-    const isRead = readIds.includes(n.noticeId);
-    return isNew && !isRead;
-  });
+  const isNewUnreadExists = notices.some((n) =>
+    dayjs().diff(dayjs(n.createdAt), 'day') <= 2 && !readMap[n.noticeId]
+  );
 
   return (
-    <NoticeContext.Provider value={{ notices, readIds, isNewUnreadExists, refetchNotices }}>
+    <NoticeContext.Provider
+      value={{
+        notices,
+        readIds: Object.keys(readMap).map((id) => Number(id)), // compatibility only
+        isNewUnreadExists,
+        refetchNotices,
+      }}
+    >
       {children}
     </NoticeContext.Provider>
   );

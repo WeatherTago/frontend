@@ -33,7 +33,7 @@ export default function SearchBar({
             value={value}
             onChangeText={onChangeText}
             placeholderTextColor="#CFCFCF"
-            editable={!onPressInput} // 👈 페이지 이동용이면 입력 비활성화
+            editable={!onPressInput} 
             pointerEvents="none"
           />
         </TouchableOpacity>
