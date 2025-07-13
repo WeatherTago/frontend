@@ -2,6 +2,7 @@ import { myFavorite } from '@/apis/favorite';
 import LargeButton from '@/components/Button/LargeButton';
 import WeatherHeader from '@/components/Header/WeatherHeader';
 import { useFavorite } from '@/context/FavoriteContext';
+import { useNoticeContext } from '@/context/NoticeContext';
 import { theme } from '@/styles/theme';
 import { StationInfo } from '@/types/common';
 import { hp, px, wp } from '@/utils/scale';
@@ -396,9 +397,11 @@ export default function AlarmScreen() {
     setCurrentBottomSheetView('mainAlarmSettings');
   }, []);
 
+  const { isNewUnreadExists } = useNoticeContext();
+
   return (
     <View style={{ flex: 1 }}>
-      <WeatherHeader />
+      <WeatherHeader showAlarmDot={isNewUnreadExists} />
       <View style={styles.mainContainer}>
         <View style={styles.textContainer}>
           <Text style={styles.text}>
