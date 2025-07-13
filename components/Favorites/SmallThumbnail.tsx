@@ -33,7 +33,6 @@ const SmallThumbnail = ({
 }: SmallThumbnailProps) => {
   const handleFavorites = async () => {
     const newFavorite = !isFavorite(stationId);
-    onToggleFavorite(stationId);
 
     if (newFavorite) {
       const res = await addFavorite({ stationId });
@@ -42,6 +41,8 @@ const SmallThumbnail = ({
       const res = await deleteFavorite({ stationId });
       if (__DEV__) console.log('즐겨찾기 삭제:', res, '즐겨찾기 여부:', newFavorite);
     }
+
+    onToggleFavorite(stationId);
   };
   return (
     <TouchableOpacity style={styles.container} onPress={() => handleFavorites()}>

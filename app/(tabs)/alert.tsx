@@ -1,6 +1,7 @@
 import { myFavorite } from '@/apis/favorite';
 import LargeButton from '@/components/Button/LargeButton';
 import WeatherHeader from '@/components/Header/WeatherHeader';
+import { useFavorite } from '@/context/FavoriteContext';
 import { theme } from '@/styles/theme';
 import { StationInfo } from '@/types/common';
 import { hp, px, wp } from '@/utils/scale';
@@ -184,6 +185,7 @@ const DateOptionChip: React.FC<DateOptionChipProps> = ({ option, onPress, isSele
 
 export default function AlarmScreen() {
   const bottomSheetRef = useRef<BottomSheet>(null);
+  const { favoriteStationIds } = useFavorite();
 
   // --- 1. 선택된 알림 설정 값들 상태 ---
   const [selectedStation, setSelectedStation] = useState<SelectedStationInfo | null>(null);
@@ -234,7 +236,7 @@ export default function AlarmScreen() {
       setIsLoading(false);
     };
     loadData();
-  }, [fetchFavoriteStations]); // fetchFavoriteStations가 의존성 배열에 포함되도록 주의
+  }, [fetchFavoriteStations, favoriteStationIds]); // fetchFavoriteStations가 의존성 배열에 포함되도록 주의
 
   // BottomSheet의 스냅 포인트 정의 (높이, % 등)
   const snapPoints = useMemo(() => ['25%', '50%', '75%'], []); // 예시: 뷰포트 높이의 25%, 50%, 75%
