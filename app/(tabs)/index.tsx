@@ -1,25 +1,31 @@
+import { useTheme } from '@emotion/react';
+import dayjs from 'dayjs';
+import { useRouter } from 'expo-router';
+import { useEffect, useState } from 'react';
+import { Dimensions, FlatList, ScrollView, StyleSheet, Text, View } from 'react-native';
+
 import DirectAccessCard from '@/components/DirectAccessCard';
 import FavoriteStationCard from '@/components/FavoriteStationCard';
 import WeatherHeader from '@/components/Header/WeatherHeader';
 import NoticeBanner from '@/components/NoticeBanner';
+import { useNoticeContext } from '@/context/NoticeContext';
 import { useFavoriteCongestionFetcher } from '@/hooks/useFavoriteCongestionFetcher';
 import { StationResult } from '@/types/station';
 import { hp, px, wp } from '@/utils/scale';
-import { useTheme } from '@emotion/react';
-import { useEffect, useState } from 'react';
-import { Dimensions, FlatList, ScrollView, StyleSheet, Text, View } from 'react-native';
 
 const { width: SCREEN_WIDTH } = Dimensions.get('window');
 const CARD_WIDTH = px(400);
 const SIDE_SPACING = (SCREEN_WIDTH - CARD_WIDTH) / 2;
 
-const mockCards = [{ id: '1' }, { id: '2' }, { id: '3' }]; //임시 카드
-
 export default function HomeScreen() {
   const theme = useTheme();
+  const router = useRouter();
+  const { fetch } = useFavoriteCongestionFetcher();
   const [favoriteStations, setFavoriteStations] = useState<StationResult[]>([]);
   const [isLoading, setIsLoading] = useState(false);
-  const { fetch } = useFavoriteCongestionFetcher();
+
+  const { notices, isNewUnreadExists } = useNoticeContext();
+  const latestNotice = notices.length > 0 ? notices[0] : null;
 
   useEffect(() => {
     const loadData = async () => {
@@ -31,19 +37,22 @@ export default function HomeScreen() {
     loadData();
   }, []);
 
+
   return (
     <View style={{ flex: 1 }}>
-      <WeatherHeader />
-      {/*  항상 고정되는 헤더 */}
+      <WeatherHeader showAlarmDot={isNewUnreadExists} />
 
       <ScrollView style={[styles.container, { backgroundColor: theme.colors.gray[50] }]}>
-        <NoticeBanner
-          text="지하철 1호선 파업 시위 관련 안내"
-          showArrowButton
-          onPressArrow={() => console.log('알림 자세히 보기')}
-          backgroundColor={theme.colors.gray[700]}
-          textColor={theme.colors.gray[0]}
-        />
+        {latestNotice && (
+          <NoticeBanner
+            text={latestNotice.title}
+            showArrowButton
+            onPressArrow={() => router.push(`../notice/${latestNotice.noticeId}`)}
+            backgroundColor={theme.colors.gray[700]}
+            textColor={theme.colors.gray[0]}
+            date={dayjs(latestNotice.createdAt).format('YYYY. MM. DD. A HH:mm')}
+          />
+        )}
         <Text
           style={[
             styles.sectionTitle,
@@ -91,10 +100,16 @@ export default function HomeScreen() {
         </Text>
 
         <DirectAccessCard
-          title={`신사역의 엘리베이터 위치가\n알고 싶다면?`}
+          title={
+            <>
+              매일 아침 내가 가는 역의
+              {"\n"}
+              <Text style={{ color: theme.colors.primary[700] }}>엘리베이터 위치</Text>가 알고 싶다면
+            </>
+          }
           subText="편의시설 정보를 빠르게 확인해보세요"
           buttonText="편의시설 확인하기"
-          onPress={() => console.log('바로가기 눌림')}
+          onPress={() => router.push('/information')}
         />
 
         <Text
@@ -111,24 +126,17 @@ export default function HomeScreen() {
         </Text>
 
         <DirectAccessCard
-          title={`신사역의 혼잡도 알림을\n받고 싶다면?`}
-          subText="알림을 설정 해보세요"
+          title={
+            <>
+              매일 아침 내가 가는 역의
+              {"\n"}
+              혼잡도를 <Text style={{ color: theme.colors.primary[700] }}>알림으로 간단하게</Text>
+            </>
+          }
+          subText="즐겨찾는 역의 혼잡도를 알림으로 받아보세요"
           buttonText="알림 설정하기"
-          onPress={() => console.log('바로가기 눌림')}
+          onPress={() => router.push('/alert')}
         />
-
-        <Text
-          style={[
-            styles.sectionTitle,
-            {
-              color: theme.colors.gray[700],
-              fontFamily: theme.fonts.pretendard.semibold,
-              fontWeight: '600',
-            },
-          ]}
-        >
-          도착역까지 빠른 혼잡도 확인
-        </Text>
       </ScrollView>
     </View>
   );
