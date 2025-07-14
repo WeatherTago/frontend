@@ -1,8 +1,34 @@
 import { theme } from '@/styles/theme';
+import { Alarm } from '@/types/alarm';
+import { formatAlarmDisplay } from '@/utils/AlarmDisplayFormat';
 import { hp, px, wp } from '@/utils/scale';
 import { Image, StyleSheet, Text, TextStyle, View } from 'react-native';
 
-const AlarmStationBox = () => {
+interface AlarmStationBoxProps {
+  alarm: Alarm;
+}
+
+type ThemeType = {
+  colors: {
+    subway: {
+      [key: string]: string;
+    };
+  };
+};
+
+function getStationLineColor(lineName: string, theme: ThemeType): string {
+  const lineNumber = extractLineNumber(lineName); // '2호선' -> 'line2'
+  const colorKey = `line${lineNumber}`;
+
+  return theme.colors.subway[colorKey] ?? theme.colors.subway.line1; // 기본값 fallback
+}
+
+function extractLineNumber(lineName: string): string {
+  const match = lineName.match(/\d+/);
+  return match ? match[0] : 'default';
+}
+
+const AlarmStationBox = ({ alarm }: AlarmStationBoxProps) => {
   return (
     <View style={styles.alarmStationBox}>
       <View style={styles.imgAndStationContainer}>
@@ -15,12 +41,17 @@ const AlarmStationBox = () => {
         </View>
         <View style={styles.stationAndTimeInfoContainer}>
           <View style={styles.stationInfoContainer}>
-            <Text style={styles.stationName}>서울역</Text>
-            <View style={styles.stationLineContainer}>
-              <Text style={styles.stationLine}>7호선</Text>
+            <Text style={styles.stationName}>{alarm.stationName}</Text>
+            <View
+              style={[
+                styles.stationLineContainer,
+                { backgroundColor: getStationLineColor(alarm.stationLine, theme) },
+              ]}
+            >
+              <Text style={styles.stationLine}>{alarm.stationLine}</Text>
             </View>
           </View>
-          <Text style={styles.timeInfoText}>매일 오후 7:00 | 전날 오후 10:00 알림</Text>
+          <Text style={styles.timeInfoText}>{formatAlarmDisplay(alarm)}</Text>
         </View>
       </View>
       <View style={styles.buttonImgContainer}>
@@ -80,13 +111,12 @@ const styles = StyleSheet.create({
     lineHeight: px(34),
   } as TextStyle,
   stationLineContainer: {
-    width: px(44),
+    width: px(48),
     height: px(26),
     paddingHorizontal: wp(8),
     justifyContent: 'center',
     alignItems: 'center',
     borderRadius: px(99),
-    backgroundColor: theme.colors.subway.line7,
   },
   stationLine: {
     color: theme.colors.gray[0],
@@ -94,6 +124,7 @@ const styles = StyleSheet.create({
     fontSize: px(12),
     fontWeight: '500',
     lineHeight: px(26),
+    textAlign: 'center',
   } as TextStyle,
   timeInfoText: {
     color: theme.colors.gray[500],

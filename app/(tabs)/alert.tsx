@@ -20,6 +20,27 @@ import {
   View,
 } from 'react-native';
 
+const AlarmList = [
+  {
+    stationName: '서울역',
+    stationLine: '1호선',
+    direction: '상행',
+    referenceTime: '07:00',
+    alarmPeriod: 'EVERYDAY' as AlarmPeriodType,
+    alarmDay: 'TODAY' as AlarmDayType,
+    alarmTime: '09:00',
+  },
+  {
+    stationName: '건대입구',
+    stationLine: '7호선',
+    direction: '내선',
+    referenceTime: '07:00',
+    alarmPeriod: 'MONDAY' as AlarmPeriodType,
+    alarmDay: 'TODAY' as AlarmDayType,
+    alarmTime: '10:00',
+  },
+];
+
 // 앱 내부에서 사용할 역 데이터 타입 (StationApiData와 매핑)
 interface SelectedStationInfo {
   id: string;
@@ -458,7 +479,9 @@ export default function AlarmScreen() {
           </View>
         </View>
         <View style={styles.alarmListContainer}>
-          <AlarmStationBox />
+          {AlarmList.map((alarm, index) => (
+            <AlarmStationBox key={index} alarm={alarm} />
+          ))}
         </View>
       </View>
       <BottomSheet
