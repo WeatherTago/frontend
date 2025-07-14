@@ -1,10 +1,10 @@
 {
   "expo": {
-    "name": "weathertago-front",
+    "name": "웨더타고",
     "slug": "weathertago-front",
     "version": "1.0.0",
     "orientation": "portrait",
-    "icon": "./assets/images/icon.png",
+    "icon": "./assets/images/logo/weathertago-logo.png",
     "scheme": "weathertagofront",
     "userInterfaceStyle": "automatic",
     "newArchEnabled": true,
@@ -13,7 +13,7 @@
     },
     "android": {
       "adaptiveIcon": {
-        "foregroundImage": "./assets/images/adaptive-icon.png",
+        "foregroundImage": "./assets/images/logo/weathertago-logo.png",
         "backgroundColor": "#ffffff"
       },
       "edgeToEdgeEnabled": true,
@@ -22,10 +22,10 @@
     "web": {
       "bundler": "metro",
       "output": "static",
-      "favicon": "./assets/images/favicon.png"
+      "favicon": "./assets/images/logo/weathertago-logo.png"
     },
     "splash": {
-      "image": "./assets/images/react-logo.png",
+      "image": "./assets/images/logo/weathertago-logo.png",
       "imageWidth": 200,
       "resizeMode": "contain",
       "backgroundColor": "#ffffff"
@@ -35,7 +35,7 @@
       [
         "expo-splash-screen",
         {
-          "image": "./assets/images/react-logo.png",
+          "image": "./assets/images/logo/weathertago-logo.png",
           "imageWidth": 200,
           "resizeMode": "contain",
           "backgroundColor": "#ffffff"

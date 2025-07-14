@@ -119,11 +119,11 @@ export default function RootLayout() {
   return (
     <SafeAreaProvider>
       <GestureHandlerRootView style={{ flex: 1 }}>
-        <AnimatedAppLoader image={require('../assets/images/react-logo.png')}>
+        <AnimatedAppLoader image={require('../assets/images/logo/weathertago-logo.png')}>
           <AuthProvider>
             <StationProvider>
               <FavoriteProvider>
-                <NoticeProvider> 
+                <NoticeProvider>
                   <ThemeProvider theme={theme}>
                     <Stack screenOptions={{ headerShown: false }} />
                   </ThemeProvider>
