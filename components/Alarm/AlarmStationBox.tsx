@@ -1,11 +1,12 @@
 import { theme } from '@/styles/theme';
-import { Alarm } from '@/types/alarm';
+import { AlarmData } from '@/types/alarm';
 import { formatAlarmDisplay } from '@/utils/AlarmDisplayFormat';
 import { hp, px, wp } from '@/utils/scale';
-import { Image, StyleSheet, Text, TextStyle, View } from 'react-native';
+import { Image, StyleSheet, Text, TextStyle, TouchableOpacity, View } from 'react-native';
 
 interface AlarmStationBoxProps {
-  alarm: Alarm;
+  alarm: AlarmData;
+  onEditPress: (alarm: AlarmData) => void;
 }
 
 type ThemeType = {
@@ -28,7 +29,7 @@ function extractLineNumber(lineName: string): string {
   return match ? match[0] : 'default';
 }
 
-const AlarmStationBox = ({ alarm }: AlarmStationBoxProps) => {
+const AlarmStationBox = ({ alarm, onEditPress }: AlarmStationBoxProps) => {
   return (
     <View style={styles.alarmStationBox}>
       <View style={styles.imgAndStationContainer}>
@@ -55,13 +56,13 @@ const AlarmStationBox = ({ alarm }: AlarmStationBoxProps) => {
         </View>
       </View>
       <View style={styles.buttonImgContainer}>
-        <View style={styles.buttonImgBox}>
+        <TouchableOpacity style={styles.buttonImgBox} onPress={() => onEditPress(alarm)}>
           <Image
             source={require('@/assets/images/alarm-right-arrow.png')}
             style={styles.buttonImg}
             resizeMode="cover"
           />
-        </View>
+        </TouchableOpacity>
       </View>
     </View>
   );

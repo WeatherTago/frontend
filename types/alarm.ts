@@ -24,15 +24,15 @@ export type AlarmBase = {
 
 export type Alarm = AlarmBase;
 
-export type CreatedAlarm = AlarmBase & {
+export type AlarmData = AlarmBase & {
   alarmId: number;
 };
 
-export type ReadAlarmResponse = CommonResponse<Alarm[]>;
+export type ReadAlarmResponse = CommonResponse<AlarmData[]>;
 
 export type CreateAlarmRequest = AlarmBase;
 
-export type CreateAlarmResponse = CommonResponse<CreatedAlarm>;
+export type CreateAlarmResponse = CommonResponse<AlarmData>;
 
 export type DeleteAlarmRequest = {
   alarmId: number;
