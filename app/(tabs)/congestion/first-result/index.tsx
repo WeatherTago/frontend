@@ -2,7 +2,6 @@ import { fetchStationByIdAndTime, fetchStationDetailInfo } from '@/apis/station'
 import subwayImage from '@/assets/images/subway/subway-all.png';
 import Header from '@/components/Header/CommonHeader';
 import InfoBox from '@/components/InfoBox';
-import SmallInfoBox from '@/components/smallInfoBox';
 import StationHeader from '@/components/StationHeader';
 import StationInfo from '@/components/StationInfo';
 import { useStationContext } from '@/context/StationContext';
@@ -10,6 +9,7 @@ import { StationDetail, StationResult } from '@/types/station';
 import { hp, px, wp } from '@/utils/scale';
 import { useTheme } from '@emotion/react';
 import { BottomSheetModal, BottomSheetScrollView } from '@gorhom/bottom-sheet';
+import dayjs from 'dayjs';
 import { useLocalSearchParams, useRouter } from 'expo-router';
 import { useEffect, useRef, useState } from 'react';
 import { ActivityIndicator, Dimensions, Image, ScrollView, StyleSheet, Text, TouchableOpacity, View } from 'react-native';
@@ -34,7 +34,20 @@ export default function FirstResultScreen() {
 
   const [address, setAddress] = useState('');
   const [phoneNumber, setPhoneNumber] = useState('');
-  const [selectedButton, setSelectedButton] = useState<'button1' | 'button2'>('button1');
+  const [selectedButton, setSelectedButton] = useState<'상행' | '하행' | '외선' | '내선' | null>(null);
+  const [directionKeys, setDirectionKeys] = useState<('상행' | '하행' | '외선' | '내선')[]>([]);
+
+  useEffect(() => {
+    if (result) {
+      const keys = Object.keys(result.congestionByDirection || {}) as (
+        '상행' | '하행' | '외선' | '내선'
+      )[];
+      setDirectionKeys(keys);
+      if (keys.length > 0) {
+        setSelectedButton(keys[0]);
+      }
+    }
+  }, [result]);
 
   useEffect(() => {
   const fetchData = async () => {
@@ -93,13 +106,6 @@ export default function FirstResultScreen() {
       );
     }
 
-    const directionKeys: ('상행' | '하행' | '외선' | '내선')[] = Object.keys(result.congestionByDirection || {}) as (
-    '상행' | '하행' | '외선' | '내선'
-  )[];
-
-
-    const lineKey = `line${result.line.replace('호선', '')}`;
-    const lineColor = theme.colors.subway[lineKey as keyof typeof theme.colors.subway];
 
     return (
       <>
@@ -109,83 +115,104 @@ export default function FirstResultScreen() {
           address={address}
           phoneNumber={phoneNumber}
         /> 
-        <View style={[styles.clickBox, {backgroundColor:theme.colors.gray[0]}]}>
-          <TouchableOpacity
-            style={[
-              styles.button,
-              selectedButton === 'button1' ? styles.selected : styles.unselected,
-            ]}
-            onPress={() => setSelectedButton('button1')}
-          >
-            <Text
+        <View style={[styles.clickBox, { backgroundColor: theme.colors.gray[0] }]}>
+          {directionKeys.map((dirKey) => (
+            <TouchableOpacity
+              key={dirKey}
               style={[
-                styles.buttonText,
-                {color : selectedButton === 'button1' ? theme.colors.gray[800] : theme.colors.gray[400]},
+                styles.button,
+                selectedButton === dirKey ? styles.selected : styles.unselected,
               ]}
+              onPress={() => setSelectedButton(dirKey)}
             >
-              상행 노선
-            </Text>
-          </TouchableOpacity>
+              <Text
+                style={[
+                  styles.buttonText,
+                  {
+                    color:
+                      selectedButton === dirKey
+                        ? theme.colors.gray[800]
+                        : theme.colors.gray[400],
+                  },
+                ]}
+              >
+                {dirKey} 노선
+              </Text>
+            </TouchableOpacity>
+          ))}
+        </View>
 
-          <TouchableOpacity
-            style={[
-              styles.button,
-              selectedButton === 'button2' ? styles.selected : styles.unselected,
-            ]}
-            onPress={() => setSelectedButton('button2')}
-          >
-            <Text
-              style={[
-                styles.buttonText,
-                {color:selectedButton === 'button2'? theme.colors.gray[800] : theme.colors.gray[400],},
-              ]}
-            >
-              하행 노선
-            </Text>
-          </TouchableOpacity>
+        {/* 선택된 방향의 혼잡도 InfoBox 하나만 보여주기 */}
+        {(() => {
+          if (!selectedButton) return null;
 
-        </View> 
-          {/* InfoBox 사용예시 */}
-        <InfoBox
-           specialColor='#02AAF8'
-           backgroundColor='#D9F2FE'
-           topText='이동할 때 다른 승객들과 부딪힐 수 있어요'
-           number='127'
-           rate='주의 필요'
-           time='오후 12:00'
-         />  
-          <SmallInfoBox
-            time='14시'
-            image={require('@/assets/images/Multiply.png')}
-            text1="흐림"
-            text2="50%"
-            textColor="#8a2323ff"
-          />
+          const directionData = result.congestionByDirection?.[selectedButton];
+          const congestion = directionData?.congestion;
 
-        {/* 응답 활용예시 */}
+          if (!congestion) {
+            return <Text>⚠️ {selectedButton} 방향 정보 없음</Text>;
+          }
 
-        <Text>역: {result.name} ({result.line})</Text>
-        <Text>시간: {date} {time}</Text>
+          let specialColor = '';
+          let backgroundColor = '';
+          let topText = '';
 
-        {directionKeys.length > 0 ? (
-          directionKeys.map((dirKey: '상행' | '하행' | '외선' | '내선') => {
-            const directionData = result.congestionByDirection?.[dirKey];
-            const congestion = directionData?.congestion;
+          switch (congestion.congestionLevel) {
+            case '여유':
+              specialColor = theme.colors.primary[500];
+              backgroundColor = theme.colors.primary[100];
+              topText = '승객 대부분이 착석해서 갈 수 있어요';
+              break;
+            case '보통':
+              specialColor = theme.colors.primary[800];
+              backgroundColor = theme.colors.primary[100];
+              topText = '승객들이 여유롭게 이동할 수 있어요';
+              break;
+            case '주의':
+              specialColor = theme.colors.secondary.blue;
+              backgroundColor = '#D9F2FE';
+              topText = '이동할 때 다른 승객들과 부딪힐 수 있어요';
+              break;
+            case '혼잡':
+              specialColor = theme.colors.secondary.pink;
+              backgroundColor = '#FDE7F2';
+              topText = '승객이 많아 지하철에서 이동할 수 없어요';
+              break;
+            default:
+              specialColor = theme.colors.gray[400];
+              backgroundColor = theme.colors.gray[100];
+              topText = '혼잡도 정보 없음';
+          }
 
-            if (congestion) {
-              return (
-                <View key={dirKey} style={styles.directionBlock}>
-                  <Text style={styles.directionTitle}>🚈 {dirKey} 방향</Text>
-                  <Text>혼잡도: {congestion.congestionLevel} / {congestion.congestionScore}%</Text>
-                </View>
-              );
-            } else {
-              return <Text key={dirKey}>⚠️ {dirKey} 방향 정보 없음</Text>;
-            }
-          })
-        ) : (
-          <Text>❗ 방향별 혼잡도 데이터 없음</Text>
-        )}
+        const selectedDate = dayjs(time);
+
+        // 오늘/내일/모레 판단
+        const today = dayjs().startOf('day');
+        let dateLabel = '오늘';
+
+        if (selectedDate.isSame(today.add(1, 'day'), 'day')) {
+          dateLabel = '내일';
+        } else if (selectedDate.isSame(today.add(2, 'day'), 'day')) {
+          dateLabel = '모레';
+        }
+
+        const hourStr = selectedDate.format('HH');
+        const formattedTime = `${dateLabel} ${hourStr}:00`;
+
+          return (
+            <InfoBox
+              key={selectedButton}
+              specialColor={specialColor}
+              backgroundColor={backgroundColor}
+              topText={topText}
+              number={`${congestion.congestionScore}%`}
+              rate={congestion.congestionLevel}
+              time={formattedTime}
+            />
+          );
+        })()}
+
+
 
         <View style={styles.weatherBlock}>
           <Text style={styles.weatherTitle}>날씨 정보</Text>
@@ -267,7 +294,7 @@ export default function FirstResultScreen() {
       </ScrollView>
 
       {loading ? (
-        <View style={{ marginTop: 100 }}>
+        <View style={{ marginTop: 100 , alignItems:'center'}}>
           <ActivityIndicator size="large" />
           <Text>결과를 불러오는 중입니다...</Text>
         </View>

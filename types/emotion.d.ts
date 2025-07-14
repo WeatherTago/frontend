@@ -43,6 +43,7 @@ declare module '@emotion/react' {
       secondary: {
         blue: string;
         purple: string;
+        pink: string;
       };
       text: string;
     };

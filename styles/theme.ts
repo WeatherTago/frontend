@@ -43,6 +43,7 @@ export const theme = {
     secondary: {
       blue: '#02AAF8',
       purple: '#8089FF',
+      pink: '#F05EA9'
     },
     text: '#0A0A0A',
   },
