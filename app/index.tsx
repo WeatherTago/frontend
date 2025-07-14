@@ -1,7 +1,7 @@
 import { useAuth } from '@/context/AuthContext';
 import { useRouter } from 'expo-router';
 import { useEffect } from 'react';
-import { Text, View } from 'react-native';
+import { ActivityIndicator, View } from 'react-native';
 
 export default function Index() {
   const router = useRouter();
@@ -17,6 +17,8 @@ export default function Index() {
     }
   }, [isAuthReady, user]);
 
+  if (!isAuthReady) return null;
+
   if (loading) {
     return (
       <View
@@ -26,7 +28,7 @@ export default function Index() {
           alignItems: 'center',
         }}
       >
-        <Text>로딩 중...</Text>
+        <ActivityIndicator size="large" />
       </View>
     );
   }
@@ -39,7 +41,7 @@ export default function Index() {
         alignItems: 'center',
       }}
     >
-      <Text>라우팅 화면</Text>
+      <ActivityIndicator size="large" />
     </View>
   );
 }
