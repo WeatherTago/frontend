@@ -1,9 +1,11 @@
 import { myFavorite } from '@/apis/favorite';
+import AlarmStationBox from '@/components/Alarm/AlarmStationBox';
 import LargeButton from '@/components/Button/LargeButton';
 import WeatherHeader from '@/components/Header/WeatherHeader';
 import { useFavorite } from '@/context/FavoriteContext';
 import { useNoticeContext } from '@/context/NoticeContext';
 import { theme } from '@/styles/theme';
+import { AlarmDayType, AlarmPeriodType } from '@/types/alarm';
 import { StationInfo } from '@/types/common';
 import { hp, px, wp } from '@/utils/scale';
 import BottomSheet, { BottomSheetView } from '@gorhom/bottom-sheet';
@@ -196,6 +198,32 @@ export default function AlarmScreen() {
   const [selectedDateOption, setSelectedDateOption] = useState<string>('전날');
   const [selectedCongestionTime, setSelectedCongestionTime] = useState<string>('08:00'); // 혼잡도 기준 시간
   const [selectedNotificationTime, setSelectedNotificationTime] = useState<string>('08:00'); // 알림 수신 시간
+
+  const periodToEnumMap: Record<string, AlarmPeriodType> = {
+    매일: 'EVERYDAY',
+    월: 'MONDAY',
+    화: 'TUESDAY',
+    수: 'WEDNESDAY',
+    목: 'THURSDAY',
+    금: 'FRIDAY',
+    토: 'SATURDAY',
+    일: 'SUNDAY',
+  };
+
+  const dayToEnumMap: Record<string, AlarmDayType> = {
+    전날: 'YESTERDAY',
+    오늘: 'TODAY',
+  };
+
+  const handleSubmit = () => {
+    if (!selectedStation || !selectedLine || !selectedDirection) {
+      alert('역, 호선, 방향을 선택해주세요.');
+      return;
+    }
+    const alarmPeriod = periodToEnumMap[selectedDay];
+    const alarmDay = dayToEnumMap[selectedDateOption];
+    handleCloseModalPress();
+  };
 
   // --- 2. 현재 BottomSheet에 보여줄 뷰 타입 상태 ---
   const [currentBottomSheetView, setCurrentBottomSheetView] =
@@ -429,6 +457,9 @@ export default function AlarmScreen() {
             </Text>
           </View>
         </View>
+        <View style={styles.alarmListContainer}>
+          <AlarmStationBox />
+        </View>
       </View>
       <BottomSheet
         ref={bottomSheetRef}
@@ -451,7 +482,7 @@ export default function AlarmScreen() {
               {currentBottomSheetView === 'timeSelectionForNotification' && '알림 수신 시간 선택'}
               {currentBottomSheetView === 'dateOptionSelection' && '날짜 옵션 선택'}
             </Text>
-            <TouchableOpacity style={styles.bottomSheetDoneButton} onPress={handleCloseModalPress}>
+            <TouchableOpacity style={styles.bottomSheetDoneButton} onPress={handleSubmit}>
               <Text style={styles.bottomSheetDoneButtonText}>완료</Text>
             </TouchableOpacity>
           </View>
@@ -909,5 +940,14 @@ const styles = StyleSheet.create({
   },
   timeOptionTextSelected: {
     color: theme.colors.primary[700],
+  },
+  alarmListContainer: {
+    backgroundColor: theme.colors.gray[0],
+    paddingHorizontal: wp(24),
+    paddingBottom: hp(28),
+    flexDirection: 'column',
+    alignItems: 'flex-start',
+    gap: hp(22),
+    alignSelf: 'stretch',
   },
 });
