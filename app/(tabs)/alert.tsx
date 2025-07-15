@@ -9,7 +9,7 @@ import { theme } from '@/styles/theme';
 import { AlarmData, ReadAlarmResponse } from '@/types/alarm';
 import { hp, px, wp } from '@/utils/scale';
 import { useEffect, useRef, useState } from 'react';
-import { Alert, StyleSheet, Text, View } from 'react-native';
+import { ActivityIndicator, Alert, ScrollView, StyleSheet, Text, View } from 'react-native';
 
 export default function AlarmScreen() {
   const { isNewUnreadExists } = useNoticeContext();
@@ -42,6 +42,46 @@ export default function AlarmScreen() {
           {
             alarmId: 3,
             stationName: '시청',
+            stationLine: '1호선',
+            direction: '상행',
+            referenceTime: '09:00',
+            alarmPeriod: 'MONDAY',
+            alarmDay: 'TODAY',
+            alarmTime: '08:00',
+          },
+          {
+            alarmId: 5,
+            stationName: '종각',
+            stationLine: '1호선',
+            direction: '상행',
+            referenceTime: '08:00',
+            alarmPeriod: 'EVERYDAY',
+            alarmDay: 'YESTERDAY',
+            alarmTime: '07:30',
+          },
+          {
+            alarmId: 7,
+            stationName: '종로3가',
+            stationLine: '1호선',
+            direction: '상행',
+            referenceTime: '09:00',
+            alarmPeriod: 'MONDAY',
+            alarmDay: 'TODAY',
+            alarmTime: '08:00',
+          },
+          {
+            alarmId: 9,
+            stationName: '종로5가',
+            stationLine: '1호선',
+            direction: '상행',
+            referenceTime: '08:00',
+            alarmPeriod: 'EVERYDAY',
+            alarmDay: 'YESTERDAY',
+            alarmTime: '07:30',
+          },
+          {
+            alarmId: 11,
+            stationName: '동대문',
             stationLine: '1호선',
             direction: '상행',
             referenceTime: '09:00',
@@ -116,11 +156,30 @@ export default function AlarmScreen() {
             </Text>
           </View>
         </View>
-        <View style={styles.alarmListContainer}>
-          {alarms.map((alarm, index) => (
-            <AlarmStationBox key={index} alarm={alarm} onEditPress={handleEditAlarmPress} />
-          ))}
-        </View>
+        <ScrollView
+          style={styles.alarmListScrollView}
+          contentContainerStyle={styles.alarmListContentContainer} // 콘텐츠 스타일 적용
+        >
+          {/* 조건부 렌더링 시작 */}
+          {isLoadingAlarms ? ( // 로딩 중일 때
+            <View style={styles.loadingContainer}>
+              <ActivityIndicator size="large" color={theme.colors.primary[700]} />
+              <Text style={styles.loadingText}>알림 목록 로딩 중...</Text>
+            </View>
+          ) : alarms.length === 0 ? ( // 알림이 없을 때
+            <Text style={styles.noAlarmsText}>알림 설정한 역이 없습니다.</Text>
+          ) : (
+            // 알림이 있을 때
+            alarms.map((alarm, index) => (
+              <AlarmStationBox
+                key={alarm.alarmId || index}
+                alarm={alarm}
+                onEditPress={handleEditAlarmPress}
+              />
+            ))
+          )}
+          {/* 조건부 렌더링 끝 */}
+        </ScrollView>
       </View>
       <AlarmEditBottomSheet
         ref={alarmBottomSheetRef}
@@ -208,13 +267,39 @@ const styles = StyleSheet.create({
     fontWeight: '500',
     lineHeight: px(20),
   },
-  alarmListContainer: {
-    backgroundColor: theme.colors.gray[0],
+  // 기존 alarmListContainer 스타일을 ScrollView의 스타일로 분리
+  alarmListScrollView: {
+    flex: 1, // 남은 공간을 차지하도록
+    alignSelf: 'stretch', // 부모 너비를 따르도록
+    backgroundColor: theme.colors.gray[0], // 배경색
+  },
+  // ScrollView 내부 콘텐츠에 적용할 스타일 (padding, gap 등)
+  alarmListContentContainer: {
     paddingHorizontal: wp(24),
     paddingBottom: hp(28),
     flexDirection: 'column',
     alignItems: 'flex-start',
-    gap: hp(22),
-    alignSelf: 'stretch',
+    gap: hp(22), // ScrollView 내부에 items들의 간격
+  },
+  noAlarmsText: {
+    color: theme.colors.gray[500],
+    fontFamily: 'Pretendard-Medium',
+    fontSize: px(20),
+    lineHeight: px(28),
+    marginTop: hp(20),
+    textAlign: 'center',
+    width: '100%',
+  },
+  loadingContainer: {
+    flex: 1,
+    justifyContent: 'center',
+    alignItems: 'center',
+    paddingVertical: hp(40),
+  },
+  loadingText: {
+    color: theme.colors.gray[500],
+    fontFamily: 'Pretendard-Medium',
+    fontSize: px(16),
+    marginTop: hp(10),
   },
 });
