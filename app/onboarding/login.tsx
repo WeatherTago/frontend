@@ -7,7 +7,7 @@ import { hp, px, wp } from '@/utils/scale';
 import { router } from 'expo-router';
 import * as SecureStore from 'expo-secure-store';
 import { useEffect } from 'react';
-import { StyleSheet, Text, TextStyle, View } from 'react-native';
+import { Image, StyleSheet, Text, TextStyle, View } from 'react-native';
 import { useSafeAreaInsets } from 'react-native-safe-area-context';
 
 export default function OnboardingLogin() {
@@ -50,7 +50,12 @@ export default function OnboardingLogin() {
   return (
     <View style={[styles.container, { paddingTop: insets.top, paddingBottom: insets.bottom }]}>
       <View style={styles.contentContainer}>
-        <View style={styles.imageContainer} />
+        <View style={styles.imageContainer}>
+          <Image
+            source={require('@/assets/images/logo/weathertago-logo.png')}
+            style={styles.image}
+          />
+        </View>
         <StepIndicator totalSteps={4} currentStep={4} />
         <OnboardingHeader
           title={
@@ -102,6 +107,11 @@ const styles = StyleSheet.create({
     alignSelf: 'stretch',
     backgroundColor: theme.colors.gray[100],
     flexGrow: 1,
+  },
+  image: {
+    width: '100%',
+    height: '100%',
+    resizeMode: 'contain',
   },
   buttonContainer: {
     height: hp(108),
