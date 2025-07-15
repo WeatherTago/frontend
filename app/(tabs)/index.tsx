@@ -2,7 +2,7 @@ import { useTheme } from '@emotion/react';
 import dayjs from 'dayjs';
 import { useRouter } from 'expo-router';
 import { useEffect, useState } from 'react';
-import { Dimensions, FlatList, ScrollView, StyleSheet, Text, View } from 'react-native';
+import { Dimensions, FlatList, Image, ScrollView, StyleSheet, Text, View } from 'react-native';
 
 import DirectAccessCard from '@/components/DirectAccessCard';
 import FavoriteStationCard from '@/components/Favorites/FavoriteStationCard';
@@ -80,8 +80,11 @@ export default function HomeScreen() {
           </View>
         ) : favoriteStations.length === 0 ? (
           // 데이터 로딩 완료 but 없음 → 안내 메시지
-          <View style={{ paddingHorizontal: wp(24), paddingVertical: hp(20) }}>
-            <Text style={{ color: theme.colors.gray[500] }}>즐겨찾는 역이 없습니다.</Text>
+          <View style={styles.emptyContainer}>
+            <Image
+              source={require('@/assets/images/subway/subway-circle-line1.png')}
+              style={styles.emptyImage}
+            />
           </View>
         ) : (
           // 실제 FlatList
@@ -176,5 +179,16 @@ const styles = StyleSheet.create({
   },
   cardListContainer: {
     paddingHorizontal: SIDE_SPACING,
+  },
+  emptyContainer: {
+    height: hp(400),
+    justifyContent: 'center',
+    alignItems: 'center',
+    gap: hp(32),
+    alignSelf: 'stretch',
+  },
+  emptyImage: {
+    width: '100%',
+    height: '100%',
   },
 });
