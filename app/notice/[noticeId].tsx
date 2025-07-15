@@ -1,15 +1,15 @@
 import type { Notice } from '@/apis/notice';
 import { fetchNoticeById } from '@/apis/notice';
 import Header from '@/components/Header/CommonHeader';
-import { useNoticeContext } from '@/context/NoticeContext'; // ✅ 추가
+import { useNoticeContext } from '@/context/NoticeContext';
 import { markNoticeAsRead } from '@/utils/noticeReadStorage';
 import { hp, px } from '@/utils/scale';
 import { useTheme } from '@emotion/react';
 import dayjs from 'dayjs';
 import { useLocalSearchParams, useRouter } from 'expo-router';
-import { useEffect, useState } from 'react';
+import { useEffect, useMemo, useState } from 'react';
 import { ScrollView, StyleSheet, Text, View, useWindowDimensions } from 'react-native';
-import RenderHTML from 'react-native-render-html';
+import RenderHTML, { MixedStyleRecord } from 'react-native-render-html';
 import { SafeAreaView, useSafeAreaInsets } from 'react-native-safe-area-context';
 
 export default function NoticeDetailScreen() {
@@ -19,11 +19,35 @@ export default function NoticeDetailScreen() {
   const insets = useSafeAreaInsets();
   const router = useRouter();
   const theme = useTheme();
-  const { refetchNotices } = useNoticeContext(); // ✅ context 함수 사용
+  const { refetchNotices } = useNoticeContext();
 
-  const removeFooterNote = (html: string) => {
-    return html.replace(/※ 자세한 내용은 첨부파일을 참고 부탁드립니다\./g, '');
-  };
+  // ✅ 항상 위에서 선언 (조건문 안에서 훅 금지)
+  const cleanedHtml = useMemo(() => {
+    if (!notice?.content) return '';
+    return notice.content.replace(/※ 자세한 내용은 첨부파일을 참고 부탁드립니다\./g, '');
+  }, [notice?.content]);
+
+  const htmlSource = useMemo(() => ({ html: cleanedHtml }), [cleanedHtml]);
+
+  const tagsStyles: MixedStyleRecord = useMemo(() => ({
+    p: {
+      fontFamily: 'Pretendard-Regular',
+      fontWeight: '400',
+      fontSize: px(24),
+      lineHeight: px(34),
+      color: theme.colors.gray[900],
+    },
+    span: {
+      fontFamily: 'Pretendard-Regular',
+      fontWeight: '400',
+      fontSize: px(24),
+      lineHeight: px(34),
+      color: theme.colors.gray[900],
+    },
+    div: {
+      marginBottom: 8,
+    },
+  }), [theme]);
 
   useEffect(() => {
     const getNotice = async () => {
@@ -31,8 +55,8 @@ export default function NoticeDetailScreen() {
       setNotice(data);
 
       if (data?.noticeId) {
-        await markNoticeAsRead(data.noticeId); // ✅ 읽음 처리
-        await refetchNotices(); // ✅ context 갱신
+        await markNoticeAsRead(data.noticeId);
+        await refetchNotices();
       }
     };
     getNotice();
@@ -75,27 +99,9 @@ export default function NoticeDetailScreen() {
         />
         <RenderHTML
           contentWidth={width}
-          source={{ html: removeFooterNote(notice.content) }}
+          source={htmlSource}
           ignoredDomTags={['font']}
-          tagsStyles={{
-            p: {
-              fontFamily: 'Pretendard-Regular',
-              fontWeight: '400',
-              fontSize: px(24),
-              lineHeight: px(34),
-              color: theme.colors.gray[900],
-            },
-            span: {
-              fontFamily: 'Pretendard-Regular',
-              fontWeight: '400',
-              fontSize: px(24),
-              lineHeight: px(34),
-              color: theme.colors.gray[900],
-            },
-            div: {
-              marginBottom: 8,
-            },
-          }}
+          tagsStyles={tagsStyles}
         />
       </ScrollView>
     </SafeAreaView>

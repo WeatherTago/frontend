@@ -1,5 +1,6 @@
 import ArrowIcon from '@/components/Icons/ArrowIcon';
 import { useStationContext } from '@/context/StationContext';
+import { theme } from '@/styles/theme';
 import { hp, px, wp } from '@/utils/scale';
 import { useTheme } from '@emotion/react';
 import { useRouter } from 'expo-router';
@@ -11,7 +12,6 @@ import {
   Image,
   Keyboard,
   Modal,
-  ScrollView,
   StyleSheet,
   Text,
   TextInput,
@@ -37,7 +37,6 @@ export default function FirstSearchScreen() {
 
   const [stationName, setStationName] = useState('');
   const [selectedLine, setSelectedLine] = useState('');
-  const [filteredLines, setFilteredLines] = useState<string[]>([]);
   const [date, setDate] = useState<Date | undefined>();
   const [time, setTime] = useState<{ hours: number; minutes: number } | undefined>();
   const [showSuggestions, setShowSuggestions] = useState(false);
@@ -58,56 +57,52 @@ export default function FirstSearchScreen() {
   );
 
   const filteredStations = stationName
-    ? fuse.search(stationName).map((res) => res.item)
+    ? fuse
+        .search(stationName)
+        .flatMap((res) =>
+          stations.filter((s) => s.stationName === res.item.stationName)
+        )
     : [];
 
-  const handleStationSelect = (name: string) => {
-    setStationName(name);
-    setShowSuggestions(false);
-    Keyboard.dismiss();
-    const matched = stations.filter((s) => s.stationName === name);
-    const lines = [...new Set(matched.map((s) => s.stationLine))];
-    setFilteredLines(lines);
-    setSelectedLine('');
-  };
-
   const handleSubmit = () => {
-  if (!stationName || !selectedLine || !date || !time) {
-    alert('모든 항목을 입력해주세요.');
-    return;
-  }
+    if (!stationName || !selectedLine || !date || !time) {
+      alert('모든 항목을 입력해주세요.');
+      return;
+    }
 
+    const combinedDate = new Date(date);
+    combinedDate.setHours(time.hours);
+    combinedDate.setMinutes(time.minutes);
+    combinedDate.setSeconds(0);
+    combinedDate.setMilliseconds(0);
 
-  const combinedDate = new Date(date);
-  combinedDate.setHours(time.hours);
-  combinedDate.setMinutes(time.minutes);
-  combinedDate.setSeconds(0);
-  combinedDate.setMilliseconds(0);
+    const formatLocalISOString = (d: Date) => {
+      const y = d.getFullYear();
+      const m = String(d.getMonth() + 1).padStart(2, '0');
+      const day = String(d.getDate()).padStart(2, '0');
+      const h = String(d.getHours()).padStart(2, '0');
+      const min = String(d.getMinutes()).padStart(2, '0');
+      return `${y}-${m}-${day}T${h}:${min}:00`;
+    };
 
- 
-  const formatLocalISOString = (d: Date) => {
-    const y = d.getFullYear();
-    const m = String(d.getMonth() + 1).padStart(2, '0');
-    const day = String(d.getDate()).padStart(2, '0');
-    const h = String(d.getHours()).padStart(2, '0');
-    const min = String(d.getMinutes()).padStart(2, '0');
-    return `${y}-${m}-${day}T${h}:${min}:00`;
+    const formattedDate = formatLocalISOString(date);
+    const formattedTime = formatLocalISOString(combinedDate);
+
+    router.push({
+      pathname: '../congestion/first-result',
+      params: {
+        station: stationName,
+        line: selectedLine,
+        date: formattedDate,
+        time: formattedTime,
+      },
+    });
   };
-  const formattedDate = formatLocalISOString(date);          // 예: 2025-07-13T00:00:00
-  const formattedTime = formatLocalISOString(combinedDate);  // 예: 2025-07-13T17:00:00
 
-  router.push({
-    pathname: '../congestion/first-result',
-    params: {
-      station: stationName,
-      line: selectedLine,
-      date: formattedDate, 
-      time: formattedTime,
-    },
-  });
-};
-
-
+  const getLineColor = (line: string) => {
+    const num = line.replace('호선', '');
+    return theme.colors.subway[`line${num}` as keyof typeof theme.colors.subway] || theme.colors.gray[300];
+  };
 
   const today = new Date();
   const tomorrow = new Date(today);
@@ -121,34 +116,30 @@ export default function FirstSearchScreen() {
     { label: '모레', value: dayAfter },
   ];
 
-  const isToday = date?.toDateString() === today.toDateString();
-  const now = new Date();
-  const currentHour = now.getHours();
   const hourOptions = useMemo(() => {
-  const now = new Date();
-  const currentHour = now.getHours();
-  const isToday = date?.toDateString() === today.toDateString();
+    const now = new Date();
+    const currentHour = now.getHours();
+    const isToday = date?.toDateString() === today.toDateString();
 
-  return Array.from({ length: 24 }, (_, i) => i).filter((hour) => {
-    if (hour >= 1 && hour <= 4) return false;
-    if (isToday) return hour >= currentHour;
-    return true;
-  });
-}, [date]);
-
-
+    return Array.from({ length: 24 }, (_, i) => i).filter((hour) => {
+      if (hour >= 1 && hour <= 4) return false;
+      if (isToday) return hour >= currentHour;
+      return true;
+    });
+  }, [date]);
 
   const getSelectedTimeLabel = () => {
-  if (!date || !time) return '출발 시각 선택';
-  const dateLabel = dateOptions.find((opt) => opt.value.toDateString() === date.toDateString())?.label
-    ?? date.toLocaleDateString();
-  return `${dateLabel} ${time.hours}:00`;
-};
-  useEffect(() => {
-    setDate(tomorrow); 
-    setTime({ hours: 9, minutes: 0 }); 
-  }, []);
+    if (!date || !time) return '출발 시각 선택';
+    const dateLabel =
+      dateOptions.find((opt) => opt.value.toDateString() === date.toDateString())?.label ??
+      date.toLocaleDateString();
+    return `${dateLabel} ${time.hours}:00`;
+  };
 
+  useEffect(() => {
+    setDate(tomorrow);
+    setTime({ hours: 9, minutes: 0 });
+  }, []);
 
   return (
     <View style={{ flex: 1, paddingTop: insets.top, backgroundColor: theme.colors.gray[0] }}>
@@ -156,18 +147,25 @@ export default function FirstSearchScreen() {
         <TouchableOpacity onPress={() => router.back()}>
           <ArrowIcon direction="left" color={theme.colors.gray[500]} width={px(46)} height={px(46)} />
         </TouchableOpacity>
-        <TextInput
-          ref={inputRef}
-          placeholder="혼잡도가 궁금한 역을 검색해보세요"
-          value={stationName}
-          onChangeText={(text) => {
-            setStationName(text);
-            setShowSuggestions(true);
-          }}
-          style={[styles.searchInput, { color: theme.colors.gray[950] }]}
-          placeholderTextColor={theme.colors.gray[300]}
-        />
+
+          <TextInput
+            ref={inputRef}
+            placeholder="혼잡도가 궁금한 역을 검색해보세요"
+            value={stationName}
+            onChangeText={(text) => {
+              setStationName(text);
+              setShowSuggestions(true);
+            }}
+            onSubmitEditing={handleSubmit}
+            returnKeyType="search"
+            style={[styles.searchInput, { color: theme.colors.gray[950] }]}
+            placeholderTextColor={theme.colors.gray[300]}
+          />
+          <TouchableOpacity onPress={handleSubmit} style={styles.inlineSearchButton}>
+            <Text style={styles.inlineSearchButtonText}>검색</Text>
+          </TouchableOpacity>
       </View>
+
 
       <View style={styles.choiceContainer}>
         <TouchableOpacity onPress={() => setSheetOpen(true)} style={styles.dateButton}>
@@ -184,10 +182,29 @@ export default function FirstSearchScreen() {
       {showSuggestions && filteredStations.length > 0 && (
         <FlatList
           data={filteredStations}
-          keyExtractor={(item) => item.stationName}
+          keyExtractor={(item, index) => item.stationName + item.stationLine + index}
           renderItem={({ item }) => (
-            <TouchableOpacity onPress={() => handleStationSelect(item.stationName)} style={[styles.suggestionItem, {borderColor:theme.colors.gray[100]}]}>
-              <Text style={[styles.suggestionItemText, { color: theme.colors.gray[900] }]}>{item.stationName}</Text>
+            <TouchableOpacity
+              onPress={() => {
+                setStationName(item.stationName);
+                setSelectedLine(item.stationLine);
+                setShowSuggestions(false);
+                Keyboard.dismiss();
+              }}
+              style={[styles.suggestionItem, { borderColor: theme.colors.gray[100] }]}
+            >
+              <View style={{ flexDirection: 'row', alignItems: 'center'}}>
+                <Text style={[styles.suggestionItemText, { color: theme.colors.gray[900] }]}>
+                  {item.stationName}
+                </Text>
+                <View
+                  style={[styles.lineBox,{backgroundColor: getLineColor(item.stationLine)}]}
+                >
+                  <Text style={styles.lineBoxText}>
+                    {item.stationLine}
+                  </Text>
+                </View>
+              </View>
             </TouchableOpacity>
           )}
           style={{ backgroundColor: theme.colors.gray[0], maxHeight: listHeight }}
@@ -195,75 +212,57 @@ export default function FirstSearchScreen() {
         />
       )}
 
-      <ScrollView contentContainerStyle={{ paddingVertical: px(24) }}>
-        {filteredLines.length > 0 && (
-          <>
-            <Text>호선 선택</Text>
-            {filteredLines.map((line) => (
-              <TouchableOpacity key={line} onPress={() => setSelectedLine(line)}>
-                <Text style={{ padding: 8, backgroundColor: selectedLine === line ? '#d0ebff' : '#eee' }}>{line}</Text>
-              </TouchableOpacity>
-            ))}
-          </>
-        )}
-
-        <TouchableOpacity onPress={handleSubmit} style={styles.searchButton}>
-          <Text style={styles.searchButtonText}>혼잡도 검색</Text>
-        </TouchableOpacity>
-      </ScrollView>
-
       <Modal visible={sheetOpen} transparent animationType="fade" onRequestClose={() => setSheetOpen(false)}>
         <View style={styles.modalOverlay}>
           <View style={styles.wheelModalContainer}>
-            <Text style={[styles.modalTitle, {fontFamily:'Pretendard-SemiBold'}]}>날짜/시간 설정</Text>
-          <View style={styles.modalBox}>
-            <FlatList
-              data={dateOptions}
-              keyExtractor={(item) => item.label}
-              style={styles.wheelList}
-              showsVerticalScrollIndicator={false}
-              snapToInterval={40}
-              decelerationRate="fast"
-              renderItem={({ item }) => {
-              const isSelected = date?.toDateString() === item.value.toDateString(); //
-              return (
-                <TouchableOpacity onPress={() => setDate(item.value)}>
-                  <Text
-                    style={[
-                      styles.wheelItemText,
-                      { color: isSelected ? theme.colors.primary[700] : theme.colors.gray[900] },
-                    ]}
-                  >
-                    {item.label}
-                  </Text>
-                </TouchableOpacity>
-              );
-            }}
-            />
-
-            <FlatList
-              data={hourOptions}
-              keyExtractor={(item) => item.toString()}
-              style={styles.wheelList}
-              showsVerticalScrollIndicator={false}
-              snapToInterval={40}
-              decelerationRate="fast"
-              renderItem={({ item }) => {
-              const isSelected = time?.hours === item;
-              return (
-                <TouchableOpacity onPress={() => setTime({ hours: item, minutes: 0 })}>
-                  <Text
-                    style={[
-                      styles.wheelItemText,
-                      { color: isSelected ? theme.colors.primary[700] : theme.colors.gray[900] },
-                    ]}
-                  >
-                    {item}:00
-                  </Text>
-                </TouchableOpacity>
-              );
-            }}
-          />
+            <Text style={[styles.modalTitle, { fontFamily: 'Pretendard-SemiBold' }]}>날짜/시간 설정</Text>
+            <View style={styles.modalBox}>
+              <FlatList
+                data={dateOptions}
+                keyExtractor={(item) => item.label}
+                style={styles.wheelList}
+                showsVerticalScrollIndicator={false}
+                snapToInterval={40}
+                decelerationRate="fast"
+                renderItem={({ item }) => {
+                  const isSelected = date?.toDateString() === item.value.toDateString();
+                  return (
+                    <TouchableOpacity onPress={() => setDate(item.value)}>
+                      <Text
+                        style={[
+                          styles.wheelItemText,
+                          { color: isSelected ? theme.colors.primary[700] : theme.colors.gray[900] },
+                        ]}
+                      >
+                        {item.label}
+                      </Text>
+                    </TouchableOpacity>
+                  );
+                }}
+              />
+              <FlatList
+                data={hourOptions}
+                keyExtractor={(item) => item.toString()}
+                style={styles.wheelList}
+                showsVerticalScrollIndicator={false}
+                snapToInterval={40}
+                decelerationRate="fast"
+                renderItem={({ item }) => {
+                  const isSelected = time?.hours === item;
+                  return (
+                    <TouchableOpacity onPress={() => setTime({ hours: item, minutes: 0 })}>
+                      <Text
+                        style={[
+                          styles.wheelItemText,
+                          { color: isSelected ? theme.colors.primary[700] : theme.colors.gray[900] },
+                        ]}
+                      >
+                        {item}:00
+                      </Text>
+                    </TouchableOpacity>
+                  );
+                }}
+              />
             </View>
             <TouchableOpacity onPress={() => setSheetOpen(false)} style={styles.modalCloseButton}>
               <Text style={styles.modalCloseButtonText}>완료</Text>
@@ -277,69 +276,158 @@ export default function FirstSearchScreen() {
 
 const styles = StyleSheet.create({
   headerContainer: {
-    width: wp(540), height: hp(90), paddingHorizontal: wp(14),
-    flexDirection: 'row', alignItems: 'center',alignSelf:'stretch', gap: px(8), flexShrink: 0,
-    shadowColor: 'rgba(0, 0, 0, 0.05)', shadowOffset: { width: 0, height: 2 },
-    shadowOpacity: 1, shadowRadius: 6, elevation: 3,
+    width: wp(540),
+    height: hp(90),
+    paddingHorizontal: wp(14),
+    flexDirection: 'row',
+    alignItems: 'center',
+    alignSelf: 'stretch',
+    gap: px(8),
+    flexShrink: 0,
+    shadowColor: 'rgba(0, 0, 0, 0.05)',
+    shadowOffset: { width: 0, height: 2 },
+    shadowOpacity: 1,
+    shadowRadius: 6,
+    elevation: 3,
   },
   searchInput: {
-   fontSize: px(24), fontFamily: 'Pretendard-Medium', fontWeight: '500'
+    fontSize: px(24),
+    fontFamily: 'Pretendard-Medium',
+    fontWeight: '500',
   },
   choiceContainer: {
-    height: hp(57), paddingHorizontal: wp(24), paddingVertical: hp(10),
-    flexShrink: 0, alignSelf: 'stretch', alignItems: 'flex-start', gap: px(6), backgroundColor: '#FFF'
+    height: hp(57),
+    paddingHorizontal: wp(24),
+    paddingVertical: hp(10),
+    flexShrink: 0,
+    alignSelf: 'stretch',
+    alignItems: 'flex-start',
+    gap: px(6),
+    backgroundColor: '#FFF',
   },
   dateButton: {
-    height: px(40), width: px(150), padding: 4, backgroundColor: '#fff', borderRadius: 6,
-    alignItems: 'center', justifyContent: 'center'
+    height: px(40),
+    width: px(150),
+    padding: 4,
+    backgroundColor: '#fff',
+    borderRadius: 6,
+    alignItems: 'center',
+    justifyContent: 'center',
   },
   dateButtonText: {
-   fontFamily: 'Pretendard-Medium', fontWeight: '500', lineHeight: px(34), fontSize: px(22)
+    fontFamily: 'Pretendard-Medium',
+    fontWeight: '500',
+    lineHeight: px(34),
+    fontSize: px(22),
   },
   searchButton: {
-    width:100, marginTop: 24, backgroundColor: '#00C4B8', borderRadius: 8, paddingVertical: 14, alignItems: 'center',
+    width: 100,
+    marginTop: 24,
+    backgroundColor: '#00C4B8',
+    borderRadius: 8,
+    paddingVertical: 14,
+    alignItems: 'center',
   },
   searchButtonText: {
-    color: 'white', fontWeight: 'bold', fontSize: 16,
+    color: 'white',
+    fontWeight: 'bold',
+    fontSize: 16,
   },
   suggestionItem: {
-    padding: px(24), borderBottomWidth: 1, maxHeight: listHeight,gap:px(34), alignSelf:'stretch'
+    padding: px(24),
+    borderBottomWidth: 1,
+    maxHeight: listHeight,
+    gap: px(34),
+    alignSelf: 'stretch',
   },
   suggestionItemText: {
-    fontSize: px(22), fontFamily: 'Pretendard-Regular', fontWeight: '400', lineHeight: px(34)
+    fontSize: px(22),
+    fontFamily: 'Pretendard-Regular',
+    fontWeight: '400',
+    lineHeight: px(34),
   },
   modalOverlay: {
-    flex: 1, justifyContent: 'center', alignItems: 'center', backgroundColor: 'rgba(0,0,0,0.5)',
+    flex: 1,
+    justifyContent: 'center',
+    alignItems: 'center',
+    backgroundColor: 'rgba(0,0,0,0.5)',
   },
   wheelModalContainer: {
-    backgroundColor: '#FFF', padding: 20, borderRadius: 12, width: '80%', alignItems: 'center',
+    backgroundColor: '#FFF',
+    padding: 20,
+    borderRadius: 12,
+    width: '80%',
+    alignItems: 'center',
   },
-  modalBox:{
-    flexDirection:'row'
+  modalBox: {
+    flexDirection: 'row',
   },
   modalTitle: {
     fontSize: 18,
   },
   wheelList: {
-    height: 120, marginVertical: 10,
+    height: 120,
+    marginVertical: 10,
   },
   wheelItemText: {
-    fontSize: 18, textAlign: 'center', paddingVertical: 10,
+    fontSize: 18,
+    textAlign: 'center',
+    paddingVertical: 10,
   },
   modalCloseButton: {
-    marginTop: 16, backgroundColor: '#00C4B8', paddingVertical: 10, paddingHorizontal: 30, borderRadius: 8,
+    marginTop: 16,
+    backgroundColor: '#00C4B8',
+    paddingVertical: 10,
+    paddingHorizontal: 30,
+    borderRadius: 8,
   },
   modalCloseButtonText: {
-    color: '#FFF', fontWeight: 'bold',
+    color: '#FFF',
+    fontWeight: 'bold',
   },
   dateRow: {
+    flexDirection: 'row',
+    alignItems: 'center',
+  },
+  arrowIcon: {
+    width: px(24),
+    height: px(24),
+    marginLeft: px(4),
+    marginTop: px(4),
+  },
+  lineBox:{
+    borderRadius: px(99),
+    paddingHorizontal: px(8),
+    justifyContent:'center',
+    alignItems:'center',
+    marginLeft:px(8)
+  },
+  lineBoxText:{
+    color:theme.colors.gray[0],
+    fontFamily:'Pretendard-Medium',
+    fontSize:px(12),
+    fontWeight:'500',
+    lineHeight:px(26)
+  },
+  searchRow: {
+  flex: 1,
   flexDirection: 'row',
   alignItems: 'center',
+  alignContent:'space-between'
 },
-arrowIcon: {
-  width: px(24), 
-  height: px(24),
-  marginLeft: px(4),
-  marginTop: px(4)
+
+inlineSearchButton: {
+  paddingHorizontal: px(12),
+  paddingVertical: px(6),
+  backgroundColor: theme.colors.primary[700],
+  borderRadius: px(8),
+  marginLeft: px(8),
 },
+
+inlineSearchButtonText: {
+  color: 'white',
+  fontFamily: 'Pretendard-SemiBold',
+  fontSize: px(18),
+},
+
 });
