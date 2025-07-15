@@ -57,7 +57,7 @@ const SmallThumbnail = ({
       <ImageBackground
         source={getLineImage(stationLine)}
         style={styles.imageBackground}
-        imageStyle={styles.imageStyle} // optional: borderRadius 등
+        imageStyle={styles.imageStyle}
       >
         <View style={styles.contentContainer}>
           <StarIcon
@@ -84,7 +84,6 @@ const styles = StyleSheet.create({
   container: {
     width: thumbnailWidth,
     height: hp(184),
-    padding: 8,
     flexDirection: 'column',
     justifyContent: 'space-between',
     alignItems: 'center',
@@ -96,13 +95,9 @@ const styles = StyleSheet.create({
   imageBackground: {
     width: '100%',
     height: '100%',
-    justifyContent: 'flex-end',
-    alignItems: 'center',
     borderRadius: px(16),
   },
   imageStyle: {
-    width: '100%',
-    height: '100%',
     resizeMode: 'contain',
   },
   contentContainer: {
@@ -111,6 +106,7 @@ const styles = StyleSheet.create({
     alignItems: 'flex-end',
     justifyContent: 'space-between',
     alignSelf: 'stretch',
+    padding: 8,
   },
   textContainer: {
     flexDirection: 'column',
