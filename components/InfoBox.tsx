@@ -26,7 +26,7 @@ export default function InfoBox({
         <Text style={[styles.topText, { color: specialColor }]}>{topText}</Text>
       </View>
       <View style={styles.bottomBox}>
-        <Text style={[styles.number, {color:theme.colors.gray[950]}]}>{number}</Text>
+        <Text style={[styles.number, {color:theme.colors.gray[950]}]}>{number}<Text style={{fontSize:px(50)}}>%</Text></Text>
         <View style={styles.lastBox}>
           <Text style={[styles.rate, { color: specialColor }]}>{rate}</Text>
           <Text style={[styles.time, {color:theme.colors.gray[400]}]}>{time}</Text>

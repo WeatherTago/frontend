@@ -47,3 +47,25 @@ export interface StationDetail {
 }
 
 export type StationDetailInfoResponse = CommonResponse<StationDetail[]>;
+
+export interface StationStatusWeather {
+  datetime: string;
+  weather: WeatherInfo;
+}
+
+export interface StationStatusCongestion {
+  datetime: string;
+  prediction: {
+    congestionScore: number;
+    congestionLevel: string;
+  };
+}
+
+export interface StationStatusByDirection {
+  weathers: StationStatusWeather[];
+  congestions: StationStatusCongestion[];
+}
+
+export type StationStatusResponse = CommonResponse<{
+  [key in '상행' | '하행' | '외선' | '내선']?: StationStatusByDirection;
+}>;

@@ -5,8 +5,8 @@ import { Image, ImageSourcePropType, StyleSheet, Text, View } from 'react-native
 interface SmallInfoBoxProps {
   time: string;
   image: ImageSourcePropType;
-  text1: string;
-  text2: string;
+  text1: string ;
+  text2: string | number;
   textColor: string;
 }
 

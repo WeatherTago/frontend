@@ -1,11 +1,18 @@
 import { fetchStationByIdAndTime, fetchStationDetailInfo } from '@/apis/station';
+import { fetchStationStatus } from '@/apis/stationStatus';
 import subwayImage from '@/assets/images/subway/subway-all.png';
 import Header from '@/components/Header/CommonHeader';
 import InfoBox from '@/components/InfoBox';
+import SmallInfoBox from '@/components/smallInfoBox';
 import StationHeader from '@/components/StationHeader';
 import StationInfo from '@/components/StationInfo';
+import ToggleBox from '@/components/ToggleBox';
 import { useStationContext } from '@/context/StationContext';
-import { StationDetail, StationResult } from '@/types/station';
+import { theme } from '@/styles/theme';
+import { StationDetail, StationResult, StationStatusCongestion, StationStatusWeather } from '@/types/station';
+import { getDateLabelFromDate, getDayjsFromDateLabel } from '@/utils/dateLabel';
+import { getCongestionStyle } from '@/utils/getCongestionStyle';
+import { getWeatherStyle } from '@/utils/getWeatherStyle';
 import { hp, px, wp } from '@/utils/scale';
 import { useTheme } from '@emotion/react';
 import { BottomSheetModal, BottomSheetScrollView } from '@gorhom/bottom-sheet';
@@ -36,6 +43,13 @@ export default function FirstResultScreen() {
   const [phoneNumber, setPhoneNumber] = useState('');
   const [selectedButton, setSelectedButton] = useState<'상행' | '하행' | '외선' | '내선' | null>(null);
   const [directionKeys, setDirectionKeys] = useState<('상행' | '하행' | '외선' | '내선')[]>([]);
+  const [selectedDate, setSelectedDate] = useState<'오늘' | '내일' | '모레'>('오늘');
+  const [statusData, setStatusData] = useState<{
+  [key in '상행' | '하행' | '외선' | '내선']?: {
+    weathers: StationStatusWeather[];
+    congestions: StationStatusCongestion[];
+  }
+} | null>(null);
 
   useEffect(() => {
     if (result) {
@@ -55,21 +69,24 @@ export default function FirstResultScreen() {
       setLoading(false);
       return;
     }
-
+    
     const stationId = getStationIdByNameAndLine(station, line);
     if (!stationId) {
       setLoading(false);
       return;
     }
-
+   console.log('📦 stationId:', stationId);
+   console.log('⏰ 요청 시간 (원본):', time);
     try {
-      const [res, detailRes] = await Promise.all([
+      const [res, detailRes,statusRes] = await Promise.all([
         fetchStationByIdAndTime({ stationId, time: time as string }),
         fetchStationDetailInfo(),
+        fetchStationStatus(stationId)
       ]);
-
+      
       setResult(res);
-
+      setStatusData(statusRes.result);
+     
       const matchedDetails = detailRes.result.filter(
         (item: StationDetail) => item.stationName === station
       );
@@ -86,7 +103,7 @@ export default function FirstResultScreen() {
       setLoading(false);
     }
   };
-
+  
   fetchData();
 }, [station, line, date, time]);
 
@@ -106,6 +123,49 @@ export default function FirstResultScreen() {
       );
     }
 
+  const filterStatusByDate = (
+  label: '오늘' | '내일' | '모레',
+  direction: '상행' | '하행' | '외선' | '내선'
+  ) => {
+    if (!statusData || !statusData[direction]) return [];
+
+    const { weathers, congestions } = statusData[direction];
+    const targetDate = getDayjsFromDateLabel(label);
+
+    return weathers
+      .filter(w => dayjs(w.datetime).isSame(targetDate, 'day'))
+      .map(w => {
+        const match = congestions.find(c => dayjs(c.datetime).isSame(w.datetime));
+        return {
+          time: dayjs(w.datetime).format('HH시'),
+          rate: match?.prediction.congestionScore ?? '정보 없음',
+          level: match?.prediction.congestionLevel ?? '정보 없음',
+        };
+      });
+  };
+
+    const selectedDateObj = dayjs(time);
+    const dateLabel = getDateLabelFromDate(selectedDateObj);
+    const hourStr = selectedDateObj.format('HH');
+    const formattedTime = `${dateLabel} ${hourStr}:00`;
+
+
+    const filterWeatherByDate = (
+    label: '오늘' | '내일' | '모레',
+    direction: '상행' | '하행' | '외선' | '내선'
+  ) => {
+    if (!statusData || !statusData[direction]) return [];
+
+    const targetDate = getDayjsFromDateLabel(label);
+
+    return statusData[direction].weathers
+      .filter(w => dayjs(w.datetime).isSame(targetDate, 'day'))
+      .map(w => ({
+        time: dayjs(w.datetime).format('HH시'),
+        status: w.weather.status,
+        tmp: w.weather.tmp,
+      }));
+  };
 
     return (
       <>
@@ -153,83 +213,175 @@ export default function FirstResultScreen() {
             return <Text>⚠️ {selectedButton} 방향 정보 없음</Text>;
           }
 
-          let specialColor = '';
-          let backgroundColor = '';
-          let topText = '';
-
-          switch (congestion.congestionLevel) {
-            case '여유':
-              specialColor = theme.colors.primary[500];
-              backgroundColor = theme.colors.primary[100];
-              topText = '승객 대부분이 착석해서 갈 수 있어요';
-              break;
-            case '보통':
-              specialColor = theme.colors.primary[800];
-              backgroundColor = theme.colors.primary[100];
-              topText = '승객들이 여유롭게 이동할 수 있어요';
-              break;
-            case '주의':
-              specialColor = theme.colors.secondary.blue;
-              backgroundColor = '#D9F2FE';
-              topText = '이동할 때 다른 승객들과 부딪힐 수 있어요';
-              break;
-            case '혼잡':
-              specialColor = theme.colors.secondary.pink;
-              backgroundColor = '#FDE7F2';
-              topText = '승객이 많아 지하철에서 이동할 수 없어요';
-              break;
-            default:
-              specialColor = theme.colors.gray[400];
-              backgroundColor = theme.colors.gray[100];
-              topText = '혼잡도 정보 없음';
-          }
-
-        const selectedDate = dayjs(time);
-
-        // 오늘/내일/모레 판단
-        const today = dayjs().startOf('day');
-        let dateLabel = '오늘';
-
-        if (selectedDate.isSame(today.add(1, 'day'), 'day')) {
-          dateLabel = '내일';
-        } else if (selectedDate.isSame(today.add(2, 'day'), 'day')) {
-          dateLabel = '모레';
-        }
-
-        const hourStr = selectedDate.format('HH');
-        const formattedTime = `${dateLabel} ${hourStr}:00`;
-
-          return (
+        const { textColor, backgroundColor, topText } = getCongestionStyle(congestion.congestionLevel, theme);
+        return (
             <InfoBox
               key={selectedButton}
-              specialColor={specialColor}
+              specialColor={textColor}
               backgroundColor={backgroundColor}
               topText={topText}
-              number={`${congestion.congestionScore}%`}
+              number={`${congestion.congestionScore}`}
               rate={congestion.congestionLevel}
               time={formattedTime}
             />
           );
         })()}
+        
+        <ToggleBox
+        text="지하철 혼잡도 예측"
+        defaultSelected="오늘"
+        onSelect={(val) => setSelectedDate(val)}
+      />
+
+      {selectedButton && (
+        <View style={{flex: 1, backgroundColor: theme.colors.gray[0], marginBottom: px(4)}}> 
+          <ScrollView
+            horizontal
+            showsHorizontalScrollIndicator={false}
+            contentContainerStyle={{
+              backgroundColor: theme.colors.gray[0],
+              flexDirection: 'row',
+              gap: px(8),
+              paddingHorizontal: wp(24),
+              paddingTop: hp(12),
+              paddingBottom: hp(34),
+              alignItems: 'center'
+            }}
+          >
+            {filterStatusByDate(selectedDate, selectedButton).map((item, idx) => {
+              const { textColor } = getCongestionStyle(item.level, theme);
+
+              return (
+                <SmallInfoBox
+                  key={idx}
+                  time={item.time}
+                  image={require('@/assets/images/Multiply.png')}
+                  text1={item.level}
+                  text2={`${item.rate}%`}
+                  textColor={textColor}
+                />
+              );
+            })}
+          </ScrollView>        
+        </View>
+      )}
 
 
+        {(() => {
+          if (!result || !result.weather) return null;
 
-        <View style={styles.weatherBlock}>
-          <Text style={styles.weatherTitle}>날씨 정보</Text>
+          const weather = result.weather;
+          const { textColor, backgroundColor, topText } = getWeatherStyle(weather.status ?? '', theme);
+
+          return (
+            <InfoBox
+              key="weather"
+              specialColor={textColor}
+              backgroundColor={backgroundColor}
+              topText={topText}
+              number={`${weather.tmp ?? '--'}`}
+              rate={weather.status ?? '--'}
+              time={formattedTime}
+            />
+          );
+        })()}
+
+        <View style={styles.weatherContainer}>
           {result.weather ? (
             <>
-              <Text>🌡️ 기온: {result.weather.tmp ?? '--'}℃</Text>
-              <Text>🌧️ 강수량: {result.weather.pcp ?? '--'}mm</Text>
-              <Text>💧 습도: {result.weather.reh ?? '--'}%</Text>
-              <Text>❄️ 적설: {result.weather.sno ?? '--'}mm</Text>
-              <Text>🌬️ 풍향: {result.weather.vec ?? '--'}°</Text>
-              <Text>💨 풍속: {result.weather.wsd ?? '--'}m/s</Text>
-              <Text>상태: {result.weather.status ?? '--'}</Text>
+          <View style={styles.weatherBox}>
+            <Image
+              style={styles.weatherIconContainer}
+              source={require('@/assets/images/Multiply.png')}
+            />
+            <Text style={styles.weatherText}>기온</Text>
+            <Text style={styles.weatherValueText}>{result.weather.tmp ?? '--'}℃</Text>
+          </View>
+          <View style={styles.weatherBox}>
+            <Image
+              style={styles.weatherIconContainer}
+              source={require('@/assets/images/Multiply.png')}
+            />
+            <Text style={styles.weatherText}>강수량</Text>
+            <Text style={styles.weatherValueText}>{result.weather.pcp ?? '--'}mm</Text>
+          </View>
+          <View style={styles.weatherBox}>
+            <Image
+              style={styles.weatherIconContainer}
+              source={require('@/assets/images/Multiply.png')}
+            />
+            <Text style={styles.weatherText}>습도</Text>
+            <Text style={styles.weatherValueText}>{result.weather.reh ?? '--'}%</Text>
+          </View>
+          <View style={styles.weatherBox}>
+            <Image
+              style={styles.weatherIconContainer}
+              source={require('@/assets/images/Multiply.png')}
+            />
+            <Text style={styles.weatherText}>적설</Text>
+            <Text style={styles.weatherValueText}>{result.weather.sno ?? '--'}mm</Text>
+          </View>
+          <View style={styles.weatherBox}>
+            <Image
+              style={styles.weatherIconContainer}
+              source={require('@/assets/images/Multiply.png')}
+            />
+            <Text style={styles.weatherText}>풍향</Text>
+            <Text style={styles.weatherValueText}>{result.weather.vec ?? '--'}°</Text>
+          </View>
+          <View style={styles.weatherBox}>
+            <Image
+              style={styles.weatherIconContainer}
+              source={require('@/assets/images/Multiply.png')}
+            />
+            <Text style={styles.weatherText}>풍속</Text>
+            <Text style={styles.weatherValueText}>{result.weather.wsd ?? '--'}m/s</Text>
+          </View>
             </>
           ) : (
             <Text>날씨 데이터가 없습니다.</Text>
           )}
         </View>
+
+         <ToggleBox
+          text="날씨 예측 정보"
+          defaultSelected="오늘"
+          onSelect={(val) => setSelectedDate(val)}
+        />
+
+        {selectedButton && (
+          <View style={{flex: 1, backgroundColor: theme.colors.gray[0], marginBottom: px(4)}}> 
+            <ScrollView
+              horizontal
+              showsHorizontalScrollIndicator={false}
+              contentContainerStyle={{
+                backgroundColor: theme.colors.gray[0],
+                flexDirection: 'row',
+                gap: px(8),
+                paddingHorizontal: wp(24),
+                paddingTop: hp(12),
+                paddingBottom: hp(34),
+                alignItems: 'center'
+              }}
+            >
+              {filterWeatherByDate(selectedDate, selectedButton).map((item, idx) => {
+                const { textColor } = getWeatherStyle(item.status, theme);
+
+                return (
+                  <SmallInfoBox
+                    key={idx}
+                    time={item.time}
+                    image={require('@/assets/images/Multiply.png')} // 나중에 상태별로 변경 가능
+                    text1={item.status}
+                    text2={`${item.tmp}℃`}
+                    textColor={textColor}
+                  />
+                );
+              })}
+            </ScrollView>        
+          </View>
+        )}
+        
 
         <StationInfo/>
 
@@ -365,6 +517,7 @@ const styles = StyleSheet.create({
     flex: 1, 
     borderRadius:px(9),
     borderWidth: px(3),
+    marginTop:20
   },
   selected: {
     borderColor: '#E5E5E5',
@@ -379,5 +532,40 @@ const styles = StyleSheet.create({
     fontWeight: '600',
     fontFamily:'Pretendard-SemiBold',
     lineHeight:px(30)
+  },
+  weatherContainer:{
+    backgroundColor:theme.colors.gray[50],
+    padding:px(24),
+    flexDirection:'row',
+    justifyContent:'center',
+    alignItems:'center',
+    gap:px(10),
+    alignSelf:'stretch',
+  },
+  weatherBox: {
+    flexDirection: 'column',
+    alignItems: 'center',
+    alignSelf: 'stretch',
+    flexGrow: 1,
+  },
+  weatherIconContainer: {
+    width: px(50),
+    height: px(50),
+    borderRadius: px(14),
+    backgroundColor: theme.colors.gray[300],
+  },
+  weatherText: {
+    color: theme.colors.gray[400],
+    fontFamily: theme.typography.caption.fontFamily,
+    fontSize: theme.typography.caption.fontSize,
+    fontWeight: theme.typography.caption.fontWeight,
+    lineHeight: theme.typography.caption.lineHeight,
+  },
+  weatherValueText: {
+    color: theme.colors.gray[700],
+    fontFamily: 'Pretendard-SemiBold',
+    fontSize: px(20),
+    fontWeight: '600',
+    lineHeight: px(22),
   },
 });
