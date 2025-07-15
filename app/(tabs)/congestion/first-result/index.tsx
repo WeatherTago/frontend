@@ -75,8 +75,7 @@ export default function FirstResultScreen() {
       setLoading(false);
       return;
     }
-   console.log('📦 stationId:', stationId);
-   console.log('⏰ 요청 시간 (원본):', time);
+
     try {
       const [res, detailRes,statusRes] = await Promise.all([
         fetchStationByIdAndTime({ stationId, time: time as string }),
@@ -213,14 +212,14 @@ export default function FirstResultScreen() {
             return <Text>⚠️ {selectedButton} 방향 정보 없음</Text>;
           }
 
-        const { textColor, backgroundColor, topText } = getCongestionStyle(congestion.congestionLevel, theme);
+        const { textColor, backgroundColor, topText,image } = getCongestionStyle(congestion.congestionLevel, theme);
         return (
             <InfoBox
               key={selectedButton}
               specialColor={textColor}
               backgroundColor={backgroundColor}
               topText={topText}
-              number={`${congestion.congestionScore}`}
+              image={image}
               rate={congestion.congestionLevel}
               time={formattedTime}
             />
@@ -249,13 +248,13 @@ export default function FirstResultScreen() {
             }}
           >
             {filterStatusByDate(selectedDate, selectedButton).map((item, idx) => {
-              const { textColor } = getCongestionStyle(item.level, theme);
+              const { textColor,image} = getCongestionStyle(item.level, theme);
 
               return (
                 <SmallInfoBox
                   key={idx}
                   time={item.time}
-                  image={require('@/assets/images/Multiply.png')}
+                  image={image}
                   text1={item.level}
                   text2={`${item.rate}%`}
                   textColor={textColor}
@@ -271,7 +270,7 @@ export default function FirstResultScreen() {
           if (!result || !result.weather) return null;
 
           const weather = result.weather;
-          const { textColor, backgroundColor, topText } = getWeatherStyle(weather.status ?? '', theme);
+          const { textColor, backgroundColor, topText,image } = getWeatherStyle(weather.status ?? '', theme);
 
           return (
             <InfoBox
@@ -279,7 +278,7 @@ export default function FirstResultScreen() {
               specialColor={textColor}
               backgroundColor={backgroundColor}
               topText={topText}
-              number={`${weather.tmp ?? '--'}`}
+              image={image}
               rate={weather.status ?? '--'}
               time={formattedTime}
             />
@@ -358,6 +357,7 @@ export default function FirstResultScreen() {
                 backgroundColor: theme.colors.gray[0],
                 flexDirection: 'row',
                 gap: px(8),
+
                 paddingHorizontal: wp(24),
                 paddingTop: hp(12),
                 paddingBottom: hp(34),
@@ -365,13 +365,13 @@ export default function FirstResultScreen() {
               }}
             >
               {filterWeatherByDate(selectedDate, selectedButton).map((item, idx) => {
-                const { textColor } = getWeatherStyle(item.status, theme);
+                const { textColor,image } = getWeatherStyle(item.status, theme);
 
                 return (
                   <SmallInfoBox
                     key={idx}
                     time={item.time}
-                    image={require('@/assets/images/Multiply.png')} // 나중에 상태별로 변경 가능
+                    image={image} 
                     text1={item.status}
                     text2={`${item.tmp}℃`}
                     textColor={textColor}

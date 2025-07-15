@@ -143,6 +143,7 @@ export default function HomeScreen() {
           subText="편의시설 정보를 빠르게 확인해보세요"
           buttonText="편의시설 확인하기"
           onPress={() => router.push('/information')}
+          image={require('@/assets/images/Multiply.png')}
         />
 
         <Text
@@ -169,6 +170,7 @@ export default function HomeScreen() {
           subText="즐겨찾는 역의 혼잡도를 알림으로 받아보세요"
           buttonText="알림 설정하기"
           onPress={() => router.push('/alert')}
+          image={require('@/assets/images/Multiply.png')}
         />
       </ScrollView>
     </View>
