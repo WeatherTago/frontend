@@ -9,7 +9,15 @@ import { theme } from '@/styles/theme';
 import { AlarmData, ReadAlarmResponse } from '@/types/alarm';
 import { hp, px, wp } from '@/utils/scale';
 import { useEffect, useRef, useState } from 'react';
-import { ActivityIndicator, Alert, ScrollView, StyleSheet, Text, View } from 'react-native';
+import {
+  ActivityIndicator,
+  Alert,
+  ImageBackground,
+  ScrollView,
+  StyleSheet,
+  Text,
+  View,
+} from 'react-native';
 
 export default function AlarmScreen() {
   const { isNewUnreadExists } = useNoticeContext();
@@ -134,17 +142,22 @@ export default function AlarmScreen() {
           </Text>
           <Text style={styles.text}>매일 알림으로 받아보세요</Text>
         </View>
-        <View style={styles.buttonContainer}>
-          <LargeButton
-            text="+ 알림 추가"
-            backgroundColor={theme.colors.primary[700]}
-            fontColor={theme.colors.gray[0]}
-            typography={theme.typography.subtitle1}
-            onPress={() => {
-              handleAddAlarmPress();
-            }}
-          />
-        </View>
+        <ImageBackground
+          source={require('@/assets/images/subway-people-small.png')}
+          style={styles.imageContainer}
+        >
+          <View style={styles.buttonContainer}>
+            <LargeButton
+              text="+ 알림 추가"
+              backgroundColor={theme.colors.primary[700]}
+              fontColor={theme.colors.gray[0]}
+              typography={theme.typography.subtitle1}
+              onPress={() => {
+                handleAddAlarmPress();
+              }}
+            />
+          </View>
+        </ImageBackground>
         <View style={styles.alarmListHeader}>
           <Text style={styles.alarmListHeaderText}>알림 리스트</Text>
           <View style={styles.tipContainer}>
@@ -215,11 +228,16 @@ const styles = StyleSheet.create({
     fontWeight: theme.typography.header1.fontWeight,
     lineHeight: theme.typography.header1.lineHeight,
   },
+  imageContainer: {
+    width: '100%',
+    aspectRatio: 27 / 20,
+    justifyContent: 'flex-end',
+    alignItems: 'center',
+    resizeMode: 'cover',
+  },
   buttonContainer: {
     height: hp(108),
     paddingHorizontal: wp(24),
-    paddingVertical: hp(10),
-    gap: hp(10),
     flexDirection: 'column',
     alignItems: 'flex-start',
     alignSelf: 'stretch',
