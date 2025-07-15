@@ -155,6 +155,7 @@ export default function AlarmScreen() {
               onPress={() => {
                 handleAddAlarmPress();
               }}
+              activeOpacity={0.95}
             />
           </View>
         </ImageBackground>
