@@ -865,7 +865,7 @@ const AlarmEditBottomSheet = forwardRef<AlarmEditBottomSheetRef, AlarmEditBottom
               {currentBottomSheetView === 'stationSelection' && '역 선택'}
               {currentBottomSheetView === 'lineSelection' && '호선 선택'}
               {currentBottomSheetView === 'directionSelection' && '방향 선택'}
-              {currentBottomSheetView === 'periodSelection' && '기간(요일) 선택'}
+              {currentBottomSheetView === 'periodSelection' && '요일 선택'}
               {currentBottomSheetView === 'referenceTimeSelection' && '혼잡도 기준 시간 선택'}
               {currentBottomSheetView === 'alarmTimeSelection' && '알림 수신 시간 선택'}
               {currentBottomSheetView === 'dayOptionSelection' && '날짜 옵션 선택'}
@@ -1050,7 +1050,7 @@ const styles = StyleSheet.create({
   },
   scrollableTimeOptionsContainer: {
     flex: 1,
-    maxHeight: hp(400),
+    maxHeight: hp(350),
   },
   timeSelectionContainer: {
     flexDirection: 'column',
@@ -1058,7 +1058,7 @@ const styles = StyleSheet.create({
   },
   timeOptionChip: {
     width: '100%',
-    backgroundColor: theme.colors.gray[100],
+    backgroundColor: theme.colors.gray[0],
     paddingVertical: hp(14),
     paddingHorizontal: wp(14),
     borderRadius: px(14),
