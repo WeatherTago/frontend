@@ -672,11 +672,6 @@ const AlarmEditBottomSheet = forwardRef<AlarmEditBottomSheetRef, AlarmEditBottom
               </View>
 
               <View style={styles.actionButtonContainer}>
-                <TouchableOpacity style={styles.actionButton} onPress={handleSaveAlarm}>
-                  <Text style={styles.actionButtonText}>
-                    {isEditMode ? '알림 수정하기' : '알림 등록하기'}
-                  </Text>
-                </TouchableOpacity>
                 {isEditMode && (
                   <TouchableOpacity
                     style={[styles.actionButton, styles.deleteButton]}
@@ -875,10 +870,7 @@ const AlarmEditBottomSheet = forwardRef<AlarmEditBottomSheetRef, AlarmEditBottom
               {currentBottomSheetView === 'alarmTimeSelection' && '알림 수신 시간 선택'}
               {currentBottomSheetView === 'dayOptionSelection' && '날짜 옵션 선택'}
             </Text>
-            <TouchableOpacity
-              style={styles.bottomSheetDoneButton}
-              onPress={() => bottomSheetRef.current?.close()}
-            >
+            <TouchableOpacity style={styles.bottomSheetDoneButton} onPress={handleSaveAlarm}>
               <Text style={styles.bottomSheetDoneButtonText}>완료</Text>
             </TouchableOpacity>
           </View>
@@ -1112,7 +1104,7 @@ const styles = StyleSheet.create({
     fontWeight: 'bold',
   },
   deleteButton: {
-    backgroundColor: '#F05650',
+    backgroundColor: theme.colors.gray[300],
   },
   scrollableContent: {
     flex: 1,
