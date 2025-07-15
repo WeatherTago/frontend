@@ -5,7 +5,8 @@ import { useEffect, useState } from 'react';
 import { Dimensions, FlatList, ScrollView, StyleSheet, Text, View } from 'react-native';
 
 import DirectAccessCard from '@/components/DirectAccessCard';
-import FavoriteStationCard from '@/components/FavoriteStationCard';
+import FavoriteStationCard from '@/components/Favorites/FavoriteStationCard';
+import FavoriteStationSkeletonCard from '@/components/Favorites/FavoriteStationSkeletonCard';
 import WeatherHeader from '@/components/Header/WeatherHeader';
 import NoticeBanner from '@/components/NoticeBanner';
 import { useFavorite } from '@/context/FavoriteContext';
@@ -23,7 +24,7 @@ export default function HomeScreen() {
   const theme = useTheme();
   const router = useRouter();
   const { fetch } = useFavoriteCongestionFetcher();
-  const [favoriteStations, setFavoriteStations] = useState<StationResult[]>([]);
+  const [favoriteStations, setFavoriteStations] = useState<StationResult[] | null>(null);
   const [isLoading, setIsLoading] = useState(false);
 
   const { notices, isNewUnreadExists } = useNoticeContext();
@@ -68,26 +69,42 @@ export default function HomeScreen() {
         >
           오늘 즐겨찾는 역의 혼잡도는?
         </Text>
-
-        <FlatList
-          data={favoriteStations}
-          keyExtractor={item => item.stationId.toString()}
-          horizontal
-          pagingEnabled
-          showsHorizontalScrollIndicator={false}
-          decelerationRate="fast"
-          snapToInterval={CARD_WIDTH + wp(32)} //스와이프 이동 거리
-          contentContainerStyle={styles.cardListContainer}
-          renderItem={({ item, index }) => (
-            <View
-              style={{
-                marginRight: index === favoriteStations.length - 1 ? 0 : wp(32), // 카드 간 시각적 간격, 마지막 카드에는 간격 없음
-              }}
-            >
-              <FavoriteStationCard station={item} />
-            </View>
-          )}
-        />
+        {favoriteStations === null ? (
+          // 처음 로딩 중 → 스켈레톤 표시
+          <View style={[styles.cardListContainer, { flexDirection: 'row' }]}>
+            {[0, 1, 2].map(index => (
+              <View key={index} style={{ marginRight: wp(32) }}>
+                <FavoriteStationSkeletonCard />
+              </View>
+            ))}
+          </View>
+        ) : favoriteStations.length === 0 ? (
+          // 데이터 로딩 완료 but 없음 → 안내 메시지
+          <View style={{ paddingHorizontal: wp(24), paddingVertical: hp(20) }}>
+            <Text style={{ color: theme.colors.gray[500] }}>즐겨찾는 역이 없습니다.</Text>
+          </View>
+        ) : (
+          // 실제 FlatList
+          <FlatList
+            data={favoriteStations}
+            keyExtractor={item => item.stationId.toString()}
+            horizontal
+            pagingEnabled
+            showsHorizontalScrollIndicator={false}
+            decelerationRate="fast"
+            snapToInterval={CARD_WIDTH + wp(32)} //스와이프 이동 거리
+            contentContainerStyle={styles.cardListContainer}
+            renderItem={({ item, index }) => (
+              <View
+                style={{
+                  marginRight: index === favoriteStations.length - 1 ? 0 : wp(32), // 카드 간 시각적 간격, 마지막 카드에는 간격 없음
+                }}
+              >
+                <FavoriteStationCard station={item} />
+              </View>
+            )}
+          />
+        )}
 
         <Text
           style={[
@@ -106,8 +123,9 @@ export default function HomeScreen() {
           title={
             <>
               매일 아침 내가 가는 역의
-              {"\n"}
-              <Text style={{ color: theme.colors.primary[700] }}>엘리베이터 위치</Text>가 알고 싶다면
+              {'\n'}
+              <Text style={{ color: theme.colors.primary[700] }}>엘리베이터 위치</Text>가 알고
+              싶다면
             </>
           }
           subText="편의시설 정보를 빠르게 확인해보세요"
@@ -132,7 +150,7 @@ export default function HomeScreen() {
           title={
             <>
               매일 아침 내가 가는 역의
-              {"\n"}
+              {'\n'}
               혼잡도를 <Text style={{ color: theme.colors.primary[700] }}>알림으로 간단하게</Text>
             </>
           }

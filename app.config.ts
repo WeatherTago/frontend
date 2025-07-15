@@ -4,11 +4,11 @@ import 'dotenv/config';
 
 export default ({ config }: ConfigContext): ExpoConfig => ({
   ...config,
-  name: 'weathertago-front',
+  name: '웨더타고',
   slug: 'weathertago-front',
   version: '1.0.0',
   orientation: 'portrait',
-  icon: './assets/images/icon.png',
+  icon: './assets/images/logo/weathertago-logo.png',
   scheme: 'weathertagofront',
   userInterfaceStyle: 'automatic',
   newArchEnabled: true,
@@ -17,7 +17,7 @@ export default ({ config }: ConfigContext): ExpoConfig => ({
   },
   android: {
     adaptiveIcon: {
-      foregroundImage: './assets/images/adaptive-icon.png',
+      foregroundImage: './assets/images/logo/weathertago-logo.png',
       backgroundColor: '#ffffff',
     },
     edgeToEdgeEnabled: true,
@@ -26,10 +26,10 @@ export default ({ config }: ConfigContext): ExpoConfig => ({
   web: {
     bundler: 'metro',
     output: 'static',
-    favicon: './assets/images/favicon.png',
+    favicon: './assets/images/logo/weathertago-logo.png',
   },
   splash: {
-    image: './assets/images/react-logo.png',
+    image: './assets/images/logo/weathertago-logo.png',
     imageWidth: 200,
     resizeMode: 'contain',
     backgroundColor: '#ffffff',
@@ -39,7 +39,7 @@ export default ({ config }: ConfigContext): ExpoConfig => ({
     [
       'expo-splash-screen',
       {
-        image: './assets/images/react-logo.png',
+        image: './assets/images/logo/weathertago-logo.png',
         imageWidth: 200,
         resizeMode: 'contain',
         backgroundColor: '#ffffff',
