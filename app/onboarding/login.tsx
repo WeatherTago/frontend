@@ -48,13 +48,10 @@ export default function OnboardingLogin() {
   };
 
   return (
-    <View style={[styles.container, { paddingTop: insets.top, paddingBottom: insets.bottom }]}>
+    <View style={[styles.container, { paddingBottom: insets.bottom }]}>
       <View style={styles.contentContainer}>
-        <View style={styles.imageContainer}>
-          <Image
-            source={require('@/assets/images/logo/weathertago-logo.png')}
-            style={styles.image}
-          />
+        <View style={[styles.imageContainer, { paddingTop: insets.top }]}>
+          <Image source={require('@/assets/images/subway-people-big.png')} style={styles.image} />
         </View>
         <StepIndicator totalSteps={4} currentStep={4} />
         <OnboardingHeader
@@ -105,13 +102,13 @@ const styles = StyleSheet.create({
     flexDirection: 'column',
     alignItems: 'center',
     alignSelf: 'stretch',
-    backgroundColor: theme.colors.gray[100],
+    backgroundColor: '#2FC8CF',
     flexGrow: 1,
   },
   image: {
     width: '100%',
     height: '100%',
-    resizeMode: 'contain',
+    resizeMode: 'cover',
   },
   buttonContainer: {
     height: hp(108),
