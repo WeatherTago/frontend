@@ -7,7 +7,6 @@ interface SearchBarProps {
   placeholder: string;
   value: string;
   onChangeText: (text: string) => void;
-  onPressSearch: () => void;  //혼잡도 페이지도 검색창 옮기면 추후 삭제
   onPressInput?: () => void;
   ButtonIcon?: any;
   buttonLabel: string;
@@ -17,7 +16,6 @@ export default function SearchBar({
   placeholder,
   value,
   onChangeText,
-  onPressSearch,
   onPressInput,
   ButtonIcon,
   buttonLabel,
@@ -38,7 +36,7 @@ export default function SearchBar({
           />
         </TouchableOpacity>
       </View>
-      <TouchableOpacity style={[styles.button, { backgroundColor: theme.colors.primary[800] }]} onPress={onPressSearch}>
+      <TouchableOpacity style={[styles.button, { backgroundColor: theme.colors.primary[800] }]}>
         {ButtonIcon && <Image source={ButtonIcon} style={styles.buttonImage} resizeMode="contain" />}
         <Text style={styles.buttonText}>{buttonLabel}</Text>
       </TouchableOpacity>

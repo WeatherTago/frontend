@@ -64,6 +64,11 @@ const styles = StyleSheet.create({
     backgroundColor: '#fff',
     paddingHorizontal: px(14),
     alignSelf: 'stretch',
+    shadowColor: 'rgba(0, 0, 0, 0.05)',
+    shadowOffset: { width: 0, height: 2 },
+    shadowOpacity: 1,
+    shadowRadius: 6,
+    elevation: 3,
   },
   leftButton: {
     position: 'absolute',

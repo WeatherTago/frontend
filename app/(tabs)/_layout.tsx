@@ -102,7 +102,7 @@ function getLabel(name: string) {
     case 'alert':
       return '알림설정';
     case 'congestion':
-      return '혼잡예측';
+      return '혼잡예측'; // ✅
     case 'information':
       return '편의시설';
     case 'mypage':

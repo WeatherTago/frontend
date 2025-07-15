@@ -4,6 +4,7 @@ import { NoticeProvider } from '@/context/NoticeContext';
 import { StationProvider } from '@/context/StationContext';
 import { theme } from '@/styles/theme';
 import { ThemeProvider } from '@emotion/react';
+import { BottomSheetModalProvider } from '@gorhom/bottom-sheet';
 import { Asset } from 'expo-asset';
 import Constants from 'expo-constants';
 import * as Font from 'expo-font';
@@ -125,7 +126,9 @@ export default function RootLayout() {
               <FavoriteProvider>
                 <NoticeProvider>
                   <ThemeProvider theme={theme}>
-                    <Stack screenOptions={{ headerShown: false }} />
+                    <BottomSheetModalProvider>
+                      <Stack screenOptions={{ headerShown: false }} />
+                    </BottomSheetModalProvider>
                   </ThemeProvider>
                 </NoticeProvider>
               </FavoriteProvider>
