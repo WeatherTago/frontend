@@ -2,6 +2,7 @@ import { theme } from '@/styles/theme';
 import { AlarmData } from '@/types/alarm';
 import { formatAlarmDisplay } from '@/utils/AlarmDisplayFormat';
 import { hp, px, wp } from '@/utils/scale';
+import { getLineImage } from '@/utils/stationImage';
 import { Image, StyleSheet, Text, TextStyle, TouchableOpacity, View } from 'react-native';
 
 interface AlarmStationBoxProps {
@@ -34,11 +35,7 @@ const AlarmStationBox = ({ alarm, onEditPress }: AlarmStationBoxProps) => {
     <View style={styles.alarmStationBox}>
       <View style={styles.imgAndStationContainer}>
         <View style={styles.imgContainer}>
-          <Image
-            source={require('@/assets/images/subway.png')}
-            style={styles.img}
-            resizeMode="cover"
-          />
+          <Image source={getLineImage(alarm.stationLine)} style={styles.img} resizeMode="cover" />
         </View>
         <View style={styles.stationAndTimeInfoContainer}>
           <View style={styles.stationInfoContainer}>
