@@ -11,7 +11,15 @@ import { useRouter } from 'expo-router';
 import Fuse from 'fuse.js';
 import debounce from 'lodash.debounce';
 import { useEffect, useMemo, useState } from 'react';
-import { ActivityIndicator, FlatList, StyleSheet, TextInput, View } from 'react-native';
+import {
+  ActivityIndicator,
+  FlatList,
+  Image,
+  StyleSheet,
+  Text,
+  TextInput,
+  View,
+} from 'react-native';
 import { useSafeAreaInsets } from 'react-native-safe-area-context';
 
 export default function FavoriteModal() {
@@ -67,7 +75,7 @@ export default function FavoriteModal() {
   };
 
   return (
-    <View style={[styles.container, { paddingTop: insets.top }]}>
+    <View style={[styles.container, { paddingTop: insets.top, paddingBottom: insets.bottom }]}>
       <Header title="즐겨찾는 역" onPressLeft={() => router.back()} />
 
       <View style={styles.searchStationContainer}>
@@ -88,6 +96,16 @@ export default function FavoriteModal() {
       {favoriteLoading ? (
         <View style={styles.loadingContainer}>
           <ActivityIndicator size="large" color={theme.colors.primary[700]} />
+        </View>
+      ) : favoriteStationList.length === 0 && !isSearching ? (
+        <View style={styles.emptyContainer}>
+          <View style={styles.emptyImageAndTextContainer}>
+            <Image
+              source={require('@/assets/images/empty/subway-question-main.png')}
+              style={styles.emptyImageContainer}
+            />
+            <Text style={styles.emptyText}>아직 즐겨찾는 역이 없어요</Text>
+          </View>
         </View>
       ) : (
         <View style={styles.flatListOuterContainer}>
@@ -123,10 +141,6 @@ const styles = StyleSheet.create({
     flex: 1,
     justifyContent: 'center',
     alignItems: 'center',
-  },
-  emptyText: {
-    fontSize: 16,
-    color: '#aaa',
   },
   textContainer: {
     padding: px(24),
@@ -200,5 +214,32 @@ const styles = StyleSheet.create({
     alignItems: 'center',
     alignSelf: 'stretch',
     backgroundColor: theme.colors.gray[0],
+  },
+  emptyContainer: {
+    flex: 1,
+    justifyContent: 'center',
+    alignItems: 'center',
+    paddingBottom: hp(82),
+  },
+  emptyImageAndTextContainer: {
+    width: '100%',
+    flexDirection: 'column',
+    alignItems: 'center',
+  },
+  emptyImageContainer: {
+    width: wp(250),
+    height: hp(170),
+  },
+  emptyImage: {
+    width: '100%',
+    height: '100%',
+  },
+  emptyText: {
+    color: theme.colors.gray[300],
+    fontFamily: 'Pretendard-SemiBold',
+    textAlign: 'center',
+    fontSize: px(20),
+    fontWeight: '600',
+    paddingHorizontal: wp(28),
   },
 });

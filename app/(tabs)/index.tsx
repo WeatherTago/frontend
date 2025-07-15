@@ -2,7 +2,16 @@ import { useTheme } from '@emotion/react';
 import dayjs from 'dayjs';
 import { useRouter } from 'expo-router';
 import { useEffect, useState } from 'react';
-import { Dimensions, FlatList, Image, ScrollView, StyleSheet, Text, View } from 'react-native';
+import {
+  Dimensions,
+  FlatList,
+  Image,
+  ScrollView,
+  StyleSheet,
+  Text,
+  TouchableOpacity,
+  View,
+} from 'react-native';
 
 import DirectAccessCard from '@/components/DirectAccessCard';
 import FavoriteStationCard from '@/components/Favorites/FavoriteStationCard';
@@ -12,6 +21,7 @@ import NoticeBanner from '@/components/NoticeBanner';
 import { useFavorite } from '@/context/FavoriteContext';
 import { useNoticeContext } from '@/context/NoticeContext';
 import { useFavoriteCongestionFetcher } from '@/hooks/useFavoriteCongestionFetcher';
+import { theme } from '@/styles/theme';
 import { StationResult } from '@/types/station';
 import { hp, px, wp } from '@/utils/scale';
 import { useIsFocused } from '@react-navigation/native';
@@ -81,10 +91,19 @@ export default function HomeScreen() {
         ) : favoriteStations.length === 0 ? (
           // 데이터 로딩 완료 but 없음 → 안내 메시지
           <View style={styles.emptyContainer}>
-            <Image
-              source={require('@/assets/images/subway/subway-circle-line1.png')}
-              style={styles.emptyImage}
-            />
+            <View style={styles.emptyImageAndTextContainer}>
+              <Image
+                source={require('@/assets/images/empty/subway-question-main.png')}
+                style={styles.emptyImageContainer}
+              />
+              <Text style={styles.emptyText}>아직 즐겨찾는 역이 없어요</Text>
+            </View>
+            <TouchableOpacity
+              style={styles.buttonContainer}
+              onPress={() => router.push('../favorite-modal')}
+            >
+              <Text style={styles.buttonText}>즐겨찾는 역 등록하러 가기</Text>
+            </TouchableOpacity>
           </View>
         ) : (
           // 실제 FlatList
@@ -181,14 +200,50 @@ const styles = StyleSheet.create({
     paddingHorizontal: SIDE_SPACING,
   },
   emptyContainer: {
-    height: hp(400),
+    height: hp(494),
+    padding: hp(10),
+    flexDirection: 'column',
     justifyContent: 'center',
     alignItems: 'center',
-    gap: hp(32),
+    gap: hp(22),
     alignSelf: 'stretch',
+  },
+  emptyImageAndTextContainer: {
+    width: '100%',
+    flexDirection: 'column',
+    alignItems: 'center',
+  },
+  emptyImageContainer: {
+    width: wp(250),
+    height: hp(170),
   },
   emptyImage: {
     width: '100%',
     height: '100%',
+  },
+  emptyText: {
+    color: theme.colors.gray[300],
+    fontFamily: 'Pretendard-SemiBold',
+    textAlign: 'center',
+    fontSize: px(20),
+    fontWeight: '600',
+    paddingHorizontal: wp(28),
+  },
+  buttonContainer: {
+    paddingVertical: px(10),
+    paddingHorizontal: px(14),
+    justifyContent: 'center',
+    alignItems: 'center',
+    borderRadius: px(6),
+    borderWidth: px(1),
+    borderColor: theme.colors.gray[400],
+    backgroundColor: theme.colors.gray[100],
+  },
+  buttonText: {
+    color: theme.colors.gray[400],
+    fontFamily: 'Pretendard-Medium',
+    fontSize: px(16),
+    fontWeight: '500',
+    lineHeight: px(16),
   },
 });
