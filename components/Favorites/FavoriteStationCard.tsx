@@ -1,51 +1,88 @@
 import { theme } from '@/styles/theme';
 import { StationResult } from '@/types/station';
-import { formatKSTRoundedHour } from '@/utils/dateUtils';
+import { formatKSTRoundedHour, getKSTCongestionDateTimeISOString } from '@/utils/dateUtils';
 import { hp, px, wp } from '@/utils/scale';
-import React from 'react';
-import { StyleSheet, Text, View } from 'react-native';
+import { useRouter } from 'expo-router';
+import React, { useCallback } from 'react';
+import { Alert, StyleSheet, Text, TouchableOpacity, View } from 'react-native';
 
 const CARD_WIDTH = wp(400);
 const CARD_HEIGHT = hp(498);
 
 export default function FavoriteStationCard({ station }: { station: StationResult }) {
   const kstTime = formatKSTRoundedHour();
+  const router = useRouter();
+
+  const handleSubmit = useCallback(() => {
+    const stationName = station.name;
+    const selectedLine = station.line;
+
+    const now = new Date(); // 현재 시점을 기준으로 두 유틸 함수 호출
+    const formattedDate = getKSTCongestionDateTimeISOString(now); // 현재 KST 날짜의 자정 ISO String
+    const formattedTime = getKSTCongestionDateTimeISOString(now); // KST 혼잡도 기준 시간 ISO String
+
+    // 필수 값 유효성 검사
+    if (!stationName || !selectedLine || !formattedDate || !formattedTime) {
+      Alert.alert('오류', '필수 정보가 누락되었습니다. 다시 시도해주세요.');
+      return;
+    }
+
+    router.push({
+      pathname: '../congestion/first-result',
+      params: {
+        station: stationName,
+        line: selectedLine,
+        date: formattedDate,
+        time: formattedTime,
+      },
+    });
+  }, [station.name, station.line, router]); // 의존성 배열 유지
 
   return (
-    <View style={styles.card}>
-      <View style={styles.upContainer}>
-        <Text style={styles.stationName}>{station.name}</Text>
-        <Text style={styles.stationLine}>{station.line}</Text>
-        <Text style={styles.congestionRate}>78%</Text>
-        <Text style={styles.dateText}>{kstTime}</Text>
-      </View>
-      <View style={styles.downContainer}>
-        <View style={styles.weatherContainer}>
-          <View style={styles.weatherBox}>
-            <View style={styles.weatherIconContainer} />
-            <Text style={styles.weatherText}>기온</Text>
-            <Text style={styles.weatherValueText}>{station.weather?.tmp ?? '-'}</Text>
-          </View>
-          <View style={styles.weatherBox}>
-            <View style={styles.weatherIconContainer} />
-            <Text style={styles.weatherText}>강수량</Text>
-            <Text style={styles.weatherValueText}>{station.weather?.pcp ?? '-'}</Text>
-          </View>
-          <View style={styles.weatherBox}>
-            <View style={styles.weatherIconContainer} />
-            <Text style={styles.weatherText}>습도</Text>
-            <Text style={styles.weatherValueText}>{station.weather?.reh ?? '-'}</Text>
+    <TouchableOpacity onPress={handleSubmit} style={styles.cardTouchable}>
+      <View style={styles.card}>
+        <View style={styles.upContainer}>
+          <Text style={styles.stationName}>{station.name}</Text>
+          <Text style={styles.stationLine}>{station.line}</Text>
+          <Text style={styles.congestionRate}>
+            {station.congestionByDirection.내선?.congestion.congestionScore}
+            {station.congestionByDirection.상행?.congestion.congestionScore}%
+          </Text>
+          <Text style={styles.dateText}>{kstTime}</Text>
+        </View>
+        <View style={styles.downContainer}>
+          <View style={styles.weatherContainer}>
+            <View style={styles.weatherBox}>
+              <View style={styles.weatherIconContainer} />
+              <Text style={styles.weatherText}>기온</Text>
+              <Text style={styles.weatherValueText}>{station.weather?.tmp ?? '-'}</Text>
+            </View>
+            <View style={styles.weatherBox}>
+              <View style={styles.weatherIconContainer} />
+              <Text style={styles.weatherText}>강수량</Text>
+              <Text style={styles.weatherValueText}>{station.weather?.pcp ?? '-'}</Text>
+            </View>
+            <View style={styles.weatherBox}>
+              <View style={styles.weatherIconContainer} />
+              <Text style={styles.weatherText}>습도</Text>
+              <Text style={styles.weatherValueText}>{station.weather?.reh ?? '-'}</Text>
+            </View>
           </View>
         </View>
       </View>
-    </View>
+    </TouchableOpacity>
   );
 }
 
 const styles = StyleSheet.create({
-  card: {
+  cardTouchable: {
     width: CARD_WIDTH,
     height: CARD_HEIGHT,
+    borderRadius: px(16),
+  },
+  card: {
+    width: '100%',
+    height: '100%',
     padding: px(24),
     backgroundColor: '#cccccc', // 임시 배경색
     borderRadius: px(16),
