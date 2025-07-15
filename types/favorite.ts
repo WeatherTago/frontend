@@ -7,6 +7,6 @@ export type AddFavoriteRequest = {
 export type DeleteFavoriteRequest = AddFavoriteRequest;
 
 export type MyFavoriteResponse = CommonResponse<{
-  faviroteId: number;
+  favoriteId: number;
   stations: StationInfo[];
 }>;
