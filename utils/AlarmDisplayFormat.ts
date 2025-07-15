@@ -6,7 +6,7 @@ export function formatAlarmDisplay(alarm: Alarm): string {
   const dayLabel = alarm.alarmDay === 'TODAY' ? '당일' : '전날';
   const referenceTimeLabel = formatTimeToKorean(alarm.referenceTime);
 
-  return `${periodLabel} ${alarmTimeLabel} | ${dayLabel} ${referenceTimeLabel} 알림`;
+  return `${periodLabel} ${referenceTimeLabel} | ${dayLabel} ${alarmTimeLabel} 알림`;
 }
 
 // 요일/주기 한글 변환
