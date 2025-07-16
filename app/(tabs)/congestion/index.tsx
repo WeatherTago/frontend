@@ -20,7 +20,8 @@ export default function CongestionMainScreen() {
         placeholder="혼잡도가 궁금한 역을 검색해보세요"
         value=""
         onChangeText={() => {}}
-        onPressInput={() => router.push('../congestion/first-search')} // ✅ 검색화면으로 이동
+        onPressInput={() => router.push('../congestion/first-search')} 
+        onPressButton={() => router.push('../congestion/first-search')} 
         ButtonIcon={mapImage}
         buttonLabel="혼잡예측"
       />

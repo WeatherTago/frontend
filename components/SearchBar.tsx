@@ -8,6 +8,7 @@ interface SearchBarProps {
   value: string;
   onChangeText: (text: string) => void;
   onPressInput?: () => void;
+  onPressButton?: () => void;
   ButtonIcon?: any;
   buttonLabel: string;
 }
@@ -17,6 +18,7 @@ export default function SearchBar({
   value,
   onChangeText,
   onPressInput,
+  onPressButton,
   ButtonIcon,
   buttonLabel,
 }: SearchBarProps) {
@@ -36,7 +38,7 @@ export default function SearchBar({
           />
         </TouchableOpacity>
       </View>
-      <TouchableOpacity style={[styles.button, { backgroundColor: theme.colors.primary[800] }]}>
+      <TouchableOpacity style={[styles.button, { backgroundColor: theme.colors.primary[800] }]}onPress={onPressButton}>
         {ButtonIcon && <Image source={ButtonIcon} style={styles.buttonImage} resizeMode="contain" />}
         <Text style={styles.buttonText}>{buttonLabel}</Text>
       </TouchableOpacity>

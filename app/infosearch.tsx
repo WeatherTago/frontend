@@ -119,12 +119,12 @@ const listHeight = screenHeight * 0.5; // 화면의 절반 높이
 
 {
   isEmptySearch ? (
-    <View style={{ flex: 1, justifyContent: 'center', alignItems: 'center' }}>
+    <View style={{ flex: 1, justifyContent: 'flex-start',paddingTop: hp(200), alignItems: 'center' }}>
       <Image
-        source={require('@/assets/images/searchButton.png')}
-        style={{ width: wp(300), height: hp(200), resizeMode: 'contain' }}
+        source={require('@/assets/images/empty/subway-question-main.png')}
+        style={{width: wp(300), height: hp(200), resizeMode: 'contain' }}
       />
-      <Text style={{ color: theme.colors.gray[400], marginTop: hp(12) }}>
+      <Text style={{ color: theme.colors.gray[300],fontSize:px(20),fontFamily:'Pretendard-SemiBold',fontWeight:'600'}}>
         역 정보를 찾을 수 없어요
       </Text>
     </View>

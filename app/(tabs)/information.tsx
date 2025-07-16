@@ -48,6 +48,7 @@ const TAB_BAR_HEIGHT = hp(82) + insets.bottom;
         value={searchText}
         onChangeText={setSearchText}
         onPressInput={() => router.push('../infosearch')}
+        onPressButton={() => router.push('../infosearch')}
         ButtonIcon={subwayImage}
         buttonLabel="편의시설"
       />
