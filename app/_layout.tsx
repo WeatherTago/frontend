@@ -1,4 +1,5 @@
-import { AuthProvider } from '@/context/AuthContext';
+import { axiosInstance } from '@/apis/axios';
+import { AuthProvider, useAuth } from '@/context/AuthContext';
 import { FavoriteProvider } from '@/context/FavoriteContext';
 import { NoticeProvider } from '@/context/NoticeContext';
 import { StationProvider } from '@/context/StationContext';
@@ -9,7 +10,7 @@ import { Asset } from 'expo-asset';
 import Constants from 'expo-constants';
 import * as Font from 'expo-font';
 import { Image } from 'expo-image';
-import { Stack } from 'expo-router';
+import { Stack, useRouter } from 'expo-router';
 import * as SplashScreen from 'expo-splash-screen';
 import { Server } from 'miragejs';
 import React, { useEffect, useRef, useState } from 'react';
@@ -117,6 +118,26 @@ function AnimatedSplashScreen({ children, image }: { children: React.ReactNode; 
 }
 
 export default function RootLayout() {
+  const router = useRouter();
+  const { logout } = useAuth();
+
+  useEffect(() => {
+    const interceptor = axiosInstance.interceptors.response.use(
+      res => res,
+      async err => {
+        if (err.message === 'refresh token expired') {
+          await logout();
+          router.replace('/onboarding');
+        }
+
+        return Promise.reject(err);
+      },
+    );
+
+    return () => {
+      axiosInstance.interceptors.response.eject(interceptor);
+    };
+  }, []);
   return (
     <SafeAreaProvider>
       <GestureHandlerRootView style={{ flex: 1 }}>

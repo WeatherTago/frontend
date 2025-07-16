@@ -12,6 +12,7 @@ import { useEffect, useRef, useState } from 'react';
 import {
   ActivityIndicator,
   Alert,
+  Image,
   ImageBackground,
   ScrollView,
   StyleSheet,
@@ -171,30 +172,36 @@ export default function AlarmScreen() {
             </Text>
           </View>
         </View>
-        <ScrollView
-          style={styles.alarmListScrollView}
-          contentContainerStyle={styles.alarmListContentContainer} // 콘텐츠 스타일 적용
-        >
-          {/* 조건부 렌더링 시작 */}
-          {isLoadingAlarms ? ( // 로딩 중일 때
-            <View style={styles.loadingContainer}>
-              <ActivityIndicator size="large" color={theme.colors.primary[700]} />
-              <Text style={styles.loadingText}>알림 목록 로딩 중...</Text>
+        {isLoadingAlarms ? ( // 로딩 중일 때
+          <View style={styles.loadingContainer}>
+            <ActivityIndicator size="large" color={theme.colors.primary[700]} />
+            <Text style={styles.loadingText}>알림 목록 로딩 중...</Text>
+          </View>
+        ) : alarms.length === 0 ? ( // 알림이 없을 때
+          <View style={styles.emptyContainer}>
+            <View style={styles.emptyImageAndTextContainer}>
+              <Image
+                source={require('@/assets/images/empty/subway-question-alarm.png')}
+                style={styles.emptyImageContainer}
+              />
+              <Text style={styles.emptyText}>알림을 설정한 역이 없어요</Text>
             </View>
-          ) : alarms.length === 0 ? ( // 알림이 없을 때
-            <Text style={styles.noAlarmsText}>알림 설정한 역이 없습니다.</Text>
-          ) : (
-            // 알림이 있을 때
-            alarms.map((alarm, index) => (
+          </View>
+        ) : (
+          // 알림이 있을 때
+          <ScrollView
+            style={styles.alarmListScrollView}
+            contentContainerStyle={styles.alarmListContentContainer} // 콘텐츠 스타일 적용
+          >
+            {alarms.map((alarm, index) => (
               <AlarmStationBox
                 key={alarm.alarmId || index}
                 alarm={alarm}
                 onEditPress={handleEditAlarmPress}
               />
-            ))
-          )}
-          {/* 조건부 렌더링 끝 */}
-        </ScrollView>
+            ))}
+          </ScrollView>
+        )}
       </View>
       <AlarmEditBottomSheet
         ref={alarmBottomSheetRef}
@@ -291,7 +298,7 @@ const styles = StyleSheet.create({
   alarmListScrollView: {
     flex: 1, // 남은 공간을 차지하도록
     alignSelf: 'stretch', // 부모 너비를 따르도록
-    backgroundColor: theme.colors.gray[0], // 배경색
+    backgroundColor: theme.colors.gray[0],
   },
   // ScrollView 내부 콘텐츠에 적용할 스타일 (padding, gap 등)
   alarmListContentContainer: {
@@ -301,25 +308,47 @@ const styles = StyleSheet.create({
     alignItems: 'flex-start',
     gap: hp(22), // ScrollView 내부에 items들의 간격
   },
-  noAlarmsText: {
-    color: theme.colors.gray[500],
-    fontFamily: 'Pretendard-Medium',
-    fontSize: px(20),
-    lineHeight: px(28),
-    marginTop: hp(20),
-    textAlign: 'center',
-    width: '100%',
-  },
   loadingContainer: {
     flex: 1,
     justifyContent: 'center',
     alignItems: 'center',
     paddingVertical: hp(40),
+    alignSelf: 'stretch',
+    backgroundColor: theme.colors.gray[0],
   },
   loadingText: {
     color: theme.colors.gray[500],
     fontFamily: 'Pretendard-Medium',
     fontSize: px(16),
     marginTop: hp(10),
+  },
+  emptyContainer: {
+    flex: 1,
+    paddingBottom: hp(30),
+    justifyContent: 'center',
+    alignItems: 'center',
+    alignSelf: 'stretch',
+    backgroundColor: theme.colors.gray[0],
+  },
+  emptyImageAndTextContainer: {
+    width: '100%',
+    flexDirection: 'column',
+    alignItems: 'center',
+  },
+  emptyImageContainer: {
+    width: wp(184),
+    height: hp(126),
+  },
+  emptyImage: {
+    width: '100%',
+    height: '100%',
+  },
+  emptyText: {
+    color: theme.colors.gray[300],
+    fontFamily: 'Pretendard-SemiBold',
+    textAlign: 'center',
+    fontSize: px(20),
+    fontWeight: '600',
+    paddingHorizontal: wp(28),
   },
 });
