@@ -1101,12 +1101,17 @@ const styles = StyleSheet.create({
     justifyContent: 'center',
   },
   actionButtonText: {
+    fontFamily:theme.typography.subtitle1.fontFamily,
     color: theme.colors.gray[0],
-    fontSize: px(18),
-    fontWeight: 'bold',
+    fontSize: px(24),
+    fontWeight: '600',
+    lineHeight:px(34)
   },
   deleteButton: {
     backgroundColor: theme.colors.gray[300],
+    width:px(490),
+    height:px(72),
+    borderRadius:px(16)
   },
   scrollableContent: {
     flex: 1,
