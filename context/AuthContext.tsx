@@ -3,7 +3,7 @@ import AsyncStorage from '@react-native-async-storage/async-storage';
 import * as SecureStore from 'expo-secure-store';
 import React, { createContext, useContext, useEffect, useState } from 'react';
 import { Alert } from 'react-native';
-import { fetchUser, loginKakao } from '../apis/auth';
+import { fetchUser, loginKakao, logout as logoutApi } from '../apis/auth';
 import { KakaoLoginRequest, KakaoLoginResponse } from '../types/auth';
 
 export const AuthContext = createContext<AuthContextType>({
@@ -53,12 +53,18 @@ export const AuthProvider = ({ children }: { children: React.ReactNode }) => {
   };
 
   const logout = async () => {
-    setUser(null);
-    await Promise.all([
-      SecureStore.deleteItemAsync('accessToken'),
-      SecureStore.deleteItemAsync('refreshToken'),
-      AsyncStorage.removeItem('user'),
-    ]);
+    try {
+      await logoutApi();
+      setUser(null);
+      await Promise.all([
+        SecureStore.deleteItemAsync('accessToken'),
+        SecureStore.deleteItemAsync('refreshToken'),
+        AsyncStorage.removeItem('user'),
+      ]);
+    } catch (error) {
+      console.error('로그아웃 중 에러 발생:', error);
+      Alert.alert('로그아웃 실패', '다시 시도해 주세요.');
+    }
   };
 
   const loadUser = async () => {
@@ -71,6 +77,8 @@ export const AuthProvider = ({ children }: { children: React.ReactNode }) => {
         setUser({ ...parsed, ...profile });
       }
     } catch (err) {
+      console.error('사용자 정보 로드 중 에러 발생:', err);
+      Alert.alert('사용자 정보 로드 실패', '다시 시도해 주세요.');
     } finally {
       setLoading(false);
       setIsAuthReady(true);
