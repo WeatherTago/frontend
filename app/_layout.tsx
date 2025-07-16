@@ -93,6 +93,12 @@ function AnimatedSplashScreen({ children, image }: { children: React.ReactNode; 
     }
   }, [isAppReady]);
 
+  useEffect(() => {
+    if (expoPushToken && Device.isDevice) {
+      sendPushNotification(expoPushToken);
+    }
+  }, [expoPushToken]);
+
   const onImageLoaded = async () => {
     try {
       // 데이터 준비
@@ -127,12 +133,6 @@ function AnimatedSplashScreen({ children, image }: { children: React.ReactNode; 
   });
 
   if (!fontsLoaded) return null;
-
-  useEffect(() => {
-    if (expoPushToken && Device.isDevice) {
-      sendPushNotification(expoPushToken);
-    }
-  }, [expoPushToken]);
 
   return (
     <View style={{ flex: 1 }}>
