@@ -25,6 +25,7 @@ import { theme } from '@/styles/theme';
 import { StationResult } from '@/types/station';
 import { hp, px, wp } from '@/utils/scale';
 import { useIsFocused } from '@react-navigation/native';
+import { useSafeAreaInsets } from 'react-native-safe-area-context';
 
 const { width: SCREEN_WIDTH } = Dimensions.get('window');
 const CARD_WIDTH = px(400);
@@ -36,6 +37,7 @@ export default function HomeScreen() {
   const { fetch } = useFavoriteCongestionFetcher();
   const [favoriteStations, setFavoriteStations] = useState<StationResult[] | null>(null);
   const [isLoading, setIsLoading] = useState(false);
+  const insets=useSafeAreaInsets();
 
   const { notices, isNewUnreadExists,loading } = useNoticeContext();
   const latestNotice = notices.length > 0 ? notices[0] : null;
@@ -53,7 +55,7 @@ export default function HomeScreen() {
   }, [isFocused, favoriteStationIds]);
 
   return (
-    <View style={{ flex: 1 }}>
+    <View style={{ flex: 1 ,paddingTop: insets.top, backgroundColor:theme.colors.gray[0]}}>
       <WeatherHeader showAlarmDot={isNewUnreadExists} />
 
       <ScrollView style={[styles.container, { backgroundColor: theme.colors.gray[50] }]}>

@@ -39,7 +39,13 @@ export default function SearchBar({
         </TouchableOpacity>
       </View>
       <TouchableOpacity style={[styles.button, { backgroundColor: theme.colors.primary[800] }]}onPress={onPressButton}>
-        {ButtonIcon && <Image source={ButtonIcon} style={styles.buttonImage} resizeMode="contain" />}
+        {ButtonIcon && (
+          <Image
+            source={ButtonIcon}
+            style={[styles.buttonImage, { tintColor: '#FFF' }]}
+            resizeMode="contain"
+          />
+        )}
         <Text style={styles.buttonText}>{buttonLabel}</Text>
       </TouchableOpacity>
     </View>

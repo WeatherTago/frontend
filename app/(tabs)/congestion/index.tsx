@@ -50,7 +50,7 @@ export default function CongestionMainScreen() {
           />
         </ScrollView>
       </ScrollView>
-    </View>
+    </View>  
   );
 }
 

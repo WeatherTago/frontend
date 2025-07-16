@@ -18,10 +18,11 @@ import {
   Text,
   View,
 } from 'react-native';
+import { useSafeAreaInsets } from 'react-native-safe-area-context';
 
 export default function AlarmScreen() {
   const { isNewUnreadExists } = useNoticeContext();
-
+  const insets=useSafeAreaInsets();
   const alarmBottomSheetRef = useRef<AlarmEditBottomSheetRef>(null);
   const [alarms, setAlarms] = useState<AlarmData[]>([]);
   const [isLoadingAlarms, setIsLoadingAlarms] = useState(false);
@@ -133,7 +134,7 @@ export default function AlarmScreen() {
   };
 
   return (
-    <View style={{ flex: 1 }}>
+    <View style={{ flex: 1 ,paddingTop:insets.top,backgroundColor:theme.colors.gray[0]}}>
       <WeatherHeader showAlarmDot={isNewUnreadExists} />
       <View style={styles.mainContainer}>
         <View style={styles.textContainer}>
