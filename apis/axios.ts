@@ -61,14 +61,16 @@ axiosInstance.interceptors.response.use(
           return data.result.accessToken;
         })()
           .catch((err: any) => {
-            if (err.response) {
-              console.error('Refresh token expired:', {
-                status: err.response.status,
-                data: err.response.data,
-                headers: err.response.headers,
-              });
-            } else {
-              console.error('Refresh token error (no response):', err.message || err);
+            if (__DEV__) {
+              if (err.response) {
+                console.error('Refresh token expired:', {
+                  status: err.response.status,
+                  data: err.response.data,
+                  headers: err.response.headers,
+                });
+              } else {
+                console.error('Refresh token error (no response):', err.message || err);
+              }
             }
             SecureStore.deleteItemAsync('accessToken');
             SecureStore.deleteItemAsync('refreshToken');
