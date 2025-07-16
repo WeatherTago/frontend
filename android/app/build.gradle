@@ -87,9 +87,9 @@ android {
     buildToolsVersion rootProject.ext.buildToolsVersion
     compileSdk rootProject.ext.compileSdkVersion
 
-    namespace 'com.jinj00oo.weathertagofront'
+    namespace 'com.tave.weathertago'
     defaultConfig {
-        applicationId 'com.jinj00oo.weathertagofront'
+        applicationId 'com.tave.weathertago'
         minSdkVersion rootProject.ext.minSdkVersion
         targetSdkVersion rootProject.ext.targetSdkVersion
         versionCode 1

@@ -1,4 +1,4 @@
-package com.jinj00oo.weathertagofront
+package com.tave.weathertago
 
 import android.app.Application
 import android.content.res.Configuration

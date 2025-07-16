@@ -1,4 +1,4 @@
-package com.jinj00oo.weathertagofront
+package com.tave.weathertago
 import expo.modules.splashscreen.SplashScreenManager
 
 import android.os.Build

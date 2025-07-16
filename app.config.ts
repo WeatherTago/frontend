@@ -21,7 +21,8 @@ export default ({ config }: ConfigContext): ExpoConfig => ({
       backgroundColor: '#ffffff',
     },
     edgeToEdgeEnabled: true,
-    package: 'com.jinj00oo.weathertagofront',
+    package: 'com.tave.weathertago',
+    googleServicesFile: './google-services.json',
   },
   web: {
     bundler: 'metro',
