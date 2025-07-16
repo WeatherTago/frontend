@@ -8,8 +8,17 @@ import { useNoticeContext } from '@/context/NoticeContext';
 import { theme } from '@/styles/theme';
 import { AlarmData, ReadAlarmResponse } from '@/types/alarm';
 import { hp, px, wp } from '@/utils/scale';
+import * as Notifications from 'expo-notifications';
 import { useEffect, useRef, useState } from 'react';
-import { ActivityIndicator, Alert, ScrollView, StyleSheet, Text, View } from 'react-native';
+import {
+  ActivityIndicator,
+  Alert,
+  Linking,
+  ScrollView,
+  StyleSheet,
+  Text,
+  View,
+} from 'react-native';
 
 export default function AlarmScreen() {
   const { isNewUnreadExists } = useNoticeContext();
@@ -109,8 +118,23 @@ export default function AlarmScreen() {
   }, []);
 
   // 새 알림 등록 버튼 클릭 핸들러
-  const handleAddAlarmPress = () => {
-    alarmBottomSheetRef.current?.present(); // 초기 데이터 없이 호출 (등록 모드)
+  const checkNotificationPermission = async () => {
+    const { status } = await Notifications.getPermissionsAsync();
+
+    if (status === Notifications.PermissionStatus.GRANTED) {
+      // 권한 허용됨 → 알림 추가 시트 열기
+      alarmBottomSheetRef.current?.present();
+    } else {
+      // 권한 없음 → 안내 후 설정 앱으로 유도
+      Alert.alert(
+        '알림 권한이 꺼져 있어요',
+        '알림을 받기 위해서는 설정에서 권한을 허용해 주세요.',
+        [
+          { text: '취소', style: 'cancel' },
+          { text: '설정으로 이동', onPress: () => Linking.openSettings() },
+        ],
+      );
+    }
   };
 
   // 기존 알림 수정 버튼 클릭 핸들러
@@ -140,9 +164,7 @@ export default function AlarmScreen() {
             backgroundColor={theme.colors.primary[700]}
             fontColor={theme.colors.gray[0]}
             typography={theme.typography.subtitle1}
-            onPress={() => {
-              handleAddAlarmPress();
-            }}
+            onPress={checkNotificationPermission}
           />
         </View>
         <View style={styles.alarmListHeader}>
