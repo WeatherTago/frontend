@@ -152,7 +152,7 @@ export default function AlarmScreen() {
   };
 
   return (
-    <View style={{ flex: 1, paddingTop: insets.top, backgroundColor: theme.colors.gray[0] }}>
+    <ScrollView style={{ flex: 1, paddingTop: insets.top, backgroundColor: theme.colors.gray[50] }}>
       <WeatherHeader showAlarmDot={isNewUnreadExists} />
       <View style={styles.mainContainer}>
         <View style={styles.textContainer}>
@@ -204,10 +204,7 @@ export default function AlarmScreen() {
           </View>
         ) : (
           // 알림이 있을 때
-          <ScrollView
-            style={styles.alarmListScrollView}
-            contentContainerStyle={styles.alarmListContentContainer} // 콘텐츠 스타일 적용
-          >
+          <View style={styles.alarmListContentContainer}>
             {alarms.map((alarm, index) => (
               <AlarmStationBox
                 key={alarm.alarmId || index}
@@ -215,14 +212,14 @@ export default function AlarmScreen() {
                 onEditPress={handleEditAlarmPress}
               />
             ))}
-          </ScrollView>
+          </View>
         )}
       </View>
       <AlarmEditBottomSheet
         ref={alarmBottomSheetRef}
         onAlarmActionCompleted={handleAlarmActionCompleted}
       />
-    </View>
+    </ScrollView>
   );
 }
 
@@ -309,18 +306,14 @@ const styles = StyleSheet.create({
     fontWeight: '500',
     lineHeight: px(20),
   },
-  // 기존 alarmListContainer 스타일을 ScrollView의 스타일로 분리
-  alarmListScrollView: {
-    flex: 1, // 남은 공간을 차지하도록
-    alignSelf: 'stretch', // 부모 너비를 따르도록
-    backgroundColor: theme.colors.gray[0],
-  },
   // ScrollView 내부 콘텐츠에 적용할 스타일 (padding, gap 등)
   alarmListContentContainer: {
+    backgroundColor: theme.colors.gray[0],
     paddingHorizontal: wp(24),
     paddingBottom: hp(28),
     flexDirection: 'column',
     alignItems: 'flex-start',
+    alignSelf: 'stretch',
     gap: hp(22), // ScrollView 내부에 items들의 간격
   },
   loadingContainer: {
