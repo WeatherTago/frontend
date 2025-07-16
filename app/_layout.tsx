@@ -14,7 +14,7 @@ import { Stack, useRouter } from 'expo-router';
 import * as SplashScreen from 'expo-splash-screen';
 import { Server } from 'miragejs';
 import React, { useEffect, useRef, useState } from 'react';
-import { Alert, Animated, StyleSheet, View } from 'react-native';
+import { Animated, StyleSheet, View } from 'react-native';
 import { GestureHandlerRootView } from 'react-native-gesture-handler';
 import { ko, registerTranslation } from 'react-native-paper-dates';
 import { SafeAreaProvider } from 'react-native-safe-area-context';
@@ -126,9 +126,8 @@ export default function RootLayout() {
       res => res,
       async err => {
         if (err.message === 'refresh token expired') {
-          Alert.alert('세션 만료', '다시 로그인해주세요.');
           await logout();
-          router.replace('/onboarding/login'); // ✅ 로그인 화면으로 이동
+          router.replace('/onboarding');
         }
 
         return Promise.reject(err);
