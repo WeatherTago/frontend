@@ -7,24 +7,34 @@ import { ThemeProvider } from '@emotion/react';
 import { BottomSheetModalProvider } from '@gorhom/bottom-sheet';
 import { Asset } from 'expo-asset';
 import Constants from 'expo-constants';
+import * as Device from 'expo-device';
 import * as Font from 'expo-font';
 import { Image } from 'expo-image';
+import * as Notifications from 'expo-notifications';
 import { Stack } from 'expo-router';
 import * as SplashScreen from 'expo-splash-screen';
-import { Server } from 'miragejs';
 import React, { useEffect, useRef, useState } from 'react';
-import { Animated, StyleSheet, View } from 'react-native';
+import { Alert, Animated, Linking, StyleSheet, View } from 'react-native';
 import { GestureHandlerRootView } from 'react-native-gesture-handler';
 import { ko, registerTranslation } from 'react-native-paper-dates';
 import { SafeAreaProvider } from 'react-native-safe-area-context';
 
 registerTranslation('ko', ko);
 
-declare global {
-  interface Window {
-    server: Server;
-  }
-}
+Notifications.setNotificationHandler({
+  handleNotification: async () => ({
+    shouldPlaySound: true,
+    shouldSetBadge: true,
+    shouldShowBanner: true,
+    shouldShowList: true,
+  }),
+  handleSuccess(notificationId) {
+    console.log('Notification sent successfully:', notificationId);
+  },
+  handleError(notificationId, error) {
+    console.log('Notification failed to send:', notificationId, error);
+  },
+});
 
 SplashScreen.preventAutoHideAsync().catch(e => console.error(e));
 
@@ -47,10 +57,31 @@ function AnimatedAppLoader({ children, image }: { children: React.ReactNode; ima
   return <AnimatedSplashScreen image={image}>{children}</AnimatedSplashScreen>;
 }
 
+async function sendPushNotification(expoPushToken: string) {
+  const message = {
+    to: expoPushToken,
+    sound: 'default',
+    title: 'Original Title',
+    body: 'And here is the body!',
+    data: { someData: 'goes here' },
+  };
+
+  await fetch('https://exp.host/--/api/v2/push/send', {
+    method: 'POST',
+    headers: {
+      Accept: 'application/json',
+      'Accept-encoding': 'gzip, deflate',
+      'Content-Type': 'application/json',
+    },
+    body: JSON.stringify(message),
+  });
+}
+
 function AnimatedSplashScreen({ children, image }: { children: React.ReactNode; image: number }) {
   const [isAppReady, setAppReady] = useState(false);
   const [isSplashAnimationComplete, setSplashAnimationComplete] = useState(false);
   const animation = useRef(new Animated.Value(1)).current;
+  const [expoPushToken, setExpoPushToken] = useState<string | null>(null);
 
   useEffect(() => {
     if (isAppReady) {
@@ -67,6 +98,20 @@ function AnimatedSplashScreen({ children, image }: { children: React.ReactNode; 
       // 데이터 준비
       await Promise.all([]);
       await SplashScreen.hideAsync();
+      const { status } = await Notifications.requestPermissionsAsync();
+      if (status !== Notifications.PermissionStatus.GRANTED) {
+        Alert.alert('알림 권한 필요', '알림을 받기 위해 권한을 허용해주세요.', [
+          { text: '취소', style: 'cancel' },
+          { text: '설정으로 이동', onPress: () => Linking.openSettings() },
+        ]);
+        return;
+      }
+      const token = await Notifications.getExpoPushTokenAsync({
+        projectId: Constants.expoConfig?.extra?.eas?.projectId ?? Constants.easConfig?.projectId,
+      });
+      console.log('✅ 푸시 토큰:', token);
+      // TODO: save token to server
+      setExpoPushToken(token.data);
     } catch (error) {
       console.error(error);
     } finally {
@@ -82,6 +127,12 @@ function AnimatedSplashScreen({ children, image }: { children: React.ReactNode; 
   });
 
   if (!fontsLoaded) return null;
+
+  useEffect(() => {
+    if (expoPushToken && Device.isDevice) {
+      sendPushNotification(expoPushToken);
+    }
+  }, [expoPushToken]);
 
   return (
     <View style={{ flex: 1 }}>

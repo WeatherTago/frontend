@@ -54,7 +54,9 @@
     "react-native-size-matters": "^0.4.2",
     "react-native-svg": "15.11.2",
     "react-native-web": "~0.20.0",
-    "react-native-webview": "13.13.5"
+    "react-native-webview": "13.13.5",
+    "expo-notifications": "~0.31.4",
+    "expo-device": "~7.1.4"
   },
   "devDependencies": {
     "@types/lodash.debounce": "^4.0.9",
