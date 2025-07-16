@@ -2,9 +2,18 @@ import { theme } from '@/styles/theme';
 import { StationResult } from '@/types/station';
 import { formatKSTRoundedHour, getKSTCongestionDateTimeISOString } from '@/utils/dateUtils';
 import { hp, px, wp } from '@/utils/scale';
+import { getLineImage } from '@/utils/stationImage';
 import { useRouter } from 'expo-router';
 import React, { useCallback } from 'react';
-import { Alert, StyleSheet, Text, TouchableOpacity, View } from 'react-native';
+import {
+  Alert,
+  Image,
+  ImageBackground,
+  StyleSheet,
+  Text,
+  TouchableOpacity,
+  View,
+} from 'react-native';
 
 const CARD_WIDTH = wp(400);
 const CARD_HEIGHT = hp(498);
@@ -40,36 +49,57 @@ export default function FavoriteStationCard({ station }: { station: StationResul
 
   return (
     <TouchableOpacity onPress={handleSubmit} style={styles.cardTouchable}>
-      <View style={styles.card}>
-        <View style={styles.upContainer}>
-          <Text style={styles.stationName}>{station.name}</Text>
-          <Text style={styles.stationLine}>{station.line}</Text>
-          <Text style={styles.congestionRate}>
-            {station.congestionByDirection.내선?.congestion.congestionScore}
-            {station.congestionByDirection.상행?.congestion.congestionScore}%
-          </Text>
-          <Text style={styles.dateText}>{kstTime}</Text>
-        </View>
-        <View style={styles.downContainer}>
-          <View style={styles.weatherContainer}>
-            <View style={styles.weatherBox}>
-              <View style={styles.weatherIconContainer} />
-              <Text style={styles.weatherText}>기온</Text>
-              <Text style={styles.weatherValueText}>{station.weather?.tmp ?? '-'}</Text>
-            </View>
-            <View style={styles.weatherBox}>
-              <View style={styles.weatherIconContainer} />
-              <Text style={styles.weatherText}>강수량</Text>
-              <Text style={styles.weatherValueText}>{station.weather?.pcp ?? '-'}</Text>
-            </View>
-            <View style={styles.weatherBox}>
-              <View style={styles.weatherIconContainer} />
-              <Text style={styles.weatherText}>습도</Text>
-              <Text style={styles.weatherValueText}>{station.weather?.reh ?? '-'}</Text>
+      <ImageBackground
+        source={getLineImage(station.line)}
+        style={styles.imageBackground}
+        imageStyle={styles.imageStyle}
+      >
+        <View style={styles.card}>
+          <View style={styles.upContainer}>
+            <Text style={styles.stationName}>{station.name}</Text>
+            <Text style={styles.stationLine}>{station.line}</Text>
+            <Text style={styles.congestionRate}>
+              {station.congestionByDirection.내선?.congestion.congestionScore}
+              {station.congestionByDirection.상행?.congestion.congestionScore}%
+            </Text>
+            <Text style={styles.dateText}>{kstTime}</Text>
+          </View>
+          <View style={styles.downContainer}>
+            <View style={styles.weatherContainer}>
+              <View style={styles.weatherBox}>
+                <View style={styles.weatherIconContainer}>
+                  <Image
+                    source={require('@/assets/images/subway/subway-circle-line1.png')}
+                    style={styles.weatherIcon}
+                  />
+                </View>
+                <Text style={styles.weatherText}>기온</Text>
+                <Text style={styles.weatherValueText}>{station.weather?.tmp ?? '-'}</Text>
+              </View>
+              <View style={styles.weatherBox}>
+                <View style={styles.weatherIconContainer}>
+                  <Image
+                    source={require('@/assets/images/subway/subway-circle-line1.png')}
+                    style={styles.weatherIcon}
+                  />
+                </View>
+                <Text style={styles.weatherText}>강수량</Text>
+                <Text style={styles.weatherValueText}>{station.weather?.pcp ?? '-'}</Text>
+              </View>
+              <View style={styles.weatherBox}>
+                <View style={styles.weatherIconContainer}>
+                  <Image
+                    source={require('@/assets/images/subway/subway-circle-line1.png')}
+                    style={styles.weatherIcon}
+                  />
+                </View>
+                <Text style={styles.weatherText}>습도</Text>
+                <Text style={styles.weatherValueText}>{station.weather?.reh ?? '-'}</Text>
+              </View>
             </View>
           </View>
         </View>
-      </View>
+      </ImageBackground>
     </TouchableOpacity>
   );
 }
@@ -80,11 +110,19 @@ const styles = StyleSheet.create({
     height: CARD_HEIGHT,
     borderRadius: px(16),
   },
+  imageBackground: {
+    width: '100%',
+    height: '100%',
+    backgroundColor: theme.colors.gray[400],
+    borderRadius: px(16),
+  },
+  imageStyle: {
+    resizeMode: 'cover',
+  },
   card: {
     width: '100%',
     height: '100%',
     padding: px(24),
-    backgroundColor: '#cccccc', // 임시 배경색
     borderRadius: px(16),
     justifyContent: 'space-between',
     alignItems: 'center',
@@ -154,6 +192,10 @@ const styles = StyleSheet.create({
     height: px(50),
     borderRadius: px(14),
     backgroundColor: theme.colors.gray[300],
+  },
+  weatherIcon: {
+    width: '100%',
+    height: '100%',
   },
   weatherText: {
     color: theme.colors.gray[400],

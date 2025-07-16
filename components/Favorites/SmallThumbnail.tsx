@@ -1,7 +1,15 @@
 import { addFavorite, deleteFavorite } from '@/apis/favorite';
 import { theme } from '@/styles/theme';
 import { hp, px, wp } from '@/utils/scale';
-import { Dimensions, StyleSheet, Text, TouchableOpacity, View } from 'react-native';
+import { getLineImage } from '@/utils/stationImage';
+import {
+  Dimensions,
+  ImageBackground,
+  StyleSheet,
+  Text,
+  TouchableOpacity,
+  View,
+} from 'react-native';
 import StarIcon from '../Icons/StarIcon';
 
 type SmallThumbnailProps = {
@@ -46,20 +54,26 @@ const SmallThumbnail = ({
   };
   return (
     <TouchableOpacity style={styles.container} onPress={() => handleFavorites()}>
-      <View style={styles.contentContainer}>
-        <StarIcon
-          size={px(42)}
-          color={isFavorite(stationId) ? theme.colors.primary[700] : theme.colors.gray[300]}
-        />
-        <View style={styles.textContainer}>
-          <View style={styles.stationNameContainer}>
-            <Text style={styles.stationNameText}>{stationName}</Text>
-          </View>
-          <View style={styles.lineContainer}>
-            <Text style={styles.lineText}>{stationLine}</Text>
+      <ImageBackground
+        source={getLineImage(stationLine)}
+        style={styles.imageBackground}
+        imageStyle={styles.imageStyle}
+      >
+        <View style={styles.contentContainer}>
+          <StarIcon
+            size={px(42)}
+            color={isFavorite(stationId) ? theme.colors.primary[700] : theme.colors.gray[300]}
+          />
+          <View style={styles.textContainer}>
+            <View style={styles.stationNameContainer}>
+              <Text style={styles.stationNameText}>{stationName}</Text>
+            </View>
+            <View style={styles.lineContainer}>
+              <Text style={styles.lineText}>{stationLine}</Text>
+            </View>
           </View>
         </View>
-      </View>
+      </ImageBackground>
     </TouchableOpacity>
   );
 };
@@ -69,20 +83,30 @@ export default SmallThumbnail;
 const styles = StyleSheet.create({
   container: {
     width: thumbnailWidth,
-    padding: 8,
+    height: hp(184),
     flexDirection: 'column',
     justifyContent: 'space-between',
     alignItems: 'center',
     flexShrink: 0,
     borderRadius: px(16),
     backgroundColor: theme.colors.gray[400],
+    overflow: 'hidden',
+  },
+  imageBackground: {
+    width: '100%',
+    height: '100%',
+    borderRadius: px(16),
+  },
+  imageStyle: {
+    resizeMode: 'contain',
   },
   contentContainer: {
-    height: hp(168),
+    height: '100%',
     flexDirection: 'column',
     alignItems: 'flex-end',
     justifyContent: 'space-between',
     alignSelf: 'stretch',
+    padding: 8,
   },
   textContainer: {
     flexDirection: 'column',
