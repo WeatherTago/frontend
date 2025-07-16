@@ -54,9 +54,22 @@ axiosInstance.interceptors.response.use(
           await SecureStore.setItemAsync('accessToken', data.result.accessToken);
           await SecureStore.setItemAsync('refreshToken', data.result.refreshToken);
 
+          if (__DEV__) {
+            console.log('✅ 액세스 토큰 재발급 성공:', data.result.accessToken);
+          }
+
           return data.result.accessToken;
         })()
-          .catch(() => {
+          .catch((err: any) => {
+            if (err.response) {
+              console.error('Refresh token expired:', {
+                status: err.response.status,
+                data: err.response.data,
+                headers: err.response.headers,
+              });
+            } else {
+              console.error('Refresh token error (no response):', err.message || err);
+            }
             SecureStore.deleteItemAsync('accessToken');
             SecureStore.deleteItemAsync('refreshToken');
             throw new Error('refresh token expired'); // ✅ 명시적으로 예외 던지기

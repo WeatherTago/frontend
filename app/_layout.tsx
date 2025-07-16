@@ -1,4 +1,5 @@
-import { AuthProvider } from '@/context/AuthContext';
+import { axiosInstance } from '@/apis/axios';
+import { AuthProvider, useAuth } from '@/context/AuthContext';
 import { FavoriteProvider } from '@/context/FavoriteContext';
 import { NoticeProvider } from '@/context/NoticeContext';
 import { StationProvider } from '@/context/StationContext';
@@ -9,11 +10,11 @@ import { Asset } from 'expo-asset';
 import Constants from 'expo-constants';
 import * as Font from 'expo-font';
 import { Image } from 'expo-image';
-import { Stack } from 'expo-router';
+import { Stack, useRouter } from 'expo-router';
 import * as SplashScreen from 'expo-splash-screen';
 import { Server } from 'miragejs';
 import React, { useEffect, useRef, useState } from 'react';
-import { Animated, StyleSheet, View } from 'react-native';
+import { Alert, Animated, StyleSheet, View } from 'react-native';
 import { GestureHandlerRootView } from 'react-native-gesture-handler';
 import { ko, registerTranslation } from 'react-native-paper-dates';
 import { SafeAreaProvider } from 'react-native-safe-area-context';
@@ -117,6 +118,27 @@ function AnimatedSplashScreen({ children, image }: { children: React.ReactNode; 
 }
 
 export default function RootLayout() {
+  const router = useRouter();
+  const { logout } = useAuth();
+
+  useEffect(() => {
+    const interceptor = axiosInstance.interceptors.response.use(
+      res => res,
+      async err => {
+        if (err.message === 'refresh token expired') {
+          Alert.alert('세션 만료', '다시 로그인해주세요.');
+          await logout();
+          router.replace('/onboarding/login'); // ✅ 로그인 화면으로 이동
+        }
+
+        return Promise.reject(err);
+      },
+    );
+
+    return () => {
+      axiosInstance.interceptors.response.eject(interceptor);
+    };
+  }, []);
   return (
     <SafeAreaProvider>
       <GestureHandlerRootView style={{ flex: 1 }}>
