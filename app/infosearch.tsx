@@ -5,7 +5,7 @@ import { useTheme } from '@emotion/react';
 import { useRouter } from 'expo-router';
 import Fuse from 'fuse.js';
 import React, { useEffect, useMemo, useRef, useState } from 'react';
-import { Alert, Dimensions, FlatList, Keyboard, StyleSheet, Text, TextInput, TouchableOpacity, View } from 'react-native';
+import { Alert, Dimensions, FlatList, Image, Keyboard, StyleSheet, Text, TextInput, TouchableOpacity, View } from 'react-native';
 import { useSafeAreaInsets } from 'react-native-safe-area-context';
 
 export default function SearchScreen() {
@@ -55,9 +55,10 @@ const screenHeight = Dimensions.get('window').height;
 const listHeight = screenHeight * 0.5; // 화면의 절반 높이
 
  useEffect(() => {
-    // 화면 진입 시 포커스
     inputRef.current?.focus();
   }, []);
+
+  const [isEmptySearch, setIsEmptySearch] = useState(false);
 
  return (
     <View style={{ flex:1, paddingTop: insets.top, backgroundColor: '#FFF' }}>
@@ -78,9 +79,16 @@ const listHeight = screenHeight * 0.5; // 화면의 절반 높이
           placeholderTextColor={theme.colors.gray[300]}
           value={searchText}
           onChangeText={setSearchText}
+          returnKeyType="search"
           onSubmitEditing={() => {
             const trimmed = searchText.trim();
-            if (!trimmed) return;
+
+            if (!trimmed) {
+              setIsEmptySearch(true);  // ✅ 빈 입력시 이미지 띄우기 활성화
+              return;
+            }
+
+            setIsEmptySearch(false); // ✅ 정상 검색 시 이미지 숨김
 
             const isValid = stations.some(s => s.stationName === trimmed);
             if (!isValid) {
@@ -90,9 +98,7 @@ const listHeight = screenHeight * 0.5; // 화면의 절반 높이
                 [
                   {
                     text: '확인',
-                    onPress: () => {
-                      inputRef.current?.focus(); // 포커스 다시 줌
-                    },
+                    onPress: () => inputRef.current?.focus(),
                   },
                 ]
               );
@@ -101,39 +107,47 @@ const listHeight = screenHeight * 0.5; // 화면의 절반 높이
 
             const selected = stations.find(s => s.stationName === trimmed);
             const line = selected?.stationLine || '';
-
             router.push({
               pathname: '../infosearch-result',
               params: { station: trimmed, line: `${line}` },
             });
           }}
 
+
         />
       </View>
 
-      {filteredStations.length > 0 && (
-      <FlatList
-        data={filteredStations}
-        keyExtractor={(item) => item}
-        renderItem={({ item }) => (
-          <TouchableOpacity onPress={() => handleSelect(item)} style={{ padding: px(24) }}>
-            <Text style={[styles.suggestionItemText, { color: theme.colors.gray[900] }]}>{item}</Text>
-          </TouchableOpacity>
-        )}
-         ItemSeparatorComponent={() => (
-          <View style={{ height: 1, backgroundColor: theme.colors.gray[100] }} />
-        )}
-        style={{
-          backgroundColor: '#FFF',
-          maxHeight: listHeight,
-        }}
-        keyboardShouldPersistTaps="handled"
+{
+  isEmptySearch ? (
+    <View style={{ flex: 1, justifyContent: 'flex-start',paddingTop: hp(200), alignItems: 'center' }}>
+      <Image
+        source={require('@/assets/images/empty/subway-question-main.png')}
+        style={{width: wp(300), height: hp(200), resizeMode: 'contain' }}
       />
-    )}
-
+      <Text style={{ color: theme.colors.gray[300],fontSize:px(20),fontFamily:'Pretendard-SemiBold',fontWeight:'600'}}>
+        역 정보를 찾을 수 없어요
+      </Text>
     </View>
-  );
+  ) : filteredStations.length > 0 ? (
+    <FlatList
+      data={filteredStations}
+      keyExtractor={(item) => item}
+      renderItem={({ item }) => (
+        <TouchableOpacity onPress={() => handleSelect(item)} style={{ padding: px(24) }}>
+          <Text style={[styles.suggestionItemText, { color: theme.colors.gray[900] }]}>{item}</Text>
+        </TouchableOpacity>
+      )}
+      ItemSeparatorComponent={() => (
+        <View style={{ height: 1, backgroundColor: theme.colors.gray[100] }} />
+      )}
+      style={{ backgroundColor: '#FFF', maxHeight: listHeight }}
+      keyboardShouldPersistTaps="handled"
+    />
+  ) : null
 }
+  </View>
+    );
+  }
 
 const styles = StyleSheet.create({
   container: {

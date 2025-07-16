@@ -1,4 +1,9 @@
-import { FetchUserResponse, KakaoLoginRequest, KakaoLoginResponse } from '../types/auth';
+import {
+  FetchUserResponse,
+  KakaoLoginRequest,
+  KakaoLoginResponse,
+  LogoutResponse,
+} from '../types/auth';
 import { axiosInstance } from './axios';
 
 export const loginKakao = async (body: KakaoLoginRequest): Promise<KakaoLoginResponse> => {
@@ -8,5 +13,10 @@ export const loginKakao = async (body: KakaoLoginRequest): Promise<KakaoLoginRes
 
 export const fetchUser = async (): Promise<FetchUserResponse> => {
   const { data } = await axiosInstance.get('/api/users/me');
+  return data;
+};
+
+export const logout = async (): Promise<LogoutResponse> => {
+  const { data } = await axiosInstance.post('/api/auth/logout');
   return data;
 };

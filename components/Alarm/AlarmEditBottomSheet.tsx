@@ -25,6 +25,7 @@ import {
 import { StationInfo, useStationContext } from '@/context/StationContext';
 
 // 제공된 API 타입 임포트
+import { useFavorite } from '@/context/FavoriteContext';
 import {
   AlarmBase,
   AlarmDayType,
@@ -221,6 +222,7 @@ interface AlarmEditBottomSheetProps {
 
 const AlarmEditBottomSheet = forwardRef<AlarmEditBottomSheetRef, AlarmEditBottomSheetProps>(
   ({ onAlarmActionCompleted }, ref) => {
+    const { favoriteStationIds } = useFavorite();
     const bottomSheetRef = React.useRef<BottomSheet>(null);
     const {
       stations,
@@ -325,7 +327,7 @@ const AlarmEditBottomSheet = forwardRef<AlarmEditBottomSheetRef, AlarmEditBottom
     // 컴포넌트 마운트 시 즐겨찾는 역 데이터 로드
     useEffect(() => {
       fetchFavoriteStations();
-    }, [fetchFavoriteStations]);
+    }, [fetchFavoriteStations, favoriteStationIds]);
 
     // 전체 로딩 상태 (StationContext 로딩 + 즐겨찾기 로딩)
     const overallLoading = isLoadingStationContext || isLoadingFavorites;
@@ -1050,7 +1052,7 @@ const styles = StyleSheet.create({
   },
   scrollableTimeOptionsContainer: {
     flex: 1,
-    maxHeight: hp(350),
+    maxHeight: hp(500),
   },
   timeSelectionContainer: {
     flexDirection: 'column',
