@@ -428,7 +428,7 @@ export default function FirstResultScreen() {
         rightType="close"
         onPressRight={() => router.replace('/congestion')}
       />
-
+<View style={{ height: px(2), backgroundColor: theme.colors.gray[100] }} />
       <ScrollView
         style={styles.mapWrapper}
         contentContainerStyle={styles.mapZoomContainer}
