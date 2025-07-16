@@ -43,7 +43,8 @@ const styles = StyleSheet.create({
     paddingBottom:hp(28),
     flexDirection: 'column',
     alignItems: 'center',
-    alignSelf:'stretch'
+    alignSelf:'stretch',
+    gap:px(6)
   },
   topBox: {
     paddingVertical: hp(4),
@@ -90,7 +91,7 @@ const styles = StyleSheet.create({
     fontWeight:'400',
   },
   image:{
-    width:px(30),
-    height:px(20),
+    width:px(154),
+    height:px(90),
   }
 });

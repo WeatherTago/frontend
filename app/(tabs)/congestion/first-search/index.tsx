@@ -7,7 +7,7 @@ import { useRouter } from 'expo-router';
 import Fuse from 'fuse.js';
 import { useEffect, useMemo, useRef, useState } from 'react';
 import {
-  Dimensions,
+  Alert, Dimensions,
   FlatList,
   Image,
   Keyboard,
@@ -16,7 +16,7 @@ import {
   Text,
   TextInput,
   TouchableOpacity,
-  View
+  View,
 } from 'react-native';
 import { useSafeAreaInsets } from 'react-native-safe-area-context';
 
@@ -65,10 +65,19 @@ export default function FirstSearchScreen() {
     : [];
 
   const handleSubmit = () => {
-    if (!stationName || !selectedLine || !date || !time) {
-      alert('모든 항목을 입력해주세요.');
-      return;
-    }
+  if (!stationName || !selectedLine || !date || !time) {
+    Alert.alert(
+      '알림', 
+      '모든 항목을 입력해주세요.', 
+      [
+        {
+          text: '확인',
+        },
+      ],
+      { cancelable: false } 
+    );
+    return;
+  }
 
     const combinedDate = new Date(date);
     combinedDate.setHours(time.hours);
@@ -144,6 +153,7 @@ export default function FirstSearchScreen() {
   return (
     <View style={{ flex: 1, paddingTop: insets.top, backgroundColor: theme.colors.gray[0] }}>
       <View style={styles.headerContainer}>
+        <View style={{flexDirection:'row', alignItems:'center',gap:px(8)}}>
         <TouchableOpacity onPress={() => router.back()}>
           <ArrowIcon direction="left" color={theme.colors.gray[500]} width={px(46)} height={px(46)} />
         </TouchableOpacity>
@@ -158,11 +168,13 @@ export default function FirstSearchScreen() {
             }}
             onSubmitEditing={handleSubmit}
             returnKeyType="search"
-            style={[styles.searchInput, { color: theme.colors.gray[950] }]}
+            style={[styles.searchInput, {color: theme.colors.gray[950] }]}
             placeholderTextColor={theme.colors.gray[300]}
           />
+        </View>
+        
           <TouchableOpacity onPress={handleSubmit} style={styles.inlineSearchButton}>
-            <Text style={styles.inlineSearchButtonText}>검색</Text>
+            <Image source={require('@/assets/images/searchButton.png')} style={{height:px(46),width:px(46),resizeMode: 'contain'}}/>
           </TouchableOpacity>
       </View>
 
@@ -276,13 +288,13 @@ export default function FirstSearchScreen() {
 
 const styles = StyleSheet.create({
   headerContainer: {
-    width: wp(540),
+    backgroundColor:theme.colors.gray[0],
+    width: '100%',
     height: hp(90),
     paddingHorizontal: wp(14),
     flexDirection: 'row',
     alignItems: 'center',
-    alignSelf: 'stretch',
-    gap: px(8),
+    justifyContent:'space-between',
     flexShrink: 0,
     shadowColor: 'rgba(0, 0, 0, 0.05)',
     shadowOffset: { width: 0, height: 2 },
@@ -417,17 +429,7 @@ const styles = StyleSheet.create({
 },
 
 inlineSearchButton: {
-  paddingHorizontal: px(12),
-  paddingVertical: px(6),
-  backgroundColor: theme.colors.primary[700],
-  borderRadius: px(8),
-  marginLeft: px(8),
+  width:px(46),
+  height:px(46)
 },
-
-inlineSearchButtonText: {
-  color: 'white',
-  fontFamily: 'Pretendard-SemiBold',
-  fontSize: px(18),
-},
-
 });

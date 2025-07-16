@@ -201,6 +201,11 @@ export default function FirstResultScreen() {
           ))}
         </View>
 
+       <Image
+          source={require('@/assets/images/Multiply.png')}
+          style={{ height: hp(320), alignSelf: 'stretch' }}
+        />
+
         {/* 선택된 방향의 혼잡도 InfoBox 하나만 보여주기 */}
         {(() => {
           if (!selectedButton) return null;
@@ -264,7 +269,12 @@ export default function FirstResultScreen() {
           </ScrollView>        
         </View>
       )}
-
+        
+        
+        <Image
+          source={require('@/assets/images/Multiply.png')}
+          style={{ height: hp(320), alignSelf: 'stretch' }}
+        />
 
         {(() => {
           if (!result || !result.weather) return null;
@@ -446,9 +456,9 @@ export default function FirstResultScreen() {
       </ScrollView>
 
       {loading ? (
-        <View style={{ marginTop: 100 , alignItems:'center'}}>
+        <View style={{ marginTop: 50 , alignItems:'center'}}>
           <ActivityIndicator size="large" />
-          <Text>결과를 불러오는 중입니다...</Text>
+          <Text style={{fontSize:px(18), fontFamily:'Pretendard-Medium', color:theme.colors.gray[400]}}>결과를 불러오는 중입니다...</Text>
         </View>
       ) : (
         <BottomSheetModal
