@@ -37,9 +37,9 @@ export default function HomeScreen() {
   const { fetch } = useFavoriteCongestionFetcher();
   const [favoriteStations, setFavoriteStations] = useState<StationResult[] | null>(null);
   const [isLoading, setIsLoading] = useState(false);
-  const insets=useSafeAreaInsets();
+  const insets = useSafeAreaInsets();
 
-  const { notices, isNewUnreadExists,loading } = useNoticeContext();
+  const { notices, isNewUnreadExists, loading: noticeLoading } = useNoticeContext();
   const latestNotice = notices.length > 0 ? notices[0] : null;
   const { favoriteStationIds } = useFavorite();
   const isFocused = useIsFocused();
@@ -52,34 +52,36 @@ export default function HomeScreen() {
       setIsLoading(false);
     };
     loadData();
-  }, [isFocused, favoriteStationIds]);
+  }, [isFocused, favoriteStationIds, noticeLoading]);
 
   return (
-    <View style={{ flex: 1 ,paddingTop: insets.top, backgroundColor:theme.colors.gray[0]}}>
+    <View style={{ flex: 1, paddingTop: insets.top, backgroundColor: theme.colors.gray[0] }}>
       <WeatherHeader showAlarmDot={isNewUnreadExists} />
 
       <ScrollView style={[styles.container, { backgroundColor: theme.colors.gray[50] }]}>
-      {loading ? (
-        <View
-          style={{
-            height: px(100),
-            marginHorizontal: px(24),
-            marginTop: px(16),
-            marginBottom: px(4),
-            borderRadius: px(12),
-            backgroundColor: theme.colors.gray[100],
-          }}
-        />
-      ) : latestNotice && (
-        <NoticeBanner
-          text={`🚨${latestNotice.title}`}
-          showArrowButton
-          onPressArrow={() => router.push(`../notice/${latestNotice.noticeId}`)}
-          backgroundColor={theme.colors.gray[700]}
-          textColor={theme.colors.gray[0]}
-          date={dayjs(latestNotice.createdAt).format('YYYY. MM. DD. A HH:mm')}
-        />
-      )}
+        {noticeLoading ? (
+          <View
+            style={{
+              height: px(100),
+              marginHorizontal: px(24),
+              marginTop: px(16),
+              marginBottom: px(4),
+              borderRadius: px(12),
+              backgroundColor: theme.colors.gray[100],
+            }}
+          />
+        ) : (
+          latestNotice && (
+            <NoticeBanner
+              text={`🚨${latestNotice.title}`}
+              showArrowButton
+              onPressArrow={() => router.push(`../notice/${latestNotice.noticeId}`)}
+              backgroundColor={theme.colors.gray[700]}
+              textColor={theme.colors.gray[0]}
+              date={dayjs(latestNotice.createdAt).format('YYYY. MM. DD. A HH:mm')}
+            />
+          )
+        )}
 
         <Text
           style={[
