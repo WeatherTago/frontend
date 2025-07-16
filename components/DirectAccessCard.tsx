@@ -1,14 +1,15 @@
 import MediumButton from '@/components/Button/MediumButton';
-import { hp, px, wp } from '@/utils/scale';
-import { useTheme } from '@emotion/react';
+import { theme } from '@/styles/theme';
+import { px, wp } from '@/utils/scale';
 import React from 'react';
-import { StyleSheet, Text, View } from 'react-native';
+import { Image, StyleSheet, Text, View } from 'react-native';
 
 interface DirectAccessCardProps {
   title: React.ReactNode;
   subText: string;
   buttonText: string;
   onPress: () => void;
+  image:any;
 }
 
 export default function DirectAccessCard({
@@ -16,36 +17,41 @@ export default function DirectAccessCard({
   subText,
   buttonText,
   onPress,
+  image
 }: DirectAccessCardProps) {
-  const theme = useTheme();
 
   return (
     <View style={styles.card}>
-      <Text
+      <View style={{flexDirection:'row',justifyContent:'space-between',alignItems:'flex-start',alignSelf:'stretch',gap:px(10)}}>
+      <View style={{flexDirection:'column',alignItems:'flex-start',gap:px(4)}}>
+        <Text
         style={{
           fontSize: theme.typography.subtitle1.fontSize,
           lineHeight: theme.typography.subtitle1.lineHeight,
           fontWeight: theme.typography.subtitle1.fontWeight as any,
           fontFamily: theme.typography.subtitle1.fontFamily,
-          marginBottom: hp(8),
           color: theme.colors.gray[900],
         }}
       >
         {title}
       </Text>
-
-      <Text
+      
+        <Text
         style={{
           fontSize: theme.typography.body1.fontSize,
           lineHeight: theme.typography.body1.lineHeight,
           fontWeight: theme.typography.body1.fontWeight as any,
           fontFamily: theme.typography.body1.fontFamily,
           color: theme.colors.gray[400],
-          marginBottom: hp(16),
         }}
       >
         {subText}
       </Text>
+      </View>
+      
+      <Image source={image} style={{ width: px(98), height: px(98) }} />
+      </View>
+      
 
       <MediumButton
         label={buttonText}
@@ -59,10 +65,15 @@ export default function DirectAccessCard({
 const styles = StyleSheet.create({
   card: {
     padding: wp(26),
-    backgroundColor: '#fff',
+    backgroundColor: theme.colors.gray[0],
     borderRadius: px(16),
     marginHorizontal:px(24),
     flexDirection: 'column',
     justifyContent: 'space-between',
+    alignSelf:'stretch',
+    flexGrow: 1,
+    flexShrink: 0,
+    flexBasis: 0,
+    gap:px(16)
   },
 });

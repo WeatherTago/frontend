@@ -15,10 +15,11 @@ import {
   TouchableOpacity,
   View,
 } from 'react-native';
-import { SafeAreaView } from 'react-native-safe-area-context';
+import { useSafeAreaInsets } from 'react-native-safe-area-context';
 
 export default function MyPageScreen() {
   const { logout } = useAuth();
+  const insets=useSafeAreaInsets();
   const [userInfo, setUserInfo] = useState<UserInfo | null>(null);
   const handleLogout = () => {
     logout();
@@ -35,9 +36,10 @@ export default function MyPageScreen() {
   };
 
   return (
-    <SafeAreaView style={styles.container}>
+    <View style={[styles.container, { paddingTop: insets.top }]}>
       <Header title="마이페이지" />
       <ScrollView>
+        <View style={{backgroundColor:theme.colors.gray[100]}}>
         <View style={styles.contentContainer}>
           <View style={styles.userContainer}>
             <View style={styles.imgContainer}>
@@ -129,21 +131,22 @@ export default function MyPageScreen() {
             </View>
           </View>
         </View>
+        </View>
       </ScrollView>
-    </SafeAreaView>
+    </View>
   );
 }
 
 const styles = StyleSheet.create({
   container: {
-    flex: 1,
+    flex:1,
     backgroundColor: theme.colors.gray[0],
   },
   contentContainer: {
     flexDirection: 'column',
     alignItems: 'flex-start',
-    gap: hp(6),
     alignSelf: 'stretch',
+    gap:hp(6)
   },
   userContainer: {
     height: hp(422),
@@ -154,6 +157,7 @@ const styles = StyleSheet.create({
     alignItems: 'center',
     gap: hp(24),
     alignSelf: 'stretch',
+    backgroundColor: theme.colors.gray[0],
   },
   imgContainer: {
     width: wp(196),
@@ -163,6 +167,7 @@ const styles = StyleSheet.create({
   img: {
     width: '100%',
     height: '100%',
+    resizeMode:'contain'
   },
   userInfoContainer: {
     flexDirection: 'column',
@@ -218,6 +223,7 @@ const styles = StyleSheet.create({
     paddingHorizontal: wp(24),
     alignItems: 'center',
     alignSelf: 'stretch',
+    backgroundColor: theme.colors.gray[0],
   },
   categoryNameTextContainer: {
     alignSelf: 'stretch',
@@ -234,6 +240,7 @@ const styles = StyleSheet.create({
     flexDirection: 'column',
     alignItems: 'flex-start',
     alignSelf: 'stretch',
+    backgroundColor: theme.colors.gray[0],
   },
   categoryItemBox: {
     flexDirection: 'column',

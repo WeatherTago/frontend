@@ -25,6 +25,7 @@ import { theme } from '@/styles/theme';
 import { StationResult } from '@/types/station';
 import { hp, px, wp } from '@/utils/scale';
 import { useIsFocused } from '@react-navigation/native';
+import { useSafeAreaInsets } from 'react-native-safe-area-context';
 
 const { width: SCREEN_WIDTH } = Dimensions.get('window');
 const CARD_WIDTH = px(400);
@@ -36,8 +37,9 @@ export default function HomeScreen() {
   const { fetch } = useFavoriteCongestionFetcher();
   const [favoriteStations, setFavoriteStations] = useState<StationResult[] | null>(null);
   const [isLoading, setIsLoading] = useState(false);
+  const insets = useSafeAreaInsets();
 
-  const { notices, isNewUnreadExists } = useNoticeContext();
+  const { notices, isNewUnreadExists, loading: noticeLoading } = useNoticeContext();
   const latestNotice = notices.length > 0 ? notices[0] : null;
   const { favoriteStationIds } = useFavorite();
   const isFocused = useIsFocused();
@@ -50,23 +52,37 @@ export default function HomeScreen() {
       setIsLoading(false);
     };
     loadData();
-  }, [isFocused, favoriteStationIds]);
+  }, [isFocused, favoriteStationIds, noticeLoading]);
 
   return (
-    <View style={{ flex: 1 }}>
+    <View style={{ flex: 1, paddingTop: insets.top, backgroundColor: theme.colors.gray[0] }}>
       <WeatherHeader showAlarmDot={isNewUnreadExists} />
 
       <ScrollView style={[styles.container, { backgroundColor: theme.colors.gray[50] }]}>
-        {latestNotice && (
-          <NoticeBanner
-            text={latestNotice.title}
-            showArrowButton
-            onPressArrow={() => router.push(`../notice/${latestNotice.noticeId}`)}
-            backgroundColor={theme.colors.gray[700]}
-            textColor={theme.colors.gray[0]}
-            date={dayjs(latestNotice.createdAt).format('YYYY. MM. DD. A HH:mm')}
+        {noticeLoading ? (
+          <View
+            style={{
+              height: px(100),
+              marginHorizontal: px(24),
+              marginTop: px(16),
+              marginBottom: px(4),
+              borderRadius: px(12),
+              backgroundColor: theme.colors.gray[100],
+            }}
           />
+        ) : (
+          latestNotice && (
+            <NoticeBanner
+              text={`🚨${latestNotice.title}`}
+              showArrowButton
+              onPressArrow={() => router.push(`../notice/${latestNotice.noticeId}`)}
+              backgroundColor={theme.colors.gray[700]}
+              textColor={theme.colors.gray[0]}
+              date={dayjs(latestNotice.createdAt).format('YYYY. MM. DD. A HH:mm')}
+            />
+          )
         )}
+
         <Text
           style={[
             styles.sectionTitle,
@@ -153,6 +169,7 @@ export default function HomeScreen() {
           subText="편의시설 정보를 빠르게 확인해보세요"
           buttonText="편의시설 확인하기"
           onPress={() => router.push('/information')}
+          image={require('@/assets/images/Multiply.png')}
         />
 
         <Text
@@ -179,6 +196,7 @@ export default function HomeScreen() {
           subText="즐겨찾는 역의 혼잡도를 알림으로 받아보세요"
           buttonText="알림 설정하기"
           onPress={() => router.push('/alert')}
+          image={require('@/assets/images/Multiply.png')}
         />
       </ScrollView>
     </View>
