@@ -1,10 +1,12 @@
 import mapImage from '@/assets/images/map.png';
 import subwayImage from '@/assets/images/subway/subway-all.png';
 import SearchBar from '@/components/SearchBar';
+import { px } from '@/utils/scale';
 import { useTheme } from '@emotion/react';
 import { useRouter } from 'expo-router';
 import { Dimensions, Image, ScrollView, StyleSheet, View } from 'react-native';
 import { useSafeAreaInsets } from 'react-native-safe-area-context';
+
 export default function CongestionMainScreen() {
   const insets = useSafeAreaInsets();
   const router = useRouter();
@@ -20,10 +22,12 @@ export default function CongestionMainScreen() {
         placeholder="혼잡도가 궁금한 역을 검색해보세요"
         value=""
         onChangeText={() => {}}
-        onPressInput={() => router.push('../congestion/first-search')} // ✅ 검색화면으로 이동
+        onPressInput={() => router.push('../congestion/first-search')} 
+        onPressButton={() => router.push('../congestion/first-search')} 
         ButtonIcon={mapImage}
         buttonLabel="혼잡예측"
       />
+      <View style={{ height: px(2), backgroundColor: theme.colors.gray[100] }} />
       <ScrollView
         style={styles.mapWrapper}
         contentContainerStyle={styles.mapZoomContainer}
@@ -49,7 +53,7 @@ export default function CongestionMainScreen() {
           />
         </ScrollView>
       </ScrollView>
-    </View>
+    </View>  
   );
 }
 

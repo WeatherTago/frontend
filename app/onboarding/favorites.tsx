@@ -138,6 +138,7 @@ const styles = StyleSheet.create({
     padding: px(24),
     alignItems: 'flex-start',
     alignSelf: 'stretch',
+    height:hp(160)
   },
   text: {
     color: theme.colors.gray[800],
@@ -154,7 +155,7 @@ const styles = StyleSheet.create({
     lineHeight: theme.typography.header1.lineHeight,
   },
   searchStationContainer: {
-    padding: px(24),
+    paddingHorizontal: px(24),
     flexDirection: 'column',
     alignItems: 'flex-start',
     alignSelf: 'stretch',

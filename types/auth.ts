@@ -33,3 +33,5 @@ export type KakaoLoginResponse = CommonResponse<{
 }>;
 
 export type FetchUserResponse = CommonResponse<UserProfile>;
+
+export type LogoutResponse = CommonResponse<{}>;

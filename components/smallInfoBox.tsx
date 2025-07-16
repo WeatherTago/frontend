@@ -17,7 +17,7 @@ export default function SmallInfoBox({ time, image, text1, text2, textColor }: S
     <View style={styles.box}>
       <Text style={[styles.timeText, {color:theme.colors.gray[800]}]}>{time}</Text>
       <View style={[styles.outerBox, {backgroundColor:theme.colors.gray[50]}]}>
-        <Image source={image} style={styles.image} />
+        <Image source={image} style={styles.image} resizeMode="contain"/>
         <View style={styles.innerBox}>
           <Text style={[styles.text, { color: textColor }]}>{text1}</Text>
           <Text style={[styles.text, { color: textColor }]}>{text2}</Text>

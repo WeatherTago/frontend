@@ -29,6 +29,7 @@ type LargeButtonProps = {
   typography?: Typography;
   onPress?: (event: GestureResponderEvent) => void;
   style?: ViewStyle | ViewStyle[];
+  activeOpacity?: number;
 };
 
 const LargeButton: React.FC<LargeButtonProps> = ({
@@ -40,11 +41,12 @@ const LargeButton: React.FC<LargeButtonProps> = ({
   typography = theme.typography.body1,
   onPress,
   style,
+  activeOpacity = 0.8,
 }) => {
   return (
     <TouchableOpacity
       style={[styles.button, { backgroundColor }, style]}
-      activeOpacity={0.8}
+      activeOpacity={activeOpacity}
       onPress={onPress}
     >
       <View style={styles.content}>

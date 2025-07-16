@@ -7,6 +7,7 @@ interface NoticeContextType {
   notices: Notice[];
   readIds: number[]; // optional compatibility
   isNewUnreadExists: boolean;
+  loading: boolean;
   refetchNotices: () => void;
 }
 
@@ -15,10 +16,13 @@ const NoticeContext = createContext<NoticeContextType | null>(null);
 export const NoticeProvider = ({ children }: { children: React.ReactNode }) => {
   const [notices, setNotices] = useState<Notice[]>([]);
   const [readMap, setReadMap] = useState<Record<number, boolean>>({});
+  const [loading, setLoading] = useState(true);
 
   const loadNotices = async () => {
     const data = await fetchNotices();
-    const sorted = data.sort((a, b) => new Date(b.createdAt).getTime() - new Date(a.createdAt).getTime());
+    const sorted = data.sort(
+      (a, b) => new Date(b.createdAt).getTime() - new Date(a.createdAt).getTime()
+    );
     setNotices(sorted);
   };
 
@@ -28,15 +32,17 @@ export const NoticeProvider = ({ children }: { children: React.ReactNode }) => {
   };
 
   const refetchNotices = async () => {
+    setLoading(true);
     await Promise.all([loadNotices(), loadReadMap()]);
+    setLoading(false);
   };
 
   useEffect(() => {
     refetchNotices();
   }, []);
 
-  const isNewUnreadExists = notices.some((n) =>
-    dayjs().diff(dayjs(n.createdAt), 'day') <= 2 && !readMap[n.noticeId]
+  const isNewUnreadExists = notices.some(
+    (n) => dayjs().diff(dayjs(n.createdAt), 'day') <= 2 && !readMap[n.noticeId]
   );
 
   return (
@@ -45,6 +51,7 @@ export const NoticeProvider = ({ children }: { children: React.ReactNode }) => {
         notices,
         readIds: Object.keys(readMap).map((id) => Number(id)), // compatibility only
         isNewUnreadExists,
+        loading,
         refetchNotices,
       }}
     >

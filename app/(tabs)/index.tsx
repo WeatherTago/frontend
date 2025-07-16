@@ -2,7 +2,16 @@ import { useTheme } from '@emotion/react';
 import dayjs from 'dayjs';
 import { useRouter } from 'expo-router';
 import { useEffect, useState } from 'react';
-import { Dimensions, FlatList, ScrollView, StyleSheet, Text, View } from 'react-native';
+import {
+  Dimensions,
+  FlatList,
+  Image,
+  ScrollView,
+  StyleSheet,
+  Text,
+  TouchableOpacity,
+  View,
+} from 'react-native';
 
 import DirectAccessCard from '@/components/DirectAccessCard';
 import FavoriteStationCard from '@/components/Favorites/FavoriteStationCard';
@@ -12,9 +21,11 @@ import NoticeBanner from '@/components/NoticeBanner';
 import { useFavorite } from '@/context/FavoriteContext';
 import { useNoticeContext } from '@/context/NoticeContext';
 import { useFavoriteCongestionFetcher } from '@/hooks/useFavoriteCongestionFetcher';
+import { theme } from '@/styles/theme';
 import { StationResult } from '@/types/station';
 import { hp, px, wp } from '@/utils/scale';
 import { useIsFocused } from '@react-navigation/native';
+import { useSafeAreaInsets } from 'react-native-safe-area-context';
 
 const { width: SCREEN_WIDTH } = Dimensions.get('window');
 const CARD_WIDTH = px(400);
@@ -26,8 +37,9 @@ export default function HomeScreen() {
   const { fetch } = useFavoriteCongestionFetcher();
   const [favoriteStations, setFavoriteStations] = useState<StationResult[] | null>(null);
   const [isLoading, setIsLoading] = useState(false);
+  const insets = useSafeAreaInsets();
 
-  const { notices, isNewUnreadExists } = useNoticeContext();
+  const { notices, isNewUnreadExists, loading: noticeLoading } = useNoticeContext();
   const latestNotice = notices.length > 0 ? notices[0] : null;
   const { favoriteStationIds } = useFavorite();
   const isFocused = useIsFocused();
@@ -40,23 +52,37 @@ export default function HomeScreen() {
       setIsLoading(false);
     };
     loadData();
-  }, [isFocused, favoriteStationIds]);
+  }, [isFocused, favoriteStationIds, noticeLoading]);
 
   return (
-    <View style={{ flex: 1 }}>
+    <View style={{ flex: 1, paddingTop: insets.top, backgroundColor: theme.colors.gray[0] }}>
       <WeatherHeader showAlarmDot={isNewUnreadExists} />
 
       <ScrollView style={[styles.container, { backgroundColor: theme.colors.gray[50] }]}>
-        {latestNotice && (
-          <NoticeBanner
-            text={latestNotice.title}
-            showArrowButton
-            onPressArrow={() => router.push(`../notice/${latestNotice.noticeId}`)}
-            backgroundColor={theme.colors.gray[700]}
-            textColor={theme.colors.gray[0]}
-            date={dayjs(latestNotice.createdAt).format('YYYY. MM. DD. A HH:mm')}
+        {noticeLoading ? (
+          <View
+            style={{
+              height: px(100),
+              marginHorizontal: px(24),
+              marginTop: px(16),
+              marginBottom: px(4),
+              borderRadius: px(12),
+              backgroundColor: theme.colors.gray[100],
+            }}
           />
+        ) : (
+          latestNotice && (
+            <NoticeBanner
+              text={`🚨${latestNotice.title}`}
+              showArrowButton
+              onPressArrow={() => router.push(`../notice/${latestNotice.noticeId}`)}
+              backgroundColor={theme.colors.gray[700]}
+              textColor={theme.colors.gray[0]}
+              date={dayjs(latestNotice.createdAt).format('YYYY. MM. DD. A HH:mm')}
+            />
+          )
         )}
+
         <Text
           style={[
             styles.sectionTitle,
@@ -80,8 +106,20 @@ export default function HomeScreen() {
           </View>
         ) : favoriteStations.length === 0 ? (
           // 데이터 로딩 완료 but 없음 → 안내 메시지
-          <View style={{ paddingHorizontal: wp(24), paddingVertical: hp(20) }}>
-            <Text style={{ color: theme.colors.gray[500] }}>즐겨찾는 역이 없습니다.</Text>
+          <View style={styles.emptyContainer}>
+            <View style={styles.emptyImageAndTextContainer}>
+              <Image
+                source={require('@/assets/images/empty/subway-question-main.png')}
+                style={styles.emptyImageContainer}
+              />
+              <Text style={styles.emptyText}>아직 즐겨찾는 역이 없어요</Text>
+            </View>
+            <TouchableOpacity
+              style={styles.buttonContainer}
+              onPress={() => router.push('../favorite-modal')}
+            >
+              <Text style={styles.buttonText}>즐겨찾는 역 등록하러 가기</Text>
+            </TouchableOpacity>
           </View>
         ) : (
           // 실제 FlatList
@@ -131,6 +169,7 @@ export default function HomeScreen() {
           subText="편의시설 정보를 빠르게 확인해보세요"
           buttonText="편의시설 확인하기"
           onPress={() => router.push('/information')}
+          image={require('@/assets/images/Multiply.png')}
         />
 
         <Text
@@ -157,6 +196,7 @@ export default function HomeScreen() {
           subText="즐겨찾는 역의 혼잡도를 알림으로 받아보세요"
           buttonText="알림 설정하기"
           onPress={() => router.push('/alert')}
+          image={require('@/assets/images/Multiply.png')}
         />
       </ScrollView>
     </View>
@@ -176,5 +216,52 @@ const styles = StyleSheet.create({
   },
   cardListContainer: {
     paddingHorizontal: SIDE_SPACING,
+  },
+  emptyContainer: {
+    height: hp(494),
+    padding: hp(10),
+    flexDirection: 'column',
+    justifyContent: 'center',
+    alignItems: 'center',
+    gap: hp(22),
+    alignSelf: 'stretch',
+  },
+  emptyImageAndTextContainer: {
+    width: '100%',
+    flexDirection: 'column',
+    alignItems: 'center',
+  },
+  emptyImageContainer: {
+    width: wp(250),
+    height: hp(170),
+  },
+  emptyImage: {
+    width: '100%',
+    height: '100%',
+  },
+  emptyText: {
+    color: theme.colors.gray[300],
+    fontFamily: 'Pretendard-SemiBold',
+    textAlign: 'center',
+    fontSize: px(20),
+    fontWeight: '600',
+    paddingHorizontal: wp(28),
+  },
+  buttonContainer: {
+    paddingVertical: px(10),
+    paddingHorizontal: px(14),
+    justifyContent: 'center',
+    alignItems: 'center',
+    borderRadius: px(6),
+    borderWidth: px(1),
+    borderColor: theme.colors.gray[400],
+    backgroundColor: theme.colors.gray[100],
+  },
+  buttonText: {
+    color: theme.colors.gray[400],
+    fontFamily: 'Pretendard-Medium',
+    fontSize: px(16),
+    fontWeight: '500',
+    lineHeight: px(16),
   },
 });
