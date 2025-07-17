@@ -4,6 +4,8 @@ import StepIndicator from '@/components/Onboarding/StepIndicator';
 import { useAuth } from '@/context/AuthContext';
 import { theme } from '@/styles/theme';
 import { hp, px, wp } from '@/utils/scale';
+import { getKeyHashAndroid, initializeKakaoSDK } from '@react-native-kakao/core';
+import { login as kakaoLogin } from '@react-native-kakao/user';
 import { router } from 'expo-router';
 import * as SecureStore from 'expo-secure-store';
 import { useEffect } from 'react';
@@ -13,7 +15,10 @@ import { useSafeAreaInsets } from 'react-native-safe-area-context';
 export default function OnboardingLogin() {
   const insets = useSafeAreaInsets();
   const { login, user } = useAuth();
-  const token = process.env.EXPO_PUBLIC_KAKAO_ACCESS_TOKEN;
+
+  useEffect(() => {
+    initializeKakaoSDK(process.env.EXPO_PUBLIC_KAKAO_NATIVE_APP_KEY!);
+  }, []);
 
   useEffect(() => {
     if (!!user) {
@@ -39,12 +44,17 @@ export default function OnboardingLogin() {
     }
   }, [user]);
 
-  const handleLogin = () => {
-    if (!token) {
-      console.error('카카오 액세스 토큰이 설정되지 않았습니다.');
-      return;
+  const handleLogin = async () => {
+    if (__DEV__) {
+      console.log(await getKeyHashAndroid());
     }
-    login(token);
+    try {
+      const result = await kakaoLogin();
+      const kakaoAccessToken = result.accessToken;
+      login(kakaoAccessToken);
+    } catch (error) {
+      console.error(error);
+    }
   };
 
   return (

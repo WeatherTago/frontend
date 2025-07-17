@@ -47,6 +47,23 @@ export default ({ config }: ConfigContext): ExpoConfig => ({
       },
     ],
     'expo-secure-store',
+    [
+      'expo-build-properties',
+      {
+        android: {
+          extraMavenRepos: ['https://devrepo.kakao.com/nexus/content/groups/public/'],
+        },
+      },
+    ],
+    [
+      '@react-native-kakao/core',
+      {
+        nativeAppKey: process.env.EXPO_PUBLIC_KAKAO_NATIVE_APP_KEY,
+        android: {
+          authCodeHandlerActivity: true,
+        },
+      },
+    ],
   ],
   experiments: {
     typedRoutes: true,
