@@ -7,7 +7,15 @@ import {
   UpdateAlarmRequest,
   UpdateAlarmResponse,
 } from '@/types/alarm';
+import { CommonResponse } from '@/types/common';
 import { axiosInstance } from './axios';
+
+export const sendPushToken = async (pushToken: string): Promise<CommonResponse<{}>> => {
+  const { data } = await axiosInstance.post('/api/users/me/pushtokens', null, {
+    params: { pushToken },
+  });
+  return data;
+};
 
 export const readAlarmList = async (): Promise<ReadAlarmResponse> => {
   const { data } = await axiosInstance.get('/api/users/me/alarms');
