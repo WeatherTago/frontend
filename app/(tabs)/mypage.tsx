@@ -193,9 +193,14 @@ const styles = StyleSheet.create({
     backgroundColor: theme.colors.gray[0],
   },
   imgContainer: {
-    width: wp(196),
-    height: hp(196),
+    width: wp(140),
+    height: hp(140),
+    padding:px(40),
+    justifyContent:'center',
+    alignItems:'center',
     flexShrink: 0,
+    borderRadius:px(99),
+    backgroundColor:theme.colors.gray[50]
   },
   img: {
     width: '100%',

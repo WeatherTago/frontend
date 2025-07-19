@@ -14,14 +14,13 @@ export default function NotificationScreen() {
   const router = useRouter();
   const theme = useTheme();
 
-  const { notices, readIds, refetchNotices } = useNoticeContext();
+  const { notices, isNewUnreadExists, loading: noticeLoading,readIds, refetchNotices } = useNoticeContext();
 
-  // ✅ 공지 목록이 비어있을 때 자동 재요청
   useEffect(() => {
-    if (!notices || notices.length === 0) {
-      refetchNotices();
-    }
-  }, [notices]);
+  if (!noticeLoading && (!notices || notices.length === 0)) {
+    refetchNotices();
+  }
+}, [notices, noticeLoading]);
 
   return (
     <SafeAreaView style={{ flex: 1, backgroundColor: '#fff' }} edges={['top', 'bottom']}>
@@ -68,4 +67,4 @@ export default function NotificationScreen() {
       />
     </SafeAreaView>
   );
-}
+} 
