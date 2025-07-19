@@ -329,7 +329,6 @@ const styles = StyleSheet.create({
   },
   dateButton: {
     height: px(40),
-    minWidth: px(150),
     padding: 4,
     backgroundColor: '#fff',
     borderRadius: 6,
