@@ -87,7 +87,10 @@ export default function AlarmScreen() {
   return (
     <View style={[styles.container, { paddingTop: insets.top }]}>
       <WeatherHeader showAlarmDot={isNewUnreadExists} />
-      <ScrollView style={{ flex: 1, backgroundColor: theme.colors.gray[50] }}>
+      <ScrollView
+        style={{ flex: 1, backgroundColor: theme.colors.gray[50] }}
+        contentContainerStyle={{ flexGrow: 1 }}
+      >
         <View style={styles.mainContainer}>
           <View style={styles.textContainer}>
             <Text style={styles.text}>
@@ -248,6 +251,7 @@ const styles = StyleSheet.create({
   },
   // ScrollView 내부 콘텐츠에 적용할 스타일 (padding, gap 등)
   alarmListContentContainer: {
+    flex: 1,
     backgroundColor: theme.colors.gray[0],
     paddingHorizontal: wp(24),
     paddingBottom: hp(28),
