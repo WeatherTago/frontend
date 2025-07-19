@@ -61,7 +61,10 @@ export default function OnboardingLogin() {
     <View style={[styles.container, { paddingBottom: insets.bottom }]}>
       <View style={styles.contentContainer}>
         <View style={[styles.imageContainer, { paddingTop: insets.top }]}>
-          <Image source={require('@/assets/images/subway-people-big.png')} style={styles.image} />
+          <Image
+            source={require('@/assets/images/onboarding/onboarding-login.png')}
+            style={styles.image}
+          />
         </View>
         <StepIndicator totalSteps={4} currentStep={4} />
         <OnboardingHeader
@@ -112,7 +115,6 @@ const styles = StyleSheet.create({
     flexDirection: 'column',
     alignItems: 'center',
     alignSelf: 'stretch',
-    backgroundColor: '#2FC8CF',
     flexGrow: 1,
   },
   image: {

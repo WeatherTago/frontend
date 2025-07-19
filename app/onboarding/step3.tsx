@@ -15,7 +15,7 @@ export default function OnboardingStep3() {
       <View style={styles.contentContainer}>
         <View style={styles.imageContainer}>
           <Image
-            source={require('@/assets/images/logo/weathertago-logo.png')}
+            source={require('@/assets/images/onboarding/onboarding-step3.png')}
             style={styles.image}
           />
         </View>
@@ -66,13 +66,12 @@ const styles = StyleSheet.create({
     flexDirection: 'column',
     alignItems: 'center',
     alignSelf: 'stretch',
-    backgroundColor: theme.colors.gray[100],
     flexGrow: 1,
   },
   image: {
     width: '100%',
     height: '100%',
-    resizeMode: 'contain',
+    resizeMode: 'cover',
   },
   buttonContainer: {
     height: hp(108),
