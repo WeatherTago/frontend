@@ -26,7 +26,7 @@ export default function SmallInfoBox({ time, image, text1, text2, textColor }: S
         </View>
         <View style={styles.innerBox}>
           <Text style={[styles.text, { color: textColor }]}>{text1}</Text>
-          <Text style={[styles.text, { color: textColor }]}>{text2}</Text>
+          <Text style={[styles.text, { color: textColor ,fontSize:px(14)}]}>{text2}</Text>
         </View>
       </View>
     </TouchableOpacity>

@@ -26,6 +26,7 @@ export default function TabsLayout() {
     'Pretendard-Medium': require('@/assets/fonts/Pretendard-Medium.otf'),
     'Pretendard-Bold': require('@/assets/fonts/Pretendard-Bold.otf'),
     'Pretendard-ExtraBold': require('@/assets/fonts/Pretendard-ExtraBold.otf'),
+    'Paperlogy':require('@/assets/fonts/Paperlogy-8ExtraBold.ttf')
   });
 
   if (!fontsLoaded) return null;

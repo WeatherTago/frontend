@@ -7,7 +7,7 @@ import ArrowIcon from './Icons/ArrowIcon';
 interface NoticeBannerProps {
   text: string;
   showArrowButton?: boolean;
-  onPressArrow?: () => void; // 🔹 화살표 버튼 클릭 이벤트
+  onPressArrow?: () => void; 
   backgroundColor: string;
   textColor: string;
   date?: string;
@@ -59,7 +59,7 @@ export default function NoticeBanner({
     <Container backgroundColor={backgroundColor}>
       <View style={{ flex: 1 }}>
         <View style={{ flexDirection: 'row', alignItems: 'center' }}>
-          <NoticeText textColor={textColor}>
+          <NoticeText textColor={textColor}numberOfLines={1} ellipsizeMode="tail">
             {text}
           </NoticeText>
         </View>

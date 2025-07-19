@@ -77,7 +77,7 @@ export default function NoticeDetailScreen() {
             fontWeight: '600',
           }}
         >
-          {`🚨${notice.title}`}
+          {notice.title}
         </Text>
         <Text
           style={{

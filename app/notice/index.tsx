@@ -42,7 +42,7 @@ export default function NotificationScreen() {
               }}
             >
               <NoticeBanner
-                text={`🚨${item.title}`}
+                text={item.title}
                 date={dayjs(item.createdAt).format('YYYY. MM. DD. A HH:mm')}
                 backgroundColor={
                   isNew && !isRead

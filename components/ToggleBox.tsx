@@ -89,7 +89,7 @@ const styles = StyleSheet.create({
     justifyContent: 'space-between',
     alignItems: 'center',
     alignSelf: 'stretch',
-    marginTop: px(4),
+    marginTop: px(8),
     flexDirection:'row'
   },
   title: {
