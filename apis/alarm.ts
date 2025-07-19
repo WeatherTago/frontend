@@ -44,3 +44,8 @@ export const updateAlarm = async ({
   const { data } = await axiosInstance.patch(`/api/users/me/alarms/${alarmId}`, body);
   return data;
 };
+
+export const deleteAllAlarms = async (): Promise<CommonResponse<{}>> => {
+  const { data } = await axiosInstance.delete('/api/users/me/pushtokens/all');
+  return data;
+};

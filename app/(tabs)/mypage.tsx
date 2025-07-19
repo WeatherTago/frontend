@@ -7,6 +7,7 @@ import { hp, px, wp } from '@/utils/scale';
 import { router } from 'expo-router';
 import { useEffect, useState } from 'react';
 import {
+  Alert,
   Image,
   ScrollView,
   StyleSheet,
@@ -18,12 +19,42 @@ import {
 import { useSafeAreaInsets } from 'react-native-safe-area-context';
 
 export default function MyPageScreen() {
-  const { logout } = useAuth();
-  const insets=useSafeAreaInsets();
+  const { logout, withdraw } = useAuth();
+  const insets = useSafeAreaInsets();
   const [userInfo, setUserInfo] = useState<UserInfo | null>(null);
+
+  const handleWithdraw = () => {
+    Alert.alert('회원 탈퇴', '정말로 탈퇴하시겠습니까?', [
+      {
+        text: '취소',
+        onPress: () => {},
+        style: 'cancel',
+      },
+      {
+        text: '확인',
+        onPress: () => {
+          const res = withdraw();
+          console.log(res);
+          router.replace('/onboarding');
+        },
+      },
+    ]);
+  };
   const handleLogout = () => {
-    logout();
-    router.replace('/onboarding');
+    Alert.alert('로그아웃', '정말로 로그아웃하시겠습니까?', [
+      {
+        text: '취소',
+        onPress: () => {},
+        style: 'cancel',
+      },
+      {
+        text: '확인',
+        onPress: () => {
+          logout();
+          router.replace('/onboarding');
+        },
+      },
+    ]);
   };
 
   useEffect(() => {
@@ -39,98 +70,100 @@ export default function MyPageScreen() {
     <View style={[styles.container, { paddingTop: insets.top }]}>
       <Header title="마이페이지" />
       <ScrollView>
-        <View style={{backgroundColor:theme.colors.gray[100]}}>
-        <View style={styles.contentContainer}>
-          <View style={styles.userContainer}>
-            <View style={styles.imgContainer}>
-              <Image source={require('@/assets/images/user.png')} style={styles.img} />
-            </View>
-            <View style={styles.userInfoContainer}>
-              <View style={styles.userNameContainer}>
-                <Text style={styles.userNameText}>
-                  {userInfo?.nickname}
-                  <Text style={styles.userNameSubText}>님</Text>
-                </Text>
+        <View style={{ backgroundColor: theme.colors.gray[100] }}>
+          <View style={styles.contentContainer}>
+            <View style={styles.userContainer}>
+              <View style={styles.imgContainer}>
+                <Image source={require('@/assets/images/user.png')} style={styles.img} />
               </View>
-              <View style={styles.emailContainer}>
-                <Text style={styles.emailText}>{userInfo?.email}</Text>
+              <View style={styles.userInfoContainer}>
+                <View style={styles.userNameContainer}>
+                  <Text style={styles.userNameText}>
+                    {userInfo?.nickname}
+                    <Text style={styles.userNameSubText}>님</Text>
+                  </Text>
+                </View>
+                <View style={styles.emailContainer}>
+                  <Text style={styles.emailText}>{userInfo?.email}</Text>
+                </View>
+              </View>
+            </View>
+            <View style={styles.settingContainer}>
+              <View style={styles.categoryContainer}>
+                <View style={styles.categoryNameContainer}>
+                  <View style={styles.categoryNameTextContainer}>
+                    <Text style={styles.categoryNameText}>계정</Text>
+                  </View>
+                </View>
+                <View style={styles.categoryItemContainer}>
+                  <View style={styles.categoryItemBox}>
+                    <View style={styles.categoryItemTextContainer}>
+                      <Text style={styles.categoryItemText}>아이디 변경</Text>
+                    </View>
+                    <View style={styles.categoryItemTextContainer}>
+                      <Text style={styles.categoryItemText}>비밀번호 변경</Text>
+                    </View>
+                    <View style={styles.categoryItemTextContainer}>
+                      <Text style={styles.categoryItemText}>이메일 변경</Text>
+                    </View>
+                  </View>
+                </View>
+              </View>
+              <View style={styles.categoryContainer}>
+                <View style={styles.categoryNameContainer}>
+                  <View style={styles.categoryNameTextContainer}>
+                    <Text style={styles.categoryNameText}>이용 안내</Text>
+                  </View>
+                </View>
+                <View style={styles.categoryItemContainer}>
+                  <View style={styles.categoryItemBox}>
+                    <View style={styles.categoryItemTextContainer}>
+                      <Text style={styles.categoryItemText}>앱 버전</Text>
+                    </View>
+                    <View style={styles.categoryItemTextContainer}>
+                      <Text style={styles.categoryItemText}>문의하기</Text>
+                    </View>
+                    <View style={styles.categoryItemTextContainer}>
+                      <Text style={styles.categoryItemText}>공지사항</Text>
+                    </View>
+                    <View style={styles.categoryItemTextContainer}>
+                      <Text style={styles.categoryItemText}>서비스 이용약관</Text>
+                    </View>
+                    <View style={styles.categoryItemTextContainer}>
+                      <Text style={styles.categoryItemText}>개인정보 처리방침</Text>
+                    </View>
+                    <View style={styles.categoryItemTextContainer}>
+                      <Text style={styles.categoryItemText}>오픈소스 라이선스</Text>
+                    </View>
+                  </View>
+                </View>
+              </View>
+              <View style={styles.categoryContainer}>
+                <View style={styles.categoryNameContainer}>
+                  <View style={styles.categoryNameTextContainer}>
+                    <Text style={styles.categoryNameText}>기타</Text>
+                  </View>
+                </View>
+                <View style={styles.categoryItemContainer}>
+                  <View style={styles.categoryItemBox}>
+                    <View style={styles.categoryItemTextContainer}>
+                      <Text style={styles.categoryItemText}>정보 동의 설정</Text>
+                    </View>
+                    <View style={styles.categoryItemTextContainer}>
+                      <TouchableOpacity onPress={handleWithdraw}>
+                        <Text style={styles.categoryItemText}>회원 탈퇴</Text>
+                      </TouchableOpacity>
+                    </View>
+                    <View style={styles.categoryItemTextContainer}>
+                      <TouchableOpacity onPress={handleLogout}>
+                        <Text style={styles.categoryItemText}>로그아웃</Text>
+                      </TouchableOpacity>
+                    </View>
+                  </View>
+                </View>
               </View>
             </View>
           </View>
-          <View style={styles.settingContainer}>
-            <View style={styles.categoryContainer}>
-              <View style={styles.categoryNameContainer}>
-                <View style={styles.categoryNameTextContainer}>
-                  <Text style={styles.categoryNameText}>계정</Text>
-                </View>
-              </View>
-              <View style={styles.categoryItemContainer}>
-                <View style={styles.categoryItemBox}>
-                  <View style={styles.categoryItemTextContainer}>
-                    <Text style={styles.categoryItemText}>아이디 변경</Text>
-                  </View>
-                  <View style={styles.categoryItemTextContainer}>
-                    <Text style={styles.categoryItemText}>비밀번호 변경</Text>
-                  </View>
-                  <View style={styles.categoryItemTextContainer}>
-                    <Text style={styles.categoryItemText}>이메일 변경</Text>
-                  </View>
-                </View>
-              </View>
-            </View>
-            <View style={styles.categoryContainer}>
-              <View style={styles.categoryNameContainer}>
-                <View style={styles.categoryNameTextContainer}>
-                  <Text style={styles.categoryNameText}>이용 안내</Text>
-                </View>
-              </View>
-              <View style={styles.categoryItemContainer}>
-                <View style={styles.categoryItemBox}>
-                  <View style={styles.categoryItemTextContainer}>
-                    <Text style={styles.categoryItemText}>앱 버전</Text>
-                  </View>
-                  <View style={styles.categoryItemTextContainer}>
-                    <Text style={styles.categoryItemText}>문의하기</Text>
-                  </View>
-                  <View style={styles.categoryItemTextContainer}>
-                    <Text style={styles.categoryItemText}>공지사항</Text>
-                  </View>
-                  <View style={styles.categoryItemTextContainer}>
-                    <Text style={styles.categoryItemText}>서비스 이용약관</Text>
-                  </View>
-                  <View style={styles.categoryItemTextContainer}>
-                    <Text style={styles.categoryItemText}>개인정보 처리방침</Text>
-                  </View>
-                  <View style={styles.categoryItemTextContainer}>
-                    <Text style={styles.categoryItemText}>오픈소스 라이선스</Text>
-                  </View>
-                </View>
-              </View>
-            </View>
-            <View style={styles.categoryContainer}>
-              <View style={styles.categoryNameContainer}>
-                <View style={styles.categoryNameTextContainer}>
-                  <Text style={styles.categoryNameText}>기타</Text>
-                </View>
-              </View>
-              <View style={styles.categoryItemContainer}>
-                <View style={styles.categoryItemBox}>
-                  <View style={styles.categoryItemTextContainer}>
-                    <Text style={styles.categoryItemText}>정보 동의 설정</Text>
-                  </View>
-                  <View style={styles.categoryItemTextContainer}>
-                    <Text style={styles.categoryItemText}>회원 탈퇴</Text>
-                  </View>
-                  <View style={styles.categoryItemTextContainer}>
-                    <TouchableOpacity onPress={handleLogout}>
-                      <Text style={styles.categoryItemText}>로그아웃</Text>
-                    </TouchableOpacity>
-                  </View>
-                </View>
-              </View>
-            </View>
-          </View>
-        </View>
         </View>
       </ScrollView>
     </View>
@@ -139,14 +172,14 @@ export default function MyPageScreen() {
 
 const styles = StyleSheet.create({
   container: {
-    flex:1,
+    flex: 1,
     backgroundColor: theme.colors.gray[0],
   },
   contentContainer: {
     flexDirection: 'column',
     alignItems: 'flex-start',
     alignSelf: 'stretch',
-    gap:hp(6)
+    gap: hp(6),
   },
   userContainer: {
     height: hp(422),
@@ -167,7 +200,7 @@ const styles = StyleSheet.create({
   img: {
     width: '100%',
     height: '100%',
-    resizeMode:'contain'
+    resizeMode: 'contain',
   },
   userInfoContainer: {
     flexDirection: 'column',

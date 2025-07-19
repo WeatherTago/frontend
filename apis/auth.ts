@@ -4,6 +4,7 @@ import {
   KakaoLoginResponse,
   LogoutResponse,
 } from '../types/auth';
+import { CommonResponse } from '../types/common';
 import { axiosInstance } from './axios';
 
 export const loginKakao = async (body: KakaoLoginRequest): Promise<KakaoLoginResponse> => {
@@ -18,5 +19,10 @@ export const fetchUser = async (): Promise<FetchUserResponse> => {
 
 export const logout = async (): Promise<LogoutResponse> => {
   const { data } = await axiosInstance.post('/api/auth/logout');
+  return data;
+};
+
+export const withdraw = async (): Promise<CommonResponse<{}>> => {
+  const { data } = await axiosInstance.delete('/api/users/withdraw');
   return data;
 };

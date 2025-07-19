@@ -1,9 +1,10 @@
+import { deleteAllAlarms } from '@/apis/alarm';
 import { AuthContextType, FullUser } from '@/types/auth';
 import AsyncStorage from '@react-native-async-storage/async-storage';
 import * as SecureStore from 'expo-secure-store';
 import React, { createContext, useContext, useEffect, useState } from 'react';
 import { Alert } from 'react-native';
-import { fetchUser, loginKakao, logout as logoutApi } from '../apis/auth';
+import { fetchUser, loginKakao, logout as logoutApi, withdraw as withdrawApi } from '../apis/auth';
 import { KakaoLoginRequest, KakaoLoginResponse } from '../types/auth';
 
 export const AuthContext = createContext<AuthContextType>({
@@ -11,6 +12,7 @@ export const AuthContext = createContext<AuthContextType>({
   login: async () => {},
   logout: () => {},
   loadUser: async () => {},
+  withdraw: async () => {},
   loading: true,
   isAuthReady: false,
 });
@@ -85,12 +87,27 @@ export const AuthProvider = ({ children }: { children: React.ReactNode }) => {
     }
   };
 
+  const withdraw = async () => {
+    try {
+      await Promise.all([deleteAllAlarms(), withdrawApi()]);
+      setUser(null);
+      await Promise.all([
+        SecureStore.deleteItemAsync('accessToken'),
+        SecureStore.deleteItemAsync('refreshToken'),
+        AsyncStorage.removeItem('user'),
+      ]);
+    } catch (error) {
+      console.error('회원 탈퇴 중 에러 발생:', error);
+      Alert.alert('회원 탈퇴 실패', '다시 시도해 주세요.');
+    }
+  };
+
   useEffect(() => {
     loadUser();
   }, []);
 
   return (
-    <AuthContext.Provider value={{ user, login, logout, loadUser, loading, isAuthReady }}>
+    <AuthContext.Provider value={{ user, login, logout, loadUser, withdraw, loading, isAuthReady }}>
       {children}
     </AuthContext.Provider>
   );

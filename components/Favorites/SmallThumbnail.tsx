@@ -1,16 +1,9 @@
 import { addFavorite, deleteFavorite } from '@/apis/favorite';
 import { theme } from '@/styles/theme';
 import { hp, px, wp } from '@/utils/scale';
-import { getLineImage } from '@/utils/stationImage';
-import {
-  Dimensions,
-  ImageBackground,
-  StyleSheet,
-  Text,
-  TouchableOpacity,
-  View,
-} from 'react-native';
-import StarIcon from '../Icons/StarIcon';
+import { getLineColor } from '@/utils/stationColor';
+import { getFavoriteLineImage } from '@/utils/stationImage';
+import { Dimensions, Image, StyleSheet, Text, TouchableOpacity, View } from 'react-native';
 
 type SmallThumbnailProps = {
   stationId: number;
@@ -52,28 +45,30 @@ const SmallThumbnail = ({
 
     onToggleFavorite(stationId);
   };
+
+  const activeColor = isFavorite(stationId) ? getLineColor(stationLine) : theme.colors.gray[100];
+  const activeFontColor = isFavorite(stationId)
+    ? getLineColor(stationLine)
+    : theme.colors.gray[400];
+  const activeImage = isFavorite(stationId)
+    ? getFavoriteLineImage(stationLine)
+    : getFavoriteLineImage('default');
   return (
-    <TouchableOpacity style={styles.container} onPress={() => handleFavorites()}>
-      <ImageBackground
-        source={getLineImage(stationLine)}
-        style={styles.imageBackground}
-        imageStyle={styles.imageStyle}
-      >
-        <View style={styles.contentContainer}>
-          <StarIcon
-            size={px(42)}
-            color={isFavorite(stationId) ? theme.colors.primary[700] : theme.colors.gray[300]}
-          />
-          <View style={styles.textContainer}>
-            <View style={styles.stationNameContainer}>
-              <Text style={styles.stationNameText}>{stationName}</Text>
-            </View>
-            <View style={styles.lineContainer}>
-              <Text style={styles.lineText}>{stationLine}</Text>
-            </View>
-          </View>
+    <TouchableOpacity
+      style={[styles.container, { borderColor: activeColor }]}
+      onPress={() => handleFavorites()}
+    >
+      <View style={styles.imageContainer}>
+        <Image source={activeImage} style={styles.image} />
+      </View>
+      <View style={styles.textContainer}>
+        <View style={styles.stationNameContainer}>
+          <Text style={[styles.stationNameText, { color: activeFontColor }]}>{stationName}</Text>
         </View>
-      </ImageBackground>
+        <View style={styles.lineContainer}>
+          <Text style={[styles.lineText, { color: activeFontColor }]}>{stationLine}</Text>
+        </View>
+      </View>
     </TouchableOpacity>
   );
 };
@@ -84,29 +79,22 @@ const styles = StyleSheet.create({
   container: {
     width: thumbnailWidth,
     height: hp(184),
+    padding: px(2), // borderWidth 6px 보정
     flexDirection: 'column',
     justifyContent: 'space-between',
     alignItems: 'center',
-    flexShrink: 0,
     borderRadius: px(16),
-    backgroundColor: theme.colors.gray[400],
+    backgroundColor: theme.colors.gray[0],
+    borderWidth: px(6),
     overflow: 'hidden',
   },
-  imageBackground: {
+  imageContainer: {
+    height: hp(103),
+    alignSelf: 'stretch',
+  },
+  image: {
     width: '100%',
     height: '100%',
-    borderRadius: px(16),
-  },
-  imageStyle: {
-    resizeMode: 'contain',
-  },
-  contentContainer: {
-    height: '100%',
-    flexDirection: 'column',
-    alignItems: 'flex-end',
-    justifyContent: 'space-between',
-    alignSelf: 'stretch',
-    padding: 8,
   },
   textContainer: {
     flexDirection: 'column',
@@ -120,7 +108,6 @@ const styles = StyleSheet.create({
     alignSelf: 'stretch',
   },
   stationNameText: {
-    color: theme.colors.gray[0],
     textAlign: 'center',
     fontSize: theme.typography.subtitle2.fontSize,
     fontWeight: theme.typography.subtitle2.fontWeight,
@@ -131,7 +118,6 @@ const styles = StyleSheet.create({
     alignItems: 'center',
   },
   lineText: {
-    color: '#fff',
     textAlign: 'center',
     fontSize: theme.typography.body2.fontSize,
     fontWeight: theme.typography.body2.fontWeight,
