@@ -13,6 +13,7 @@ import {
   View,
 } from 'react-native';
 
+import { sendPushToken } from '@/apis/alarm';
 import DirectAccessCard from '@/components/DirectAccessCard';
 import FavoriteStationCard from '@/components/Favorites/FavoriteStationCard';
 import FavoriteStationSkeletonCard from '@/components/Favorites/FavoriteStationSkeletonCard';
@@ -25,6 +26,11 @@ import { theme } from '@/styles/theme';
 import { StationResult } from '@/types/station';
 import { hp, px, wp } from '@/utils/scale';
 import { useIsFocused } from '@react-navigation/native';
+import Constants from 'expo-constants';
+import * as Device from 'expo-device';
+import * as Linking from 'expo-linking';
+import * as Notifications from 'expo-notifications';
+import { Alert } from 'react-native';
 import { useSafeAreaInsets } from 'react-native-safe-area-context';
 
 const { width: SCREEN_WIDTH } = Dimensions.get('window');
@@ -43,6 +49,35 @@ export default function HomeScreen() {
   const latestNotice = notices.length > 0 ? notices[0] : null;
   const { favoriteStationIds } = useFavorite();
   const isFocused = useIsFocused();
+
+  const sendExpoPushToken = async () => {
+    const { status } = await Notifications.requestPermissionsAsync();
+    if (status !== Notifications.PermissionStatus.GRANTED) {
+      Alert.alert('알림 권한 필요', '알림을 받기 위해 권한을 허용해주세요.', [
+        { text: '취소', style: 'cancel' },
+        { text: '설정으로 이동', onPress: () => Linking.openSettings() },
+      ]);
+      return;
+    }
+    const token = await Notifications.getExpoPushTokenAsync({
+      projectId: Constants.expoConfig?.extra?.eas?.projectId ?? Constants.easConfig?.projectId,
+    });
+
+    const expoPushToken = token.data;
+    const encodedToken = expoPushToken.replace(/\[/g, '%5B').replace(/\]/g, '%5D');
+
+    if (Device.isDevice) {
+      try {
+        await sendPushToken(encodedToken);
+      } catch (error) {
+        console.error('❌ 푸시 토큰 전송 실패:', JSON.stringify(error));
+      }
+    }
+  };
+
+  useEffect(() => {
+    sendExpoPushToken();
+  }, []);
 
   useEffect(() => {
     const loadData = async () => {
