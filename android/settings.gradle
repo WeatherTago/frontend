@@ -31,7 +31,7 @@ extensions.configure(com.facebook.react.ReactSettingsExtension) { ex ->
 }
 expoAutolinking.useExpoModules()
 
-rootProject.name = 'weathertago-front'
+rootProject.name = '웨더타고'
 
 expoAutolinking.useExpoVersionCatalog()
 
