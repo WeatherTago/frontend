@@ -1,7 +1,7 @@
 import { addFavorite, deleteFavorite } from '@/apis/favorite';
 import { theme } from '@/styles/theme';
 import { hp, px, wp } from '@/utils/scale';
-import { getLineColor } from '@/utils/stationColor';
+import { getFavoriteBackgroundColor, getLineColor } from '@/utils/stationColor';
 import { getFavoriteLineImage } from '@/utils/stationImage';
 import { Dimensions, Image, StyleSheet, Text, TouchableOpacity, View } from 'react-native';
 
@@ -46,7 +46,9 @@ const SmallThumbnail = ({
     onToggleFavorite(stationId);
   };
 
-  const activeColor = isFavorite(stationId) ? getLineColor(stationLine) : theme.colors.gray[100];
+  const activeBackgroundColor = isFavorite(stationId)
+    ? getFavoriteBackgroundColor(stationLine)
+    : theme.colors.gray[50];
   const activeFontColor = isFavorite(stationId)
     ? getLineColor(stationLine)
     : theme.colors.gray[400];
@@ -55,7 +57,7 @@ const SmallThumbnail = ({
     : getFavoriteLineImage('default');
   return (
     <TouchableOpacity
-      style={[styles.container, { borderColor: activeColor }]}
+      style={[styles.container, { backgroundColor: activeBackgroundColor }]}
       onPress={() => handleFavorites()}
     >
       <View style={styles.imageContainer}>
@@ -79,13 +81,11 @@ const styles = StyleSheet.create({
   container: {
     width: thumbnailWidth,
     height: hp(184),
-    padding: px(2), // borderWidth 6px 보정
+    padding: px(8),
     flexDirection: 'column',
     justifyContent: 'space-between',
     alignItems: 'center',
     borderRadius: px(16),
-    backgroundColor: theme.colors.gray[0],
-    borderWidth: px(6),
     overflow: 'hidden',
   },
   imageContainer: {
