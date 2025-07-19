@@ -17,7 +17,7 @@ export default function FavoriteStationSkeletonCard() {
       </View>
 
       <View style={styles.downContainer}>
-        {[0, 1, 2].map(index => (
+        {[0, 1, 2, 3].map(index => (
           <View style={styles.weatherBox} key={index}>
             <View style={styles.weatherIcon} />
             <View style={styles.skeletonBoxTiny} />

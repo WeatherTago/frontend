@@ -74,7 +74,7 @@ export default function FavoriteStationCard({ station }: { station: StationResul
                   />
                 </View>
                 <Text style={styles.weatherText}>기온</Text>
-                <Text style={styles.weatherValueText}>{station.weather?.tmp ?? '-'}</Text>
+                <Text style={styles.weatherValueText}>{station.weather?.tmp ?? '-'}°C</Text>
               </View>
               <View style={styles.weatherBox}>
                 <View style={styles.weatherIconContainer}>
@@ -84,7 +84,7 @@ export default function FavoriteStationCard({ station }: { station: StationResul
                   />
                 </View>
                 <Text style={styles.weatherText}>강수량</Text>
-                <Text style={styles.weatherValueText}>{station.weather?.pcp ?? '-'}</Text>
+                <Text style={styles.weatherValueText}>{station.weather?.pcp ?? '-'}mm</Text>
               </View>
               <View style={styles.weatherBox}>
                 <View style={styles.weatherIconContainer}>
@@ -94,7 +94,17 @@ export default function FavoriteStationCard({ station }: { station: StationResul
                   />
                 </View>
                 <Text style={styles.weatherText}>습도</Text>
-                <Text style={styles.weatherValueText}>{station.weather?.reh ?? '-'}</Text>
+                <Text style={styles.weatherValueText}>{station.weather?.reh ?? '-'}%</Text>
+              </View>
+              <View style={styles.weatherBox}>
+                <View style={styles.weatherIconContainer}>
+                  <Image
+                    source={require('@/assets/images/subway/subway-circle-line1.png')}
+                    style={styles.weatherIcon}
+                  />
+                </View>
+                <Text style={styles.weatherText}>풍속</Text>
+                <Text style={styles.weatherValueText}>{station.weather?.wsd ?? '-'}m/s</Text>
               </View>
             </View>
           </View>
