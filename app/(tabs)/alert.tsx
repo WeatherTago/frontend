@@ -1,3 +1,4 @@
+import { readAlarmList } from '@/apis/alarm';
 import AlarmEditBottomSheet, {
   AlarmEditBottomSheetRef,
 } from '@/components/Alarm/AlarmEditBottomSheet';
@@ -34,75 +35,7 @@ export default function AlarmScreen() {
   const fetchAlarms = async () => {
     setIsLoadingAlarms(true);
     try {
-      // const response: ReadAlarmResponse = await readAlarms(); // 실제 API 호출
-      // 임시 데이터 (API 호출 대신 사용)
-      const response: ReadAlarmResponse = {
-        isSuccess: true,
-        code: '1000',
-        message: 'Success',
-        result: [
-          {
-            alarmId: 1,
-            stationName: '서울역',
-            stationLine: '1호선',
-            direction: '상행',
-            referenceTime: '08:00',
-            alarmPeriod: 'EVERYDAY',
-            alarmDay: 'YESTERDAY',
-            alarmTime: '07:30',
-          },
-          {
-            alarmId: 3,
-            stationName: '시청',
-            stationLine: '1호선',
-            direction: '상행',
-            referenceTime: '09:00',
-            alarmPeriod: 'MONDAY',
-            alarmDay: 'TODAY',
-            alarmTime: '08:00',
-          },
-          {
-            alarmId: 5,
-            stationName: '종각',
-            stationLine: '1호선',
-            direction: '상행',
-            referenceTime: '08:00',
-            alarmPeriod: 'EVERYDAY',
-            alarmDay: 'YESTERDAY',
-            alarmTime: '07:30',
-          },
-          {
-            alarmId: 7,
-            stationName: '종로3가',
-            stationLine: '1호선',
-            direction: '상행',
-            referenceTime: '09:00',
-            alarmPeriod: 'MONDAY',
-            alarmDay: 'TODAY',
-            alarmTime: '08:00',
-          },
-          {
-            alarmId: 9,
-            stationName: '종로5가',
-            stationLine: '1호선',
-            direction: '상행',
-            referenceTime: '08:00',
-            alarmPeriod: 'EVERYDAY',
-            alarmDay: 'YESTERDAY',
-            alarmTime: '07:30',
-          },
-          {
-            alarmId: 11,
-            stationName: '동대문',
-            stationLine: '1호선',
-            direction: '상행',
-            referenceTime: '09:00',
-            alarmPeriod: 'MONDAY',
-            alarmDay: 'TODAY',
-            alarmTime: '08:00',
-          },
-        ],
-      };
+      const response: ReadAlarmResponse = await readAlarmList(); // 실제 API 호출
       if (response.isSuccess && response.result) {
         setAlarms(response.result);
       } else {
@@ -152,78 +85,85 @@ export default function AlarmScreen() {
   };
 
   return (
-    <ScrollView style={{ flex: 1, paddingTop: insets.top, backgroundColor: theme.colors.gray[50] }}>
+    <View style={[styles.container, { paddingTop: insets.top }]}>
       <WeatherHeader showAlarmDot={isNewUnreadExists} />
-      <View style={styles.mainContainer}>
-        <View style={styles.textContainer}>
-          <Text style={styles.text}>
-            <Text style={styles.textFocus}>자주 가는 역</Text>의 혼잡도를
-          </Text>
-          <Text style={styles.text}>매일 알림으로 받아보세요</Text>
-        </View>
-        <ImageBackground
-          source={require('@/assets/images/subway-people-small.png')}
-          style={styles.imageContainer}
-        >
-          <View style={styles.buttonContainer}>
-            <LargeButton
-              text="+ 알림 추가"
-              backgroundColor={theme.colors.primary[700]}
-              fontColor={theme.colors.gray[0]}
-              typography={theme.typography.subtitle1}
-              onPress={checkNotificationPermission}
-              activeOpacity={0.95}
-            />
-          </View>
-        </ImageBackground>
-        <View style={styles.alarmListHeader}>
-          <Text style={styles.alarmListHeaderText}>알림 리스트</Text>
-          <View style={styles.tipContainer}>
-            <View style={styles.tipBox}>
-              <Text style={styles.tipText}>Tip!</Text>
-            </View>
-            <Text style={styles.tipRightText}>
-              {`즐겨찾는 역으로 등록한 역만\n알림을 설정할 수 있어요`}
+      <ScrollView style={{ flex: 1, backgroundColor: theme.colors.gray[50] }}>
+        <View style={styles.mainContainer}>
+          <View style={styles.textContainer}>
+            <Text style={styles.text}>
+              <Text style={styles.textFocus}>자주 가는 역</Text>의 혼잡도를
             </Text>
+            <Text style={styles.text}>매일 알림으로 받아보세요</Text>
           </View>
-        </View>
-        {isLoadingAlarms ? ( // 로딩 중일 때
-          <View style={styles.loadingContainer}>
-            <ActivityIndicator size="large" color={theme.colors.primary[700]} />
-            <Text style={styles.loadingText}>알림 목록 로딩 중...</Text>
-          </View>
-        ) : alarms.length === 0 ? ( // 알림이 없을 때
-          <View style={styles.emptyContainer}>
-            <View style={styles.emptyImageAndTextContainer}>
-              <Image
-                source={require('@/assets/images/empty/subway-question-alarm.png')}
-                style={styles.emptyImageContainer}
+          <ImageBackground
+            source={require('@/assets/images/subway-people-small.png')}
+            style={styles.imageContainer}
+          >
+            <View style={styles.buttonContainer}>
+              <LargeButton
+                text="+ 알림 추가"
+                backgroundColor={theme.colors.primary[700]}
+                fontColor={theme.colors.gray[0]}
+                typography={theme.typography.subtitle1}
+                onPress={checkNotificationPermission}
+                activeOpacity={0.95}
               />
-              <Text style={styles.emptyText}>알림을 설정한 역이 없어요</Text>
+            </View>
+          </ImageBackground>
+          <View style={styles.alarmListHeader}>
+            <Text style={styles.alarmListHeaderText}>알림 리스트</Text>
+            <View style={styles.tipContainer}>
+              <View style={styles.tipBox}>
+                <Text style={styles.tipText}>Tip!</Text>
+              </View>
+              <Text style={styles.tipRightText}>
+                {`즐겨찾는 역으로 등록한 역만\n알림을 설정할 수 있어요`}
+              </Text>
             </View>
           </View>
-        ) : (
-          // 알림이 있을 때
-          <View style={styles.alarmListContentContainer}>
-            {alarms.map((alarm, index) => (
-              <AlarmStationBox
-                key={alarm.alarmId || index}
-                alarm={alarm}
-                onEditPress={handleEditAlarmPress}
-              />
-            ))}
-          </View>
-        )}
-      </View>
+          {isLoadingAlarms ? ( // 로딩 중일 때
+            <View style={styles.loadingContainer}>
+              <ActivityIndicator size="large" color={theme.colors.primary[700]} />
+              <Text style={styles.loadingText}>알림 목록 로딩 중...</Text>
+            </View>
+          ) : alarms.length === 0 ? ( // 알림이 없을 때
+            <View style={styles.emptyContainer}>
+              <View style={styles.emptyImageAndTextContainer}>
+                <Image
+                  source={require('@/assets/images/empty/subway-question-alarm.png')}
+                  style={styles.emptyImageContainer}
+                />
+                <Text style={styles.emptyText}>알림을 설정한 역이 없어요</Text>
+              </View>
+            </View>
+          ) : (
+            // 알림이 있을 때
+            <View style={styles.alarmListContentContainer}>
+              {alarms.map((alarm, index) => (
+                <AlarmStationBox
+                  key={alarm.alarmId || index}
+                  alarm={alarm}
+                  onEditPress={handleEditAlarmPress}
+                />
+              ))}
+            </View>
+          )}
+        </View>
+      </ScrollView>
       <AlarmEditBottomSheet
         ref={alarmBottomSheetRef}
         onAlarmActionCompleted={handleAlarmActionCompleted}
       />
-    </ScrollView>
+    </View>
   );
 }
 
 const styles = StyleSheet.create({
+  container: {
+    flex: 1,
+    flexDirection: 'column',
+    backgroundColor: theme.colors.gray[50],
+  },
   mainContainer: {
     flex: 1,
     flexDirection: 'column',

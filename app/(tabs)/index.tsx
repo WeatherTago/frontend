@@ -90,7 +90,7 @@ export default function HomeScreen() {
   }, [isFocused, favoriteStationIds, noticeLoading]);
 
   return (
-    <View style={{ flex: 1, paddingTop: insets.top, backgroundColor: theme.colors.gray[0] }}>
+    <View style={{ flex: 1, paddingTop: insets.top, backgroundColor: theme.colors.gray[50] }}>
       <WeatherHeader showAlarmDot={isNewUnreadExists} />
 
       <ScrollView style={[styles.container, { backgroundColor: theme.colors.gray[50] }]}>
