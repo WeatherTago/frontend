@@ -8,7 +8,7 @@ export default ({ config }: ConfigContext): ExpoConfig => ({
   slug: 'weathertago-front',
   version: '1.0.0',
   orientation: 'portrait',
-  icon: './assets/images/logo/weathertago-logo.png',
+  icon: './assets/images/logo/weathertago-app-icon.png',
   scheme: 'weathertagofront',
   userInterfaceStyle: 'automatic',
   newArchEnabled: true,
@@ -17,7 +17,7 @@ export default ({ config }: ConfigContext): ExpoConfig => ({
   },
   android: {
     adaptiveIcon: {
-      foregroundImage: './assets/images/logo/weathertago-logo.png',
+      foregroundImage: './assets/images/logo/weathertago-app-icon.png',
       backgroundColor: '#ffffff',
     },
     edgeToEdgeEnabled: true,
@@ -27,7 +27,7 @@ export default ({ config }: ConfigContext): ExpoConfig => ({
   web: {
     bundler: 'metro',
     output: 'static',
-    favicon: './assets/images/logo/weathertago-logo.png',
+    favicon: './assets/images/logo/weathertago-app-icon.png',
   },
   splash: {
     image: './assets/images/logo/weathertago-logo.png',
