@@ -1,12 +1,12 @@
 import { hp, px } from '@/utils/scale';
 import { useTheme } from '@emotion/react';
-import { Image, ImageSourcePropType, StyleSheet, Text, View } from 'react-native';
+import { Image, ImageSourcePropType, StyleSheet, Text, TouchableOpacity, View } from 'react-native';
 
 interface SmallInfoBoxProps {
   time: string;
   image: ImageSourcePropType;
   text1: string ;
-  text2: string | number;
+  text2?: string | number; 
   textColor: string;
 }
 
@@ -14,16 +14,22 @@ export default function SmallInfoBox({ time, image, text1, text2, textColor }: S
   const theme = useTheme();
 
   return (
-    <View style={styles.box}>
+    <TouchableOpacity style={styles.box}>
       <Text style={[styles.timeText, {color:theme.colors.gray[800]}]}>{time}</Text>
       <View style={[styles.outerBox, {backgroundColor:theme.colors.gray[50]}]}>
-        <Image source={image} style={styles.image} resizeMode="contain"/>
+        <View style={styles.image}>
+           <Image
+            source={image}
+            style={styles.imageStyle}
+            resizeMode="contain"
+          />
+        </View>
         <View style={styles.innerBox}>
           <Text style={[styles.text, { color: textColor }]}>{text1}</Text>
           <Text style={[styles.text, { color: textColor }]}>{text2}</Text>
         </View>
       </View>
-    </View>
+    </TouchableOpacity>
     
   );
 }
@@ -68,5 +74,9 @@ const styles = StyleSheet.create({
     flexDirection:'column',
     alignItems:'center',
     gap:px(12)
-  }
+  },
+  imageStyle: {
+    width: '100%',
+    height: px(78),
+  },
 });

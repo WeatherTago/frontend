@@ -137,18 +137,13 @@ export default function FirstSearchScreen() {
     });
   }, [date]);
 
-  const getSelectedTimeLabel = () => {
-    if (!date || !time) return '출발 시각 선택';
-    const dateLabel =
-      dateOptions.find((opt) => opt.value.toDateString() === date.toDateString())?.label ??
-      date.toLocaleDateString();
-    return `${dateLabel} ${time.hours}:00`;
-  };
-
-  useEffect(() => {
-    setDate(tomorrow);
-    setTime({ hours: 9, minutes: 0 });
-  }, []);
+    const getSelectedTimeLabel = () => {
+      if (!date || !time) return '검색할 시각을 선택해주세요';
+      const dateLabel =
+        dateOptions.find((opt) => opt.value.toDateString() === date.toDateString())?.label ??
+        date.toLocaleDateString();
+      return `${dateLabel} ${time.hours}:00`;
+    };
 
   return (
     <View style={{ flex: 1, paddingTop: insets.top, backgroundColor: theme.colors.gray[0] }}>
@@ -180,12 +175,21 @@ export default function FirstSearchScreen() {
 
 
       <View style={styles.choiceContainer}>
-        <TouchableOpacity onPress={() => setSheetOpen(true)} style={styles.dateButton}>
+        <TouchableOpacity
+          onPress={() => {
+            if (!stationName) {
+              Alert.alert('알림', '역을 선택해주세요.');
+            } else {
+              setSheetOpen(true);
+            }
+          }}
+          style={styles.dateButton}
+        >
           <View style={styles.dateRow}>
-            <Text style={[styles.dateButtonText, { color: theme.colors.primary[700] }]}>
+            <Text style={[styles.dateButtonText, { color: theme.colors.gray[400] }]}>
               {getSelectedTimeLabel()}
             </Text>
-            <Text style={[styles.dateButtonText, { color: theme.colors.gray[950] }]}> 기준</Text>
+            <Text style={[styles.dateButtonText, { color: theme.colors.gray[950] }]}></Text>
             <Image source={downArrow} style={styles.arrowIcon} resizeMode="contain" />
           </View>
         </TouchableOpacity>
@@ -276,8 +280,14 @@ export default function FirstSearchScreen() {
                 }}
               />
             </View>
-            <TouchableOpacity onPress={() => setSheetOpen(false)} style={styles.modalCloseButton}>
-              <Text style={styles.modalCloseButtonText}>완료</Text>
+            <TouchableOpacity
+              onPress={() => {
+                setSheetOpen(false);
+                handleSubmit(); // 바로 검색
+              }}
+              style={styles.modalCloseButton}
+            >
+              <Text style={styles.modalCloseButtonText}>검색</Text>
             </TouchableOpacity>
           </View>
         </View>
@@ -319,7 +329,7 @@ const styles = StyleSheet.create({
   },
   dateButton: {
     height: px(40),
-    width: px(150),
+    minWidth: px(150),
     padding: 4,
     backgroundColor: '#fff',
     borderRadius: 6,
@@ -396,6 +406,7 @@ const styles = StyleSheet.create({
   modalCloseButtonText: {
     color: '#FFF',
     fontWeight: 'bold',
+    fontSize:px(16)
   },
   dateRow: {
     flexDirection: 'row',

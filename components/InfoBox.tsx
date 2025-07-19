@@ -6,7 +6,8 @@ interface InfoBoxProps {
   specialColor: string;
   backgroundColor: string;
   topText: string;
-  image:any;
+  image?:any;
+  iconText?: string | number;
   rate: string;
   time: string;
 }
@@ -16,6 +17,7 @@ export default function InfoBox({
   backgroundColor,
   topText,
   image,
+  iconText,
   rate,
   time
 }: InfoBoxProps) {
@@ -26,7 +28,13 @@ export default function InfoBox({
         <Text style={[styles.topText, { color: specialColor }]}>{topText}</Text>
       </View>
       <View style={styles.bottomBox}>
+       {image ? (
         <Image source={image} style={styles.image} resizeMode="contain" />
+      ) : iconText !== undefined ? (
+      <Text style={[styles.iconText, { color: theme.colors.gray[800] }]}>
+        {iconText}<Text style={styles.degreeUnit}>℃</Text>
+        </Text>
+      ) : null}
         <View style={styles.lastBox}>
           <Text style={[styles.rate, { color: specialColor }]}>{rate}</Text>
           <Text style={[styles.time, {color:theme.colors.gray[400]}]}>{time}</Text>
@@ -93,5 +101,17 @@ const styles = StyleSheet.create({
   image:{
     width:px(154),
     height:px(90),
-  }
+  },
+  iconText: {
+  fontSize: px(68),
+  fontWeight: '600',
+  textAlign: 'center',
+  lineHeight: px(81),
+  fontFamily: 'Pretendard-SemiBold',
+},
+degreeUnit:{
+  fontFamily:'Pretendard-SemiBold',
+  fontSize:px(35),
+  fontWeight:'600'
+}
 });

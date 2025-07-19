@@ -9,17 +9,29 @@ type Option = '오늘' | '내일' | '모레';
 interface Props {
   text: string;
   defaultSelected?: Option;
+  selected?: Option;
   onSelect?: (value: Option) => void;
 }
 
-export default function ToggleBox({ text, defaultSelected = '오늘', onSelect }: Props) {
+export default function ToggleBox({
+  text,
+  defaultSelected = '오늘',
+  selected: controlledSelected,
+  onSelect,
+}: Props) {
   const options: Option[] = ['오늘', '내일', '모레'];
   const theme = useTheme();
-  const [selected, setSelected] = useState<Option>(defaultSelected);
+
+  // 내부 상태는 only uncontrolled일 때만 사용
+  const [uncontrolledSelected, setUncontrolledSelected] = useState<Option>(defaultSelected);
+
+  const selected = controlledSelected ?? uncontrolledSelected;
 
   const handlePress = (option: Option) => {
-    setSelected(option);
-    onSelect?.(option); // 선택이 바뀌면 부모에 알려주기
+    if (!controlledSelected) {
+      setUncontrolledSelected(option); // only if not controlled
+    }
+    onSelect?.(option);
   };
 
   return (

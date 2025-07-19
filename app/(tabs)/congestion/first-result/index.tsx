@@ -19,7 +19,9 @@ import { BottomSheetModal, BottomSheetScrollView } from '@gorhom/bottom-sheet';
 import dayjs from 'dayjs';
 import { useLocalSearchParams, useRouter } from 'expo-router';
 import { useEffect, useRef, useState } from 'react';
-import { ActivityIndicator, Dimensions, Image, ScrollView, StyleSheet, Text, TouchableOpacity, View } from 'react-native';
+import { ActivityIndicator, Dimensions, Image, StyleSheet, Text, TouchableOpacity, View } from 'react-native';
+import { ScrollView as GestureScrollView } from 'react-native-gesture-handler';
+import ImageZoom from 'react-native-image-pan-zoom';
 import { useSafeAreaInsets } from 'react-native-safe-area-context';
 
 export default function FirstResultScreen() {
@@ -233,14 +235,15 @@ export default function FirstResultScreen() {
         
         <ToggleBox
         text="지하철 혼잡도 예측"
-        defaultSelected="오늘"
+        selected={selectedDate}
         onSelect={(val) => setSelectedDate(val)}
       />
 
-      {selectedButton && (
-        <View style={{flex: 1, backgroundColor: theme.colors.gray[0], marginBottom: px(4)}}> 
-          <ScrollView
-            horizontal
+  {selectedButton && (
+        <View style={{ backgroundColor: theme.colors.gray[0], marginBottom: px(4)}}> 
+          <GestureScrollView            horizontal
+            nestedScrollEnabled={true}
+            scrollEnabled={true}
             showsHorizontalScrollIndicator={false}
             contentContainerStyle={{
               backgroundColor: theme.colors.gray[0],
@@ -249,27 +252,29 @@ export default function FirstResultScreen() {
               paddingHorizontal: wp(24),
               paddingTop: hp(12),
               paddingBottom: hp(34),
-              alignItems: 'center'
+              alignItems: 'center',
+              minWidth: '100%',
             }}
           >
             {filterStatusByDate(selectedDate, selectedButton).map((item, idx) => {
-              const { textColor,image} = getCongestionStyle(item.level, theme);
+              const { textColor,image2,text2} = getCongestionStyle(item.level, theme);
 
               return (
                 <SmallInfoBox
                   key={idx}
                   time={item.time}
-                  image={image}
+                  image={image2}
                   text1={item.level}
-                  text2={`${item.rate}%`}
+                  text2={text2}
                   textColor={textColor}
                 />
               );
             })}
-          </ScrollView>        
+          </GestureScrollView>        
         </View>
       )}
         
+
         
         <Image
           source={require('@/assets/images/Multiply.png')}
@@ -280,7 +285,7 @@ export default function FirstResultScreen() {
           if (!result || !result.weather) return null;
 
           const weather = result.weather;
-          const { textColor, backgroundColor, topText,image } = getWeatherStyle(weather.status ?? '', theme);
+          const { textColor, backgroundColor, topText,iconText } = getWeatherStyle(weather.status ?? '', theme);
 
           return (
             <InfoBox
@@ -288,7 +293,7 @@ export default function FirstResultScreen() {
               specialColor={textColor}
               backgroundColor={backgroundColor}
               topText={topText}
-              image={image}
+              iconText={weather.tmp}
               rate={weather.status ?? '--'}
               time={formattedTime}
             />
@@ -301,7 +306,7 @@ export default function FirstResultScreen() {
           <View style={styles.weatherBox}>
             <Image
               style={styles.weatherIconContainer}
-              source={require('@/assets/images/Multiply.png')}
+              source={require('@/assets/images/weather/tempgray.png')}
             />
             <Text style={styles.weatherText}>기온</Text>
             <Text style={styles.weatherValueText}>{result.weather.tmp ?? '--'}℃</Text>
@@ -309,7 +314,7 @@ export default function FirstResultScreen() {
           <View style={styles.weatherBox}>
             <Image
               style={styles.weatherIconContainer}
-              source={require('@/assets/images/Multiply.png')}
+              source={require('@/assets/images/weather/raingray.png')}
             />
             <Text style={styles.weatherText}>강수량</Text>
             <Text style={styles.weatherValueText}>{result.weather.pcp ?? '--'}mm</Text>
@@ -317,7 +322,7 @@ export default function FirstResultScreen() {
           <View style={styles.weatherBox}>
             <Image
               style={styles.weatherIconContainer}
-              source={require('@/assets/images/Multiply.png')}
+              source={require('@/assets/images/weather/raindrop.png')}
             />
             <Text style={styles.weatherText}>습도</Text>
             <Text style={styles.weatherValueText}>{result.weather.reh ?? '--'}%</Text>
@@ -325,23 +330,7 @@ export default function FirstResultScreen() {
           <View style={styles.weatherBox}>
             <Image
               style={styles.weatherIconContainer}
-              source={require('@/assets/images/Multiply.png')}
-            />
-            <Text style={styles.weatherText}>적설</Text>
-            <Text style={styles.weatherValueText}>{result.weather.sno ?? '--'}mm</Text>
-          </View>
-          <View style={styles.weatherBox}>
-            <Image
-              style={styles.weatherIconContainer}
-              source={require('@/assets/images/Multiply.png')}
-            />
-            <Text style={styles.weatherText}>풍향</Text>
-            <Text style={styles.weatherValueText}>{result.weather.vec ?? '--'}°</Text>
-          </View>
-          <View style={styles.weatherBox}>
-            <Image
-              style={styles.weatherIconContainer}
-              source={require('@/assets/images/Multiply.png')}
+              source={require('@/assets/images/weather/windgray.png')}
             />
             <Text style={styles.weatherText}>풍속</Text>
             <Text style={styles.weatherValueText}>{result.weather.wsd ?? '--'}m/s</Text>
@@ -354,13 +343,13 @@ export default function FirstResultScreen() {
 
          <ToggleBox
           text="날씨 예측 정보"
-          defaultSelected="오늘"
+          selected={selectedDate}
           onSelect={(val) => setSelectedDate(val)}
         />
 
         {selectedButton && (
           <View style={{flex: 1, backgroundColor: theme.colors.gray[0], marginBottom: px(4)}}> 
-            <ScrollView
+            <GestureScrollView
               horizontal
               showsHorizontalScrollIndicator={false}
               contentContainerStyle={{
@@ -388,7 +377,7 @@ export default function FirstResultScreen() {
                   />
                 );
               })}
-            </ScrollView>        
+            </GestureScrollView>        
           </View>
         )}
         
@@ -398,84 +387,74 @@ export default function FirstResultScreen() {
       </>
     );
   };
-      const [isDismissed, setIsDismissed] = useState(false);
-
-    useEffect(() => {
-  if (!loading && bottomSheetRef.current && isDismissed) {
-    // dismiss되었다가 다시 띄워야 할 때
-    setIsDismissed(false); // 먼저 false로 바꿔주고
-    bottomSheetRef.current.present(); // 다시 열기
-  } else if (!loading && bottomSheetRef.current && !isDismissed) {
-    bottomSheetRef.current.present(); // 최초 진입
-  }
-}, [loading, isDismissed]);
-
-    const handleDismiss = () => {
-      setIsDismissed(true);
-    };
 
     const { height: SCREEN_HEIGHT, width: SCREEN_WIDTH } = Dimensions.get('window');
     const safeHeight = SCREEN_HEIGHT - insets.top - insets.bottom;
     const imageHeight = safeHeight;
     const imageWidth = (4635 / 3685) * imageHeight;
+    const Zoom = ImageZoom as any;
 
-  return (
-    <View style={[styles.container, { paddingTop: insets.top }]}>
-      <Header
-        title='상세정보'
-        showLeft={true}
-        onPressLeft={() => router.back()}
-        rightType="close"
-        onPressRight={() => router.replace('/congestion')}
-      />
-<View style={{ height: px(2), backgroundColor: theme.colors.gray[100] }} />
-      <ScrollView
-        style={styles.mapWrapper}
-        contentContainerStyle={styles.mapZoomContainer}
-        minimumZoomScale={1}
-        maximumZoomScale={3}
-        pinchGestureEnabled={true}
-        showsHorizontalScrollIndicator={true}
-        showsVerticalScrollIndicator={true}
-        bounces={false}
-        horizontal={true}
+return (
+  <View style={[styles.container, { paddingTop: insets.top }]}>
+    <Header
+      title="상세정보"
+      showLeft={true}
+      rightType="close"
+      onPressRight={() => router.replace('/congestion')}
+    />
+
+    <View style={{ height: px(2), backgroundColor: theme.colors.gray[100] }} />
+
+    {/* ✅ 지도 줌 가능한 ImageZoom 적용 */}
+    <View style={{ flex: 1, width: SCREEN_WIDTH, height: imageHeight }}>
+      <Zoom
+        cropWidth={SCREEN_WIDTH}
+        cropHeight={imageHeight}
+        imageWidth={imageWidth}
+        imageHeight={imageHeight}
+        minScale={1}
+        maxScale={3}
+        enableCenterFocus={false}
       >
-        <ScrollView
-          contentContainerStyle={{ flexGrow: 1 }}
-          showsVerticalScrollIndicator={false}
-        >
-          <Image
-            source={subwayImage}
-            style={{
-              width: imageWidth,
-              height: imageHeight,
-            }}
-            resizeMode="contain"
-          />
-        </ScrollView>
-      </ScrollView>
-
-      {loading ? (
-        <View style={{ marginTop: 50 , alignItems:'center'}}>
-          <ActivityIndicator size="large" />
-          <Text style={{fontSize:px(18), fontFamily:'Pretendard-Medium', color:theme.colors.gray[400]}}>결과를 불러오는 중입니다...</Text>
-        </View>
-      ) : (
-        <BottomSheetModal
-          ref={bottomSheetRef}
-          index={0}
-          snapPoints={snapPoints}
-          onDismiss={handleDismiss}
-        >
-            <BottomSheetScrollView style={{backgroundColor:theme.colors.gray[100]}}>
-              {renderBottomSheetContent()}
-            </BottomSheetScrollView>
-        </BottomSheetModal>
-      )}
+        <Image
+          source={subwayImage}
+          style={{
+            width: imageWidth,
+            height: imageHeight,
+          }}
+          resizeMode="contain"
+        />
+      </Zoom>
     </View>
-  );
-}
 
+    {loading ? (
+      <View style={{ marginTop: 50, alignItems: 'center' }}>
+        <ActivityIndicator size="large" />
+        <Text
+          style={{
+            fontSize: px(18),
+            fontFamily: 'Pretendard-Medium',
+            color: theme.colors.gray[400],
+          }}
+        >
+          결과를 불러오는 중입니다...
+        </Text>
+      </View>
+    ) : (
+      <BottomSheetModal
+        ref={bottomSheetRef}
+        index={0}
+        snapPoints={snapPoints}
+        enablePanDownToClose={false}
+      >
+        <BottomSheetScrollView style={{ backgroundColor: theme.colors.gray[100] }}>
+          {renderBottomSheetContent()}
+        </BottomSheetScrollView>
+      </BottomSheetModal>
+    )}
+  </View>
+);
+}
 const styles = StyleSheet.create({
   container: {
     flex: 1,
@@ -562,7 +541,6 @@ const styles = StyleSheet.create({
     width: px(50),
     height: px(50),
     borderRadius: px(14),
-    backgroundColor: theme.colors.gray[300],
   },
   weatherText: {
     color: theme.colors.gray[400],
