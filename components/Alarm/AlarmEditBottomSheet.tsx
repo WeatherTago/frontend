@@ -25,6 +25,7 @@ import {
 import { StationInfo, useStationContext } from '@/context/StationContext';
 
 // 제공된 API 타입 임포트
+import { createAlarm, deleteAlarm, updateAlarm } from '@/apis/alarm';
 import { useFavorite } from '@/context/FavoriteContext';
 import {
   AlarmBase,
@@ -157,13 +158,7 @@ const PeriodChip: React.FC<PeriodChipProps> = ({
     ]}
     onPress={() => onPress(period)}
   >
-    <Text
-      style={[
-        // isCircle ? styles.dayOptionText : styles.dayOptionText, // 원본 스타일 유지
-        styles.dayOptionText,
-        isSelected && styles.dayOptionTextSelected,
-      ]}
-    >
+    <Text style={[styles.dayOptionText, isSelected && styles.dayOptionTextSelected]}>
       {displayText}
     </Text>
   </TouchableOpacity>
@@ -187,7 +182,6 @@ const TimeChip: React.FC<TimeChipProps> = ({ time, onPress, isSelected }) => (
 
 // 날짜 옵션 칩 컴포넌트 (날짜 옵션 선택 BottomSheet용) - TimeChip과 유사한 스타일 재활용
 interface DayOptionChipProps {
-  // DayOptionChipProps 이름 유지
   dayOption: AlarmDayType;
   onPress: (dayOption: AlarmDayType) => void;
   isSelected: boolean;
@@ -240,7 +234,10 @@ const AlarmEditBottomSheet = forwardRef<AlarmEditBottomSheetRef, AlarmEditBottom
     const [selectedReferenceTime, setSelectedReferenceTime] = useState<string>('08:00'); // referenceTime
     const [selectedAlarmPeriod, setSelectedAlarmPeriod] = useState<AlarmPeriodType>('EVERYDAY'); // alarmPeriod
     const [selectedAlarmDay, setSelectedAlarmDay] = useState<AlarmDayType>('YESTERDAY'); // alarmDay
-    const [selectedAlarmTime, setSelectedAlarmTime] = useState<string>('08:00'); // alarmTime
+
+    // alarmTime을 시와 분으로 분리하여 관리
+    const [selectedAlarmHour, setSelectedAlarmHour] = useState<string>('08'); // 알림 시간 (시)
+    const [selectedAlarmMinute, setSelectedAlarmMinute] = useState<string>('00'); // 알림 시간 (분)
 
     // --- 2. 현재 BottomSheet에 보여줄 뷰 타입 상태 ---
     const [currentBottomSheetView, setCurrentBottomSheetView] =
@@ -281,7 +278,10 @@ const AlarmEditBottomSheet = forwardRef<AlarmEditBottomSheetRef, AlarmEditBottom
           setSelectedReferenceTime(initialData.referenceTime);
           setSelectedAlarmPeriod(initialData.alarmPeriod);
           setSelectedAlarmDay(initialData.alarmDay);
-          setSelectedAlarmTime(initialData.alarmTime);
+          // alarmTime 파싱하여 시, 분 분리
+          const [hour, minute] = initialData.alarmTime.split(':');
+          setSelectedAlarmHour(hour);
+          setSelectedAlarmMinute(minute);
         } else {
           setIsEditMode(false);
           setAlarmId(undefined);
@@ -291,7 +291,8 @@ const AlarmEditBottomSheet = forwardRef<AlarmEditBottomSheetRef, AlarmEditBottom
           setSelectedReferenceTime('08:00');
           setSelectedAlarmPeriod('EVERYDAY');
           setSelectedAlarmDay('YESTERDAY');
-          setSelectedAlarmTime('08:00');
+          setSelectedAlarmHour('08');
+          setSelectedAlarmMinute('00');
         }
         setCurrentBottomSheetView('mainAlarmSettings'); // 항상 메인 뷰에서 시작
       },
@@ -350,12 +351,8 @@ const AlarmEditBottomSheet = forwardRef<AlarmEditBottomSheetRef, AlarmEditBottom
     const availableLines = useMemo(() => {
       const lines = new Set<string>();
       if (selectedStation) {
-        // 선택된 역이 있으면 해당 역의 호선만 표시 (단일 역의 여러 호선 가능성 배제)
-        // 만약 한 역에 여러 호선이 등록될 수 있다면, favoriteStationsApiData에서 해당 역의 모든 호선을 찾아야 함
-        // 예시: favoriteStationsApiData.filter(s => s.stationName === selectedStation.stationName).forEach(s => lines.add(s.stationLine));
         lines.add(selectedStation.stationLine);
       } else {
-        // 역이 선택되지 않았다면 모든 즐겨찾기 역의 호선
         favoriteStationsApiData.forEach(station => {
           lines.add(station.stationLine);
         });
@@ -396,8 +393,8 @@ const AlarmEditBottomSheet = forwardRef<AlarmEditBottomSheetRef, AlarmEditBottom
       [],
     );
 
-    // 시간 옵션 (고정값 - 1시~4시 제외)
-    const timeOptions = useMemo(() => {
+    // 혼잡도 기준 시간 옵션 (정시 - 1시~4시 제외)
+    const referenceTimeOptions = useMemo(() => {
       const times: string[] = [];
       for (let h = 0; h < 24; h++) {
         if (h >= 1 && h <= 4) continue;
@@ -405,6 +402,24 @@ const AlarmEditBottomSheet = forwardRef<AlarmEditBottomSheetRef, AlarmEditBottom
         times.push(`${hour}:00`);
       }
       return times;
+    }, []);
+
+    // 알림 시간 - 시 옵션 (1시~4시 제외)
+    const alarmHourOptions = useMemo(() => {
+      const hours: string[] = [];
+      for (let h = 0; h < 24; h++) {
+        hours.push(h < 10 ? `0${h}` : `${h}`);
+      }
+      return hours;
+    }, []);
+
+    // 알림 시간 - 분 옵션 (00분부터 59분까지 모든 분)
+    const alarmMinuteOptions = useMemo(() => {
+      const minutes: string[] = [];
+      for (let m = 0; m < 60; m++) {
+        minutes.push(m < 10 ? `0${m}` : `${m}`);
+      }
+      return minutes;
     }, []);
 
     // --- 5. 각 설정 버튼 클릭 시 뷰 전환 핸들러 ---
@@ -418,17 +433,12 @@ const AlarmEditBottomSheet = forwardRef<AlarmEditBottomSheetRef, AlarmEditBottom
         Alert.alert('알림', '역을 먼저 선택해주세요.');
         return;
       }
-      // 이 부분은 특정 역에 여러 호선이 있을 때만 의미가 있습니다.
-      // 현재 selectedStation은 이미 단일 호선을 가지고 있으므로,
-      // 이 버튼은 선택된 역의 호선을 표시하는 용도로만 사용될 수 있습니다.
-      // 하지만 요구사항에 따라 '호선 선택' 뷰를 유지해야 한다면 아래 로직을 따릅니다.
       setCurrentBottomSheetView('lineSelection');
       bottomSheetRef.current?.snapToIndex(2);
-    }, [selectedStation]); // selectedStation이 변경되면 이 콜백도 재생성
+    }, [selectedStation]);
 
     const handleOpenDirectionSelection = useCallback(() => {
       if (!selectedStation || !selectedLine) {
-        // selectedLine도 확인
         Alert.alert('알림', '역과 호선을 먼저 선택해주세요.');
         return;
       }
@@ -459,7 +469,6 @@ const AlarmEditBottomSheet = forwardRef<AlarmEditBottomSheetRef, AlarmEditBottom
     // --- 6. 각 항목 선택 핸들러 (선택 후 메인 뷰로 돌아감) ---
 
     const handleSelectStation = useCallback((station: StationInfo) => {
-      // StationInfo 타입 사용
       setSelectedStation(station);
       setSelectedLine(station.stationLine); // 역 선택 시 해당 역의 호선 자동 설정
       setSelectedDirection(null); // 역 변경 시 방향 초기화
@@ -468,9 +477,6 @@ const AlarmEditBottomSheet = forwardRef<AlarmEditBottomSheetRef, AlarmEditBottom
 
     const handleSelectLine = useCallback(
       (line: string) => {
-        // 호선 선택 시 selectedStation의 stationLine도 업데이트 (선택된 역의 호선 변경)
-        // 만약 selectedStation이 있다면 해당 역의 stationLine을 업데이트합니다.
-        // 이 로직은 한 역에 여러 호선이 있고, 사용자가 그 중 하나를 선택하는 시나리오에 적합합니다.
         if (selectedStation) {
           setSelectedStation(prev => (prev ? { ...prev, stationLine: line } : null));
         }
@@ -501,28 +507,25 @@ const AlarmEditBottomSheet = forwardRef<AlarmEditBottomSheetRef, AlarmEditBottom
       setCurrentBottomSheetView('mainAlarmSettings');
     }, []);
 
-    const handleSelectAlarmTime = useCallback((time: string) => {
-      setSelectedAlarmTime(time);
-      setCurrentBottomSheetView('mainAlarmSettings');
-    }, []);
-
     // --- 7. 알림 등록/수정/삭제 핸들러 ---
     const handleSaveAlarm = useCallback(async () => {
       if (!selectedStation || !selectedLine || !selectedDirection) {
-        // selectedLine도 필수값으로 확인
         Alert.alert('알림', '역, 호선, 방향을 모두 선택해주세요.');
         return;
       }
 
+      // alarmTime을 시와 분을 조합하여 생성
+      const finalAlarmTime = `${selectedAlarmHour}:${selectedAlarmMinute}`;
+
       // API 요청 페이로드 구성
       const payload: AlarmBase = {
         stationName: selectedStation.stationName,
-        stationLine: selectedLine, // selectedLine 사용
+        stationLine: selectedLine,
         direction: selectedDirection,
         referenceTime: selectedReferenceTime,
         alarmPeriod: selectedAlarmPeriod,
         alarmDay: selectedAlarmDay,
-        alarmTime: selectedAlarmTime,
+        alarmTime: finalAlarmTime, // 조합된 alarmTime 사용
       };
 
       try {
@@ -532,13 +535,21 @@ const AlarmEditBottomSheet = forwardRef<AlarmEditBottomSheetRef, AlarmEditBottom
             alarmId: alarmId,
             ...payload,
           };
-          // const response = await updateAlarm(updatePayload); // 실제 API 호출
-          Alert.alert('알림', `알림이 수정되었습니다: ${JSON.stringify(updatePayload)}`); // 임시 메시지
+          const response = await updateAlarm({ alarmId: alarmId, body: updatePayload }); // 실제 API 호출
+          if (response.isSuccess) {
+            Alert.alert('알림', '알림이 성공적으로 수정되었습니다.');
+          } else {
+            Alert.alert('오류', response.message || '알림 수정에 실패했습니다.');
+          }
         } else {
           // 등록 모드: 알림 등록 API 호출
           const createPayload: CreateAlarmRequest = payload;
-          // const response = await createAlarm(createPayload); // 실제 API 호출
-          Alert.alert('알림', `새 알림이 등록되었습니다: ${JSON.stringify(createPayload)}`); // 임시 메시지
+          const response = await createAlarm(createPayload); // 실제 API 호출
+          if (response.isSuccess) {
+            Alert.alert('알림', '새 알림이 성공적으로 등록되었습니다.');
+          } else {
+            Alert.alert('오류', response.message || '알림 등록에 실패했습니다.');
+          }
         }
         bottomSheetRef.current?.close();
         onAlarmActionCompleted(); // 부모 컴포넌트에 알림 저장 완료 알림
@@ -548,12 +559,13 @@ const AlarmEditBottomSheet = forwardRef<AlarmEditBottomSheetRef, AlarmEditBottom
       }
     }, [
       selectedStation,
-      selectedLine, // 의존성 추가
+      selectedLine,
       selectedDirection,
       selectedReferenceTime,
       selectedAlarmPeriod,
       selectedAlarmDay,
-      selectedAlarmTime,
+      selectedAlarmHour,
+      selectedAlarmMinute,
       isEditMode,
       alarmId,
       onAlarmActionCompleted,
@@ -578,8 +590,12 @@ const AlarmEditBottomSheet = forwardRef<AlarmEditBottomSheetRef, AlarmEditBottom
             onPress: async () => {
               try {
                 const deletePayload: DeleteAlarmRequest = { alarmId: alarmId };
-                // const response = await deleteAlarm(deletePayload); // 실제 API 호출
-                Alert.alert('알림', '알림이 성공적으로 삭제되었습니다.'); // 임시 메시지
+                const response = await deleteAlarm(deletePayload); // 실제 API 호출
+                if (response.isSuccess) {
+                  Alert.alert('알림', '알림이 성공적으로 삭제되었습니다.');
+                } else {
+                  Alert.alert('오류', response.message || '알림 삭제에 실패했습니다.');
+                }
                 bottomSheetRef.current?.close();
                 onAlarmActionCompleted(); // 부모 컴포넌트에 알림 삭제 완료 알림
               } catch (error) {
@@ -616,7 +632,6 @@ const AlarmEditBottomSheet = forwardRef<AlarmEditBottomSheetRef, AlarmEditBottom
     // BottomSheet 내용 렌더링
     const renderContent = useCallback(() => {
       if (overallLoadingState) {
-        // 전체 로딩 상태 사용
         return (
           <View style={styles.loadingContainer}>
             <ActivityIndicator size="large" color={theme.colors.primary[700]} />
@@ -637,7 +652,7 @@ const AlarmEditBottomSheet = forwardRef<AlarmEditBottomSheetRef, AlarmEditBottom
                 />
                 <AlarmSettingButton
                   text={selectedLine ? selectedLine : '호선'}
-                  onPress={handleOpenLineSelection} // 호선 선택 뷰로 이동
+                  onPress={handleOpenLineSelection}
                   isSelected={!!selectedLine}
                 />
                 <AlarmSettingButton
@@ -666,7 +681,7 @@ const AlarmEditBottomSheet = forwardRef<AlarmEditBottomSheetRef, AlarmEditBottom
                   isSelected={true}
                 />
                 <AlarmSettingButton
-                  text={selectedAlarmTime}
+                  text={`${selectedAlarmHour}:${selectedAlarmMinute}`} // 시와 분을 조합하여 표시
                   onPress={handleOpenAlarmTimeSelection}
                   isSelected={true}
                 />
@@ -694,7 +709,6 @@ const AlarmEditBottomSheet = forwardRef<AlarmEditBottomSheetRef, AlarmEditBottom
                     key={station.stationId}
                     station={station}
                     onPress={handleSelectStation}
-                    // 역 선택 시 selectedStation의 stationId와 비교
                     isSelected={selectedStation?.stationId === station.stationId}
                   />
                 ))}
@@ -706,7 +720,7 @@ const AlarmEditBottomSheet = forwardRef<AlarmEditBottomSheetRef, AlarmEditBottom
               </View>
             </ScrollView>
           );
-        case 'lineSelection': // 호선 선택 뷰 유지
+        case 'lineSelection':
           return (
             <ScrollView style={styles.scrollableContent}>
               <View style={styles.stationChipContainer}>
@@ -786,28 +800,58 @@ const AlarmEditBottomSheet = forwardRef<AlarmEditBottomSheetRef, AlarmEditBottom
             </ScrollView>
           );
         case 'referenceTimeSelection':
-        case 'alarmTimeSelection':
           return (
-            <ScrollView style={styles.scrollableTimeOptionsContainer}>
-              <View style={styles.timeSelectionContainer}>
-                {timeOptions.map(time => (
+            <ScrollView
+              style={styles.scrollableTimeOptionsContainer}
+              showsVerticalScrollIndicator={false}
+            >
+              <View style={styles.timeSelectionColumn}>
+                {referenceTimeOptions.map(time => (
                   <TimeChip
                     key={time}
                     time={time}
-                    onPress={
-                      currentBottomSheetView === 'referenceTimeSelection'
-                        ? handleSelectReferenceTime
-                        : handleSelectAlarmTime
-                    }
-                    isSelected={
-                      currentBottomSheetView === 'referenceTimeSelection'
-                        ? selectedReferenceTime === time
-                        : selectedAlarmTime === time
-                    }
+                    onPress={handleSelectReferenceTime}
+                    isSelected={selectedReferenceTime === time}
                   />
                 ))}
               </View>
             </ScrollView>
+          );
+        case 'alarmTimeSelection':
+          return (
+            <View style={styles.timePickerContainer}>
+              <ScrollView
+                style={styles.scrollableTimeOptionsContainer}
+                showsVerticalScrollIndicator={false}
+              >
+                <View style={styles.timeSelectionColumn}>
+                  {alarmHourOptions.map(hour => (
+                    <TimeChip
+                      key={hour}
+                      time={hour}
+                      onPress={setSelectedAlarmHour}
+                      isSelected={selectedAlarmHour === hour}
+                    />
+                  ))}
+                </View>
+              </ScrollView>
+              <Text style={styles.timeSeparator}>:</Text>
+              <ScrollView
+                style={styles.scrollableTimeOptionsContainer}
+                showsVerticalScrollIndicator={false}
+              >
+                <View style={styles.timeSelectionColumn}>
+                  {alarmMinuteOptions.map(minute => (
+                    <TimeChip
+                      key={minute}
+                      time={minute}
+                      onPress={setSelectedAlarmMinute}
+                      isSelected={selectedAlarmMinute === minute}
+                    />
+                  ))}
+                </View>
+              </ScrollView>
+            </View>
           );
         default:
           return null;
@@ -817,20 +861,23 @@ const AlarmEditBottomSheet = forwardRef<AlarmEditBottomSheetRef, AlarmEditBottom
       currentBottomSheetView,
       isEditMode,
       selectedStation,
-      selectedLine, // 의존성 추가
+      selectedLine,
       selectedDirection,
       selectedReferenceTime,
       selectedAlarmPeriod,
       selectedAlarmDay,
-      selectedAlarmTime,
+      selectedAlarmHour,
+      selectedAlarmMinute,
       stationsForSelection,
-      availableLines, // 의존성 추가
+      availableLines,
       availableDirections,
       periodOptions,
       dayOptions,
-      timeOptions,
+      referenceTimeOptions,
+      alarmHourOptions,
+      alarmMinuteOptions,
       handleOpenStationSelection,
-      handleOpenLineSelection, // 의존성 추가
+      handleOpenLineSelection,
       handleOpenDirectionSelection,
       handleOpenPeriodSelection,
       handleOpenDayOptionSelection,
@@ -839,12 +886,11 @@ const AlarmEditBottomSheet = forwardRef<AlarmEditBottomSheetRef, AlarmEditBottom
       handleSaveAlarm,
       handleDeleteAlarm,
       handleSelectStation,
-      handleSelectLine, // 의존성 추가
+      handleSelectLine,
       handleSelectDirection,
       handleSelectPeriod,
       handleSelectDayOption,
       handleSelectReferenceTime,
-      handleSelectAlarmTime,
       getPeriodDisplayText,
       getDayOptionDisplayText,
     ]);
@@ -872,9 +918,19 @@ const AlarmEditBottomSheet = forwardRef<AlarmEditBottomSheetRef, AlarmEditBottom
               {currentBottomSheetView === 'alarmTimeSelection' && '알림 수신 시간 선택'}
               {currentBottomSheetView === 'dayOptionSelection' && '날짜 옵션 선택'}
             </Text>
-            <TouchableOpacity style={styles.bottomSheetDoneButton} onPress={handleSaveAlarm}>
-              <Text style={styles.bottomSheetDoneButtonText}>완료</Text>
-            </TouchableOpacity>
+            {currentBottomSheetView !== 'mainAlarmSettings' && (
+              <TouchableOpacity
+                style={styles.bottomSheetDoneButton}
+                onPress={() => setCurrentBottomSheetView('mainAlarmSettings')}
+              >
+                <Text style={styles.bottomSheetDoneButtonText}>완료</Text>
+              </TouchableOpacity>
+            )}
+            {currentBottomSheetView === 'mainAlarmSettings' && (
+              <TouchableOpacity style={styles.bottomSheetDoneButton} onPress={handleSaveAlarm}>
+                <Text style={styles.bottomSheetDoneButtonText}>저장</Text>
+              </TouchableOpacity>
+            )}
           </View>
           {renderContent()}
         </BottomSheetView>
@@ -1054,9 +1110,16 @@ const styles = StyleSheet.create({
     flex: 1,
     maxHeight: hp(500),
   },
-  timeSelectionContainer: {
-    flexDirection: 'column',
+  timePickerContainer: {
+    flexDirection: 'row',
+    justifyContent: 'center',
+    alignItems: 'center',
+    gap: wp(10),
+  },
+  timeSelectionColumn: {
+    flex: 1,
     gap: hp(10),
+    alignItems: 'center',
   },
   timeOptionChip: {
     width: '100%',
@@ -1066,7 +1129,7 @@ const styles = StyleSheet.create({
     borderRadius: px(14),
     justifyContent: 'center',
     alignItems: 'center',
-    alignSelf: 'flex-start',
+    alignSelf: 'center',
   },
   timeOptionChipSelected: {
     backgroundColor: theme.colors.primary[100],
@@ -1080,6 +1143,14 @@ const styles = StyleSheet.create({
   },
   timeOptionTextSelected: {
     color: theme.colors.primary[700],
+  },
+  timeSeparator: {
+    color: theme.colors.gray[950],
+    fontFamily: 'Pretendard-Medium',
+    fontSize: px(40),
+    fontWeight: '500',
+    lineHeight: px(48),
+    marginHorizontal: wp(5),
   },
   loadingContainer: {
     flex: 1,
@@ -1101,17 +1172,17 @@ const styles = StyleSheet.create({
     justifyContent: 'center',
   },
   actionButtonText: {
-    fontFamily:theme.typography.subtitle1.fontFamily,
+    fontFamily: theme.typography.subtitle1.fontFamily,
     color: theme.colors.gray[0],
     fontSize: px(24),
     fontWeight: '600',
-    lineHeight:px(34)
+    lineHeight: px(34),
   },
   deleteButton: {
     backgroundColor: theme.colors.gray[300],
-    width:px(490),
-    height:px(72),
-    borderRadius:px(16)
+    width: px(490),
+    height: px(72),
+    borderRadius: px(16),
   },
   scrollableContent: {
     flex: 1,
