@@ -22,12 +22,10 @@ export default function Index() {
         <StepIndicator totalSteps={4} currentStep={1} />
         <OnboardingHeader
           title={
-            <>
-              <Text style={styles.titlePrimary}>웨더타고</Text>
-              <Text
-                style={styles.titleDefault}
-              >{`로 날씨에 따른\n지하철 혼잡도 쉽게 알아봐요`}</Text>
-            </>
+            <Text style={styles.titleDefault}>
+              지하철이 <Text style={styles.titlePrimary}>얼마나 붐비는지</Text>
+              {`\n`}웨더타고가 미리 알려드릴게요
+            </Text>
           }
           subtitle={
             <Text style={styles.subtitle}>자주 가는 역의 혼잡도를 알림으로 받아보세요</Text>

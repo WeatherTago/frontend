@@ -22,15 +22,13 @@ export default function OnboardingStep3() {
         <StepIndicator totalSteps={4} currentStep={3} />
         <OnboardingHeader
           title={
-            <>
-              <Text style={styles.titlePrimary}>웨더타고</Text>
-              <Text
-                style={styles.titleDefault}
-              >{`로 날씨에 따른\n지하철 혼잡도 쉽게 알아봐요`}</Text>
-            </>
+            <Text style={styles.titleDefault}>
+              승강기, 휠체어 리프트 위치까지{`\n`}미리미리
+              <Text style={styles.titlePrimary}> 한눈에 확인해요</Text>
+            </Text>
           }
           subtitle={
-            <Text style={styles.subtitle}>자주 가는 역의 혼잡도를 알림으로 받아보세요</Text>
+            <Text style={styles.subtitle}>역 내 편의시설 정보를 미리 확인하고 준비해요</Text>
           }
         />
       </View>
