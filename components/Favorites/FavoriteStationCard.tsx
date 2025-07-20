@@ -127,6 +127,7 @@ const styles = StyleSheet.create({
   },
   imageStyle: {
     resizeMode: 'cover',
+    opacity: 0.9,
   },
   card: {
     width: '100%',
@@ -143,10 +144,10 @@ const styles = StyleSheet.create({
   },
   stationName: {
     color: theme.colors.gray[0],
-    fontFamily: theme.typography.header1.fontFamily,
-    fontSize: theme.typography.header1.fontSize,
-    fontWeight: theme.typography.header1.fontWeight,
-    lineHeight: theme.typography.header1.lineHeight,
+    fontFamily: 'Pretendard-SemiBold',
+    fontSize: px(32),
+    fontWeight: '600',
+    lineHeight: px(36),
   },
   stationLine: {
     color: theme.colors.gray[0],
@@ -185,7 +186,7 @@ const styles = StyleSheet.create({
     flexDirection: 'row',
     alignItems: 'center',
     alignSelf: 'stretch',
-    gap: wp(28),
+    gap: wp(20),
   },
   weatherBox: {
     flexDirection: 'column',
@@ -213,7 +214,7 @@ const styles = StyleSheet.create({
   weatherValueText: {
     color: theme.colors.gray[700],
     fontFamily: 'Pretendard-SemiBold',
-    fontSize: px(20),
+    fontSize: px(18),
     fontWeight: '600',
     lineHeight: px(22),
   },
