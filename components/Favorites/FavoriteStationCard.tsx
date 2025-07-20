@@ -2,7 +2,7 @@ import { theme } from '@/styles/theme';
 import { StationResult } from '@/types/station';
 import { formatKSTRoundedHour, getKSTCongestionDateTimeISOString } from '@/utils/dateUtils';
 import { hp, px, wp } from '@/utils/scale';
-import { getLineImage } from '@/utils/stationImage';
+import { getCongestionLineImage } from '@/utils/stationImage';
 import { useRouter } from 'expo-router';
 import React, { useCallback } from 'react';
 import {
@@ -50,7 +50,7 @@ export default function FavoriteStationCard({ station }: { station: StationResul
   return (
     <TouchableOpacity onPress={handleSubmit} style={styles.cardTouchable}>
       <ImageBackground
-        source={getLineImage(station.line)}
+        source={getCongestionLineImage(station.line)}
         style={styles.imageBackground}
         imageStyle={styles.imageStyle}
       >
@@ -58,9 +58,9 @@ export default function FavoriteStationCard({ station }: { station: StationResul
           <View style={styles.upContainer}>
             <Text style={styles.stationName}>{station.name}</Text>
             <Text style={styles.stationLine}>{station.line}</Text>
-            <Text style={styles.congestionRate}>
-              {station.congestionByDirection.내선?.congestion.congestionScore}
-              {station.congestionByDirection.상행?.congestion.congestionScore}%
+            <Text style={styles.congestionLevel}>
+              {station.congestionByDirection.내선?.congestion.congestionLevel}
+              {station.congestionByDirection.상행?.congestion.congestionLevel}
             </Text>
             <Text style={styles.dateText}>{kstTime}</Text>
           </View>
@@ -69,7 +69,7 @@ export default function FavoriteStationCard({ station }: { station: StationResul
               <View style={styles.weatherBox}>
                 <View style={styles.weatherIconContainer}>
                   <Image
-                    source={require('@/assets/images/subway/subway-circle-line1.png')}
+                    source={require('@/assets/images/weather/tempgray.png')}
                     style={styles.weatherIcon}
                   />
                 </View>
@@ -79,7 +79,7 @@ export default function FavoriteStationCard({ station }: { station: StationResul
               <View style={styles.weatherBox}>
                 <View style={styles.weatherIconContainer}>
                   <Image
-                    source={require('@/assets/images/subway/subway-circle-line1.png')}
+                    source={require('@/assets/images/weather/raingray.png')}
                     style={styles.weatherIcon}
                   />
                 </View>
@@ -89,7 +89,7 @@ export default function FavoriteStationCard({ station }: { station: StationResul
               <View style={styles.weatherBox}>
                 <View style={styles.weatherIconContainer}>
                   <Image
-                    source={require('@/assets/images/subway/subway-circle-line1.png')}
+                    source={require('@/assets/images/weather/raindrop.png')}
                     style={styles.weatherIcon}
                   />
                 </View>
@@ -99,7 +99,7 @@ export default function FavoriteStationCard({ station }: { station: StationResul
               <View style={styles.weatherBox}>
                 <View style={styles.weatherIconContainer}>
                   <Image
-                    source={require('@/assets/images/subway/subway-circle-line1.png')}
+                    source={require('@/assets/images/weather/windgray.png')}
                     style={styles.weatherIcon}
                   />
                 </View>
@@ -119,21 +119,20 @@ const styles = StyleSheet.create({
     width: CARD_WIDTH,
     height: CARD_HEIGHT,
     borderRadius: px(16),
+    overflow: 'hidden',
   },
   imageBackground: {
     width: '100%',
     height: '100%',
-    backgroundColor: theme.colors.gray[400],
-    borderRadius: px(16),
   },
   imageStyle: {
     resizeMode: 'cover',
+    opacity: 0.9,
   },
   card: {
     width: '100%',
     height: '100%',
     padding: px(24),
-    borderRadius: px(16),
     justifyContent: 'space-between',
     alignItems: 'center',
     flexDirection: 'column',
@@ -145,10 +144,10 @@ const styles = StyleSheet.create({
   },
   stationName: {
     color: theme.colors.gray[0],
-    fontFamily: theme.typography.header1.fontFamily,
-    fontSize: theme.typography.header1.fontSize,
-    fontWeight: theme.typography.header1.fontWeight,
-    lineHeight: theme.typography.header1.lineHeight,
+    fontFamily: 'Pretendard-SemiBold',
+    fontSize: px(32),
+    fontWeight: '600',
+    lineHeight: px(36),
   },
   stationLine: {
     color: theme.colors.gray[0],
@@ -157,12 +156,12 @@ const styles = StyleSheet.create({
     fontWeight: theme.typography.subtitle1.fontWeight,
     lineHeight: theme.typography.subtitle1.lineHeight,
   },
-  congestionRate: {
+  congestionLevel: {
     color: theme.colors.gray[0],
     fontFamily: 'Pretendard-Bold',
-    fontSize: px(86),
+    fontSize: px(60),
     fontWeight: '700',
-    lineHeight: px(103),
+    lineHeight: px(72),
   },
   dateText: {
     color: theme.colors.gray[0],
@@ -175,33 +174,31 @@ const styles = StyleSheet.create({
     height: hp(120),
     paddingVertical: hp(14),
     paddingHorizontal: wp(10),
-    flexDirection: 'row',
     justifyContent: 'center',
     alignItems: 'center',
     alignSelf: 'stretch',
-    gap: wp(10),
     backgroundColor: theme.colors.gray[0],
-    borderRadius: px(16),
     flexShrink: 0,
+    borderRadius: px(16),
   },
   weatherContainer: {
     flex: 1,
     flexDirection: 'row',
     alignItems: 'center',
     alignSelf: 'stretch',
-    gap: wp(28),
+    gap: wp(20),
   },
   weatherBox: {
     flexDirection: 'column',
     alignItems: 'center',
-    alignSelf: 'stretch',
     flexGrow: 1,
   },
   weatherIconContainer: {
     width: px(50),
     height: px(50),
+    justifyContent: 'center',
+    alignItems: 'center',
     borderRadius: px(14),
-    backgroundColor: theme.colors.gray[300],
   },
   weatherIcon: {
     width: '100%',
@@ -217,7 +214,7 @@ const styles = StyleSheet.create({
   weatherValueText: {
     color: theme.colors.gray[700],
     fontFamily: 'Pretendard-SemiBold',
-    fontSize: px(20),
+    fontSize: px(18),
     fontWeight: '600',
     lineHeight: px(22),
   },

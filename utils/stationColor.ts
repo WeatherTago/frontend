@@ -22,3 +22,26 @@ export const getLineColor = (line: string) => {
       return theme.colors.gray[400];
   }
 };
+
+export const getFavoriteBackgroundColor = (line: string) => {
+  switch (line) {
+    case '1호선':
+      return '#EFF6FE';
+    case '2호선':
+      return '#F0FDF8';
+    case '3호선':
+      return '#FFF8F1';
+    case '4호선':
+      return '#F0FDFE';
+    case '5호선':
+      return '#F9F8FF';
+    case '6호선':
+      return '#FFF6F6';
+    case '7호선':
+      return '#F6FCEB';
+    case '8호선':
+      return '#FEF6FB';
+    default:
+      return theme.colors.gray[50];
+  }
+};
