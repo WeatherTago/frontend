@@ -16,11 +16,17 @@ export default function NotificationScreen() {
 
   const { notices, isNewUnreadExists, loading: noticeLoading,readIds, refetchNotices } = useNoticeContext();
 
-  useEffect(() => {
-  if (!noticeLoading && (!notices || notices.length === 0)) {
-    refetchNotices();
+useEffect(() => {
+  if (!noticeLoading) {
+
+    if (!notices || notices.length === 0) {
+      console.log('🔄 공지사항 리패치 실행');
+      refetchNotices();
+    }
   }
-}, [notices, noticeLoading]);
+}, [noticeLoading]);
+
+
 
   return (
     <SafeAreaView style={{ flex: 1, backgroundColor: '#fff' }} edges={['top', 'bottom']}>
