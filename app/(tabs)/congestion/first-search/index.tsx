@@ -138,7 +138,7 @@ export default function FirstSearchScreen() {
   }, [date]);
 
     const getSelectedTimeLabel = () => {
-      if (!date || !time) return '검색할 시각을 선택해주세요';
+      if (!date || !time) return '검색할 시간을 선택해주세요';
       const dateLabel =
         dateOptions.find((opt) => opt.value.toDateString() === date.toDateString())?.label ??
         date.toLocaleDateString();
