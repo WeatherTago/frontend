@@ -50,7 +50,7 @@ AI가 실시간 데이터를 분석해서, 지금 이 시간에 얼마나 붐빌
   return (
     <View style={{flexDirection:'column', backgroundColor:theme.colors.gray[0]}}>
       <View style={styles.titleBox}>
-        <Text style={[styles.title,{color:theme.colors.gray[700]}]}>지하철 혼잡도 분석</Text>
+        <Text style={[styles.title,{color:theme.colors.gray[700]}]}>지하철 혼잡도, 어떻게 정해질까요?</Text>
       </View>
       <View style={styles.stationBox}>
         <Image source={stationInfoImage} style={styles.image} resizeMode="contain" />

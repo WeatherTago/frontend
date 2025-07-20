@@ -176,38 +176,34 @@ export default function FirstResultScreen() {
           address={address}
           phoneNumber={phoneNumber}
         /> 
-        <View style={[styles.clickBox, { backgroundColor: theme.colors.gray[0] }]}>
-          {directionKeys.map((dirKey, index) => {
-            const isFirst = index === 0;
-            const isLast = index === directionKeys.length - 1;
-
-            return (
-              <TouchableOpacity
-                key={dirKey}
-                style={[
-                  styles.button,
-                  selectedButton === dirKey ? styles.selected : styles.unselected,
-                  isFirst && { borderTopLeftRadius: px(9), borderBottomLeftRadius: px(9) },
-                  isLast && { borderTopRightRadius: px(9), borderBottomRightRadius: px(9) },
-                ]}
-                onPress={() => setSelectedButton(dirKey)}
-              >
-                <Text
-                  style={[
-                    styles.buttonText,
-                    {
-                      color:
-                        selectedButton === dirKey
-                          ? theme.colors.gray[800]
-                          : theme.colors.gray[400],
-                    },
-                  ]}
-                >
-                  {dirKey} 노선
-                </Text>
-              </TouchableOpacity>
-            );
-          })}
+      <View style={[styles.clickBox, { backgroundColor: theme.colors.gray[0] }]}>
+        <View style={styles.buttonCover}>
+        {directionKeys.map((dirKey) => (
+          <TouchableOpacity
+            key={dirKey}
+            style={[
+              styles.button,
+              selectedButton === dirKey ? styles.selected : styles.unselected,
+            ]}
+            onPress={() => setSelectedButton(dirKey)}
+          >
+            <Text
+              style={[
+                styles.buttonText,
+                {
+                  color:
+                    selectedButton === dirKey
+                      ? theme.colors.gray[800]
+                      : theme.colors.gray[400],
+                },
+              ]}
+            >
+              {dirKey} 노선
+            </Text>
+          </TouchableOpacity>
+        ))}
+        </View>
+        
       </View>
 
         <View style={{backgroundColor:theme.colors.gray[0],width:'100%',height:px(304),paddingVertical:px(8),justifyContent:'center',alignItems:'center',alignSelf:'stretch'}}>
@@ -217,7 +213,7 @@ export default function FirstResultScreen() {
               ? require('@/assets/images/left.png') 
               : require('@/assets/images/right.png') 
           }
-          style={{ height:px(320),resizeMode:'contain' }}
+          style={{width:'100%', height:'100%',resizeMode:'cover' }}
         />
         </View>
         
@@ -241,7 +237,7 @@ export default function FirstResultScreen() {
               backgroundColor={backgroundColor}
               topText={topText}
               image={image}
-              rate={congestion.congestionLevel}
+              rate={`${congestion.congestionLevel} 수준`} 
               time={formattedTime}
             />
           );
@@ -278,7 +274,7 @@ export default function FirstResultScreen() {
                   key={idx}
                   time={item.time}
                   image={image2}
-                  text1={item.level}
+                  text1={`${item.level} 수준`} 
                   text2={text2}
                   textColor={textColor}
                 />
@@ -293,7 +289,7 @@ export default function FirstResultScreen() {
           if (!result || !result.weather) return null;
 
           const weather = result.weather;
-          const { textColor, backgroundColor, topText,image2 } = getWeatherStyle(weather.status ?? '', theme);
+          const { textColor, backgroundColor, topText,image2,statusText } = getWeatherStyle(weather.status ?? '', theme);
 
           return (
             <View style={{backgroundColor:theme.colors.gray[0]}}>
@@ -311,7 +307,7 @@ export default function FirstResultScreen() {
               backgroundColor={backgroundColor}
               topText={topText}
               iconText={weather.tmp}
-              rate={weather.status ?? '--'}
+              rate={statusText ?? '--'}
               time={formattedTime}
             />
             </View>
@@ -382,14 +378,14 @@ export default function FirstResultScreen() {
               }}
             >
               {filterWeatherByDate(selectedDate, selectedButton).map((item, idx) => {
-                const { textColor,image } = getWeatherStyle(item.status, theme);
+                const { textColor,image,statusText } = getWeatherStyle(item.status, theme);
 
                 return (
                   <SmallInfoBox
                     key={idx}
                     time={item.time}
                     image={image} 
-                    text1={item.status}
+                    text1={statusText ?? '--'}
                     text2={`${item.tmp}℃`}
                     textColor={textColor}
                   />
@@ -466,7 +462,10 @@ return (
         snapPoints={snapPoints}
         enablePanDownToClose={false}
       >
-        <BottomSheetScrollView style={{ backgroundColor: theme.colors.gray[100] }}>
+        <BottomSheetScrollView
+          style={{ backgroundColor: theme.colors.gray[100] }}
+          showsVerticalScrollIndicator={false}
+        >
           {renderBottomSheetContent()}
         </BottomSheetScrollView>
       </BottomSheetModal>
@@ -506,9 +505,10 @@ const styles = StyleSheet.create({
   paddingLeft: wp(24),
   alignItems: 'flex-start',
   alignSelf: 'stretch',
+  gap:px(10)
 },
   button: {
-    height: px(60),
+    height: '100%',
     paddingVertical: px(12),
     paddingHorizontal: px(15),
     justifyContent: 'center',
@@ -516,15 +516,17 @@ const styles = StyleSheet.create({
     gap: px(15),
     flex: 1, 
     borderWidth: px(3),
-    marginTop:20
+    borderRadius:px(9),
+    resizeMode:'cover'
   },
   selected: {
-    borderColor: '#E5E5E5',
-    backgroundColor: '#FFF',
+    borderColor:  theme.colors.gray[200],
+    backgroundColor: theme.colors.gray[0],
+    zIndex: 1,
   },
   unselected: {
     borderColor: 'transparent',
-    backgroundColor: '#F5F5F5',
+    backgroundColor: theme.colors.gray[100],
   },
   buttonText: {
     fontSize: px(22),
@@ -565,5 +567,15 @@ const styles = StyleSheet.create({
     fontSize: px(20),
     fontWeight: '600',
     lineHeight: px(22),
+  },
+  buttonCover:{
+    marginTop:px(20),
+    height: px(60),
+    flex:1,
+    flexDirection:'row',
+    alignItems: 'center',
+    alignSelf: 'stretch',
+    backgroundColor:theme.colors.gray[100],
+    borderRadius:px(9),
   },
 });
