@@ -69,15 +69,14 @@ export default function OnboardingLogin() {
         <StepIndicator totalSteps={4} currentStep={4} />
         <OnboardingHeader
           title={
-            <>
-              <Text style={styles.titlePrimary}>웨더타고</Text>
-              <Text
-                style={styles.titleDefault}
-              >{`로 날씨에 따른\n지하철 혼잡도 쉽게 알아봐요`}</Text>
-            </>
+            <Text style={styles.titleDefault}>
+              이제
+              <Text style={styles.titlePrimary}> 웨더타고</Text>와 함께{`\n`}안전한 이동을
+              시작해볼까요?
+            </Text>
           }
           subtitle={
-            <Text style={styles.subtitle}>자주 가는 역의 혼잡도를 알림으로 받아보세요</Text>
+            <Text style={styles.subtitle}>당신의 편안한 이동에 꼭 필요한 정보만 담았어요</Text>
           }
         />
       </View>
