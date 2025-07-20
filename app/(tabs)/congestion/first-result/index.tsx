@@ -217,7 +217,7 @@ export default function FirstResultScreen() {
               ? require('@/assets/images/left.png') 
               : require('@/assets/images/right.png') 
           }
-          style={{ height:px(320),resizeMode:'contain' }}
+          style={{width:'100%', height:'100%',resizeMode:'cover' }}
         />
         </View>
         
