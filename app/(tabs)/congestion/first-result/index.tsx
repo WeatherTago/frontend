@@ -210,7 +210,7 @@ export default function FirstResultScreen() {
           })}
       </View>
 
-        <View style={{backgroundColor:theme.colors.gray[0],height:px(320),paddingVertical:px(8),justifyContent:'center',alignItems:'center',alignSelf:'stretch'}}>
+        <View style={{backgroundColor:theme.colors.gray[0],width:'100%',height:px(304),paddingVertical:px(8),justifyContent:'center',alignItems:'center',alignSelf:'stretch'}}>
           <Image
           source={
             selectedButton === '상행' || selectedButton === '외선'
@@ -401,7 +401,7 @@ export default function FirstResultScreen() {
         
 
         <StationInfo/>
-        <View style={{height:px(50)}}></View>
+        <View style={{height:insets.bottom}}></View>
 
       </>
     );

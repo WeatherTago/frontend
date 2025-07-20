@@ -43,8 +43,8 @@ export default function StationHeader({ stationName, lines,address,phoneNumber }
     <View style={styles.lineCircleWrapper}>
 
   <View style={styles.textBox}>
-    <Text style={[styles.addressText, {color:theme.colors.gray[950]}]}>{address}</Text>
-    <Text style={[styles.phoneText, {color:theme.colors.secondary['blue']}]}>{phoneNumber}</Text>
+    <Text adjustsFontSizeToFit style={[styles.addressText, {color:theme.colors.gray[950]}]}>{address}</Text>
+    <Text adjustsFontSizeToFit style={[styles.phoneText, {color:theme.colors.secondary['blue']}]}>{phoneNumber}</Text>
   </View>
   
     <View style={styles.lineItemWrapper}>
@@ -121,7 +121,7 @@ const styles = StyleSheet.create({
     flexDirection: 'row',
     justifyContent: 'flex-end',
     alignItems: 'center',
-    gap:px(10)
+    gap:px(10),
   },
   textBox: {
     flexDirection: 'column',

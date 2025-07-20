@@ -1,4 +1,4 @@
-import stationInfoImage from '@/assets/images/subway/subway-info.png';
+import stationInfoImage from '@/assets/images/subway/station-info.png';
 import { theme } from '@/styles/theme';
 import { hp, px, wp } from '@/utils/scale';
 import { useTheme } from '@emotion/react';

@@ -338,7 +338,7 @@ const styles = StyleSheet.create({
   dateButtonText: {
     fontFamily: 'Pretendard-Medium',
     fontWeight: '500',
-    lineHeight: px(34),
+    lineHeight: px(23),
     fontSize: px(22),
   },
   searchButton: {

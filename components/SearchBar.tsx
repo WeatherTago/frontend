@@ -28,7 +28,7 @@ export default function SearchBar({
       <View style={styles.inputWrapper}>
         <TouchableOpacity onPress={onPressInput} activeOpacity={1}>
           <TextInput
-            style={styles.input}
+            style={styles.input} 
             placeholder={placeholder}
             value={value}
             onChangeText={onChangeText}
@@ -46,7 +46,7 @@ export default function SearchBar({
             resizeMode="contain"
           />
         )}
-        <Text style={styles.buttonText}>{buttonLabel}</Text>
+        <Text style={styles.buttonText}  adjustsFontSizeToFit  numberOfLines={1}>{buttonLabel}</Text>
       </TouchableOpacity>
     </View>
   );
@@ -82,7 +82,7 @@ const styles = StyleSheet.create({
   input: {
     fontFamily: 'Pretendard-Medium',
     fontWeight: 500,
-    fontSize: px(22),
+    fontSize: px(20),
     lineHeight: px(34),
     color: '#000',
   },

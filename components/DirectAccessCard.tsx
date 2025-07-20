@@ -24,7 +24,7 @@ export default function DirectAccessCard({
     <View style={styles.card}>
       <View style={{flexDirection:'row',justifyContent:'space-between',alignItems:'flex-start',alignSelf:'stretch',gap:px(10)}}>
       <View style={{flexDirection:'column',alignItems:'flex-start',gap:px(4)}}>
-        <Text
+        <Text 
         style={{
           fontSize: theme.typography.subtitle1.fontSize,
           lineHeight: theme.typography.subtitle1.lineHeight,
@@ -36,7 +36,7 @@ export default function DirectAccessCard({
         {title}
       </Text>
       
-        <Text
+        <Text 
         style={{
           fontSize: theme.typography.body1.fontSize,
           lineHeight: theme.typography.body1.lineHeight,
@@ -49,7 +49,7 @@ export default function DirectAccessCard({
       </Text>
       </View>
       
-      <Image source={image} style={{ width: px(98), height: px(98) }} />
+      <Image source={image} style={{ width: px(98), height: px(98), resizeMode:'contain'}} />
       </View>
       
 
