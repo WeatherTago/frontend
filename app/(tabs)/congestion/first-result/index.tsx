@@ -178,7 +178,7 @@ export default function FirstResultScreen() {
         /> 
       <View style={[styles.clickBox, { backgroundColor: theme.colors.gray[0] }]}>
         <View style={styles.buttonCover}>
-{directionKeys.map((dirKey) => (
+        {directionKeys.map((dirKey) => (
           <TouchableOpacity
             key={dirKey}
             style={[
@@ -569,6 +569,7 @@ const styles = StyleSheet.create({
     lineHeight: px(22),
   },
   buttonCover:{
+    marginTop:px(20),
     height: px(60),
     flex:1,
     flexDirection:'row',
