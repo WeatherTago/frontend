@@ -93,29 +93,24 @@ export default function HomeScreen() {
     <View style={{ flex: 1, paddingTop: insets.top, backgroundColor: theme.colors.gray[50] }}>
       <WeatherHeader showAlarmDot={isNewUnreadExists} />
 
-      <ScrollView style={[styles.container, { backgroundColor: theme.colors.gray[50] }]}>
-        {noticeLoading ? (
-          <View
-            style={{
-              height: px(100),
-              marginHorizontal: px(24),
-              marginTop: px(16),
-              marginBottom: px(4),
-              borderRadius: px(12),
-              backgroundColor: theme.colors.gray[100],
-            }}
+      <ScrollView showsVerticalScrollIndicator={false} style={[styles.container, { backgroundColor: theme.colors.gray[50] }]}>
+        {noticeLoading || !latestNotice ? (
+          <NoticeBanner
+            text="최신 공지를 확인하세요"
+            showArrowButton
+            onPressArrow={() => router.push('../notice')}
+            backgroundColor={theme.colors.gray[700]}
+            textColor={theme.colors.gray[0]}
           />
         ) : (
-          latestNotice && (
-            <NoticeBanner
-              text={`🚨${latestNotice.title}`}
-              showArrowButton
-              onPressArrow={() => router.push(`../notice/${latestNotice.noticeId}`)}
-              backgroundColor={theme.colors.gray[700]}
-              textColor={theme.colors.gray[0]}
-              date={dayjs(latestNotice.createdAt).format('YYYY. MM. DD. A HH:mm')}
-            />
-          )
+          <NoticeBanner
+            text={latestNotice.title}
+            showArrowButton
+            onPressArrow={() => router.push(`../notice/${latestNotice.noticeId}`)}
+            backgroundColor={theme.colors.gray[700]}
+            textColor={theme.colors.gray[0]}
+            date={dayjs(latestNotice.createdAt).format('YYYY. MM. DD. A HH:mm')}
+          />
         )}
 
         <Text
@@ -131,7 +126,6 @@ export default function HomeScreen() {
           오늘 즐겨찾는 역의 혼잡도는?
         </Text>
         {favoriteStations === null ? (
-          // 처음 로딩 중 → 스켈레톤 표시
           <View style={[styles.cardListContainer, { flexDirection: 'row' }]}>
             {[0, 1, 2].map(index => (
               <View key={index} style={{ marginRight: wp(32) }}>
@@ -140,7 +134,6 @@ export default function HomeScreen() {
             ))}
           </View>
         ) : favoriteStations.length === 0 ? (
-          // 데이터 로딩 완료 but 없음 → 안내 메시지
           <View style={styles.emptyContainer}>
             <View style={styles.emptyImageAndTextContainer}>
               <Image
@@ -195,7 +188,7 @@ export default function HomeScreen() {
         <DirectAccessCard
           title={
             <>
-              매일 아침 내가 가는 역의
+              편안한 이동을 위해 지하철 역의
               {'\n'}
               <Text style={{ color: theme.colors.primary[700] }}>엘리베이터 위치</Text>가 알고
               싶다면
@@ -204,7 +197,7 @@ export default function HomeScreen() {
           subText="편의시설 정보를 빠르게 확인해보세요"
           buttonText="편의시설 확인하기"
           onPress={() => router.push('/information')}
-          image={require('@/assets/images/Multiply.png')}
+          image={require('@/assets/images/elevator.png')}
         />
 
         <Text
@@ -223,7 +216,7 @@ export default function HomeScreen() {
         <DirectAccessCard
           title={
             <>
-              매일 아침 내가 가는 역의
+              붐비는 시간대를 피하고 싶다면
               {'\n'}
               혼잡도를 <Text style={{ color: theme.colors.primary[700] }}>알림으로 간단하게</Text>
             </>
@@ -231,8 +224,9 @@ export default function HomeScreen() {
           subText="즐겨찾는 역의 혼잡도를 알림으로 받아보세요"
           buttonText="알림 설정하기"
           onPress={() => router.push('/alert')}
-          image={require('@/assets/images/Multiply.png')}
+          image={require('@/assets/images/homealarm.png')}
         />
+        <View style={{height:px(30)}}/>
       </ScrollView>
     </View>
   );

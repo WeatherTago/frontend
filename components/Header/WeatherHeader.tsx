@@ -9,6 +9,7 @@ import { useSafeAreaInsets } from 'react-native-safe-area-context';
 import AlarmDot from '../Icons/AlarmDot';
 import StarIcon from '../Icons/StarIcon';
 
+
 export default function WeatherHeader({ showAlarmDot }: { showAlarmDot?: boolean }) {
   const insets = useSafeAreaInsets();
   const theme = useTheme();
@@ -19,14 +20,14 @@ export default function WeatherHeader({ showAlarmDot }: { showAlarmDot?: boolean
       <View style={styles.innerContainer}>
         <Text
           style={{
-            fontSize: px(30),
-            lineHeight: px(44),
-            fontWeight: '800',
-            fontFamily: theme.fonts.pretendard.extrabold,
-            color: theme.colors.gray[300],
+            fontFamily:'Paperlogy',
+            fontSize:px(34),
+            fontWeight:'600',
+            lineHeight:px(44),
+            color:theme.colors.gray[300],
           }}
         >
-          WEATHER
+          웨더타고
         </Text>
         <View style={styles.iconRow}>
           <TouchableOpacity
@@ -63,7 +64,7 @@ const styles = StyleSheet.create({
     backgroundColor: theme.colors.gray[50], 
     height: hp(74),
     flexDirection:'row',
-    paddingHorizontal: px(14),
+    paddingHorizontal: px(24),
     justifyContent:'flex-end',
     alignItems:'center',
     alignSelf:'stretch'

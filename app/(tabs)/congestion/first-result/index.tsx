@@ -39,7 +39,7 @@ export default function FirstResultScreen() {
   const [loading, setLoading] = useState(true);
 
   const bottomSheetRef = useRef<BottomSheetModal>(null);
-  const snapPoints = ['20%', '90%'];
+  const snapPoints = ['25%', '90%'];
 
   const [address, setAddress] = useState('');
   const [phoneNumber, setPhoneNumber] = useState('');
@@ -177,36 +177,50 @@ export default function FirstResultScreen() {
           phoneNumber={phoneNumber}
         /> 
         <View style={[styles.clickBox, { backgroundColor: theme.colors.gray[0] }]}>
-          {directionKeys.map((dirKey) => (
-            <TouchableOpacity
-              key={dirKey}
-              style={[
-                styles.button,
-                selectedButton === dirKey ? styles.selected : styles.unselected,
-              ]}
-              onPress={() => setSelectedButton(dirKey)}
-            >
-              <Text
-                style={[
-                  styles.buttonText,
-                  {
-                    color:
-                      selectedButton === dirKey
-                        ? theme.colors.gray[800]
-                        : theme.colors.gray[400],
-                  },
-                ]}
-              >
-                {dirKey} 노선
-              </Text>
-            </TouchableOpacity>
-          ))}
-        </View>
+          {directionKeys.map((dirKey, index) => {
+            const isFirst = index === 0;
+            const isLast = index === directionKeys.length - 1;
 
-       <Image
-          source={require('@/assets/images/Multiply.png')}
-          style={{ height: hp(320), alignSelf: 'stretch' }}
+            return (
+              <TouchableOpacity
+                key={dirKey}
+                style={[
+                  styles.button,
+                  selectedButton === dirKey ? styles.selected : styles.unselected,
+                  isFirst && { borderTopLeftRadius: px(9), borderBottomLeftRadius: px(9) },
+                  isLast && { borderTopRightRadius: px(9), borderBottomRightRadius: px(9) },
+                ]}
+                onPress={() => setSelectedButton(dirKey)}
+              >
+                <Text
+                  style={[
+                    styles.buttonText,
+                    {
+                      color:
+                        selectedButton === dirKey
+                          ? theme.colors.gray[800]
+                          : theme.colors.gray[400],
+                    },
+                  ]}
+                >
+                  {dirKey} 노선
+                </Text>
+              </TouchableOpacity>
+            );
+          })}
+      </View>
+
+        <View style={{backgroundColor:theme.colors.gray[0],width:'100%',height:px(304),paddingVertical:px(8),justifyContent:'center',alignItems:'center',alignSelf:'stretch'}}>
+          <Image
+          source={
+            selectedButton === '상행' || selectedButton === '외선'
+              ? require('@/assets/images/left.png') 
+              : require('@/assets/images/right.png') 
+          }
+          style={{ height:px(320),resizeMode:'contain' }}
         />
+        </View>
+        
 
         {/* 선택된 방향의 혼잡도 InfoBox 하나만 보여주기 */}
         {(() => {
@@ -240,7 +254,7 @@ export default function FirstResultScreen() {
       />
 
   {selectedButton && (
-        <View style={{ backgroundColor: theme.colors.gray[0], marginBottom: px(4)}}> 
+        <View style={{ backgroundColor: theme.colors.gray[0], marginBottom: px(26)}}> 
           <GestureScrollView            horizontal
             nestedScrollEnabled={true}
             scrollEnabled={true}
@@ -275,19 +289,22 @@ export default function FirstResultScreen() {
       )}
         
 
-        
-        <Image
-          source={require('@/assets/images/Multiply.png')}
-          style={{ height: hp(320), alignSelf: 'stretch' }}
-        />
-
         {(() => {
           if (!result || !result.weather) return null;
 
           const weather = result.weather;
-          const { textColor, backgroundColor, topText,iconText } = getWeatherStyle(weather.status ?? '', theme);
+          const { textColor, backgroundColor, topText,image2 } = getWeatherStyle(weather.status ?? '', theme);
 
           return (
+            <View style={{backgroundColor:theme.colors.gray[0]}}>
+            <Image
+              source={image2}
+              style={{ height: hp(320),
+                width: '100%',
+                paddingRight:px(7),
+                paddingLeft:px(46),
+                resizeMode: 'contain', }}
+            />
             <InfoBox
               key="weather"
               specialColor={textColor}
@@ -297,6 +314,7 @@ export default function FirstResultScreen() {
               rate={weather.status ?? '--'}
               time={formattedTime}
             />
+            </View>
           );
         })()}
 
@@ -342,13 +360,13 @@ export default function FirstResultScreen() {
         </View>
 
          <ToggleBox
-          text="날씨 예측 정보"
+          text="역 기준 날씨"
           selected={selectedDate}
           onSelect={(val) => setSelectedDate(val)}
         />
 
         {selectedButton && (
-          <View style={{flex: 1, backgroundColor: theme.colors.gray[0], marginBottom: px(4)}}> 
+          <View style={{flex: 1, backgroundColor: theme.colors.gray[0], marginBottom: px(26)}}> 
             <GestureScrollView
               horizontal
               showsHorizontalScrollIndicator={false}
@@ -383,6 +401,7 @@ export default function FirstResultScreen() {
         
 
         <StationInfo/>
+        <View style={{height:insets.bottom}}></View>
 
       </>
     );
@@ -461,14 +480,6 @@ const styles = StyleSheet.create({
     backgroundColor: '#FFF',
   },
 
-  directionBlock: { marginBottom: 16, paddingVertical: 8},
-
-  directionTitle: { fontSize: 18, fontWeight: '600', marginBottom: 4 },
-
-  weatherBlock: { marginTop: 24, paddingTop: 8, borderTopWidth: 1, borderColor: '#ddd' },
-
-  weatherTitle: { fontSize: 18, fontWeight: '600', marginBottom: 6 },
-  
   buttonRow: { flexDirection: 'row', justifyContent: 'space-between', marginTop: 24, gap: 12 },
 
   setButton: { flex: 1, backgroundColor: '#F2F2F2', paddingVertical: 12, borderRadius: 8, alignItems: 'center' },
@@ -504,7 +515,6 @@ const styles = StyleSheet.create({
     alignItems: 'center',
     gap: px(15),
     flex: 1, 
-    borderRadius:px(9),
     borderWidth: px(3),
     marginTop:20
   },
