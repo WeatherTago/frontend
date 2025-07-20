@@ -39,7 +39,7 @@ export default function FirstResultScreen() {
   const [loading, setLoading] = useState(true);
 
   const bottomSheetRef = useRef<BottomSheetModal>(null);
-  const snapPoints = ['20%', '90%'];
+  const snapPoints = ['25%', '90%'];
 
   const [address, setAddress] = useState('');
   const [phoneNumber, setPhoneNumber] = useState('');

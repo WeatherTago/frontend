@@ -51,9 +51,6 @@ AI가 실시간 데이터를 분석해서, 지금 이 시간에 얼마나 붐빌
     <View style={{flexDirection:'column', backgroundColor:theme.colors.gray[0]}}>
       <View style={styles.titleBox}>
         <Text style={[styles.title,{color:theme.colors.gray[700]}]}>지하철 혼잡도 분석</Text>
-        <View style={[styles.tooltip, {borderColor:theme.colors.gray[400]}]}>
-          <Text style={[styles.tooltipText, {color:theme.colors.gray[400]}]}>i</Text>
-        </View>
       </View>
       <View style={styles.stationBox}>
         <Image source={stationInfoImage} style={styles.image} resizeMode="contain" />
@@ -88,23 +85,6 @@ const styles = StyleSheet.create({
     fontWeight:'600',
     lineHeight:px(34)
   },
-  tooltip:{
-    width: px(16),
-    height: px(16),
-    paddingHorizontal: px(5.333),
-    justifyContent: 'center',
-    alignItems: 'center',
-    flexDirection: 'column',
-    gap: px(6.667), 
-    borderRadius: px(66),
-    borderWidth: px(1),
-  },
-  tooltipText:{
-    fontFamily: 'Pretendard-SemiBold',
-    fontSize: px(12),
-    fontWeight: '600', 
-    lineHeight: px(14), 
-    },
   stationBox:{
     paddingHorizontal:px(34),
     paddingVertical:px(10),

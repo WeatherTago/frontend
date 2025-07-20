@@ -107,7 +107,7 @@ const styles = StyleSheet.create({
     elevation: 4,
   },
   lineCircleWrapper: {
-    height: hp(72),
+    minHeight: hp(72),
     paddingVertical: hp(10),
     paddingHorizontal: wp(24),
     flexDirection: 'row',
@@ -115,7 +115,8 @@ const styles = StyleSheet.create({
     justifyContent:'space-between',
     alignSelf: 'stretch',
     gap: px(8),
-    backgroundColor:'#FFF'
+    backgroundColor:'#FFF',
+    flexWrap:'wrap'
   },
   lineItemWrapper: {
     flexDirection: 'row',

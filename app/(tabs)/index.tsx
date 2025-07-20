@@ -93,7 +93,7 @@ export default function HomeScreen() {
     <View style={{ flex: 1, paddingTop: insets.top, backgroundColor: theme.colors.gray[50] }}>
       <WeatherHeader showAlarmDot={isNewUnreadExists} />
 
-      <ScrollView style={[styles.container, { backgroundColor: theme.colors.gray[50] }]}>
+      <ScrollView showsVerticalScrollIndicator={false} style={[styles.container, { backgroundColor: theme.colors.gray[50] }]}>
         {noticeLoading || !latestNotice ? (
           <NoticeBanner
             text="최신 공지를 확인하세요"
