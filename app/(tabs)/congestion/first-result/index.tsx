@@ -274,7 +274,7 @@ export default function FirstResultScreen() {
                   key={idx}
                   time={item.time}
                   image={image2}
-                  text1={`${item.level}수준`} 
+                  text1={`${item.level} 수준`} 
                   text2={text2}
                   textColor={textColor}
                 />
