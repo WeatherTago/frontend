@@ -39,7 +39,8 @@ export default function MyPageScreen() {
       },
       {
         text: '확인',
-        onPress: () => {
+        onPress: async () => {
+          const res = await withdraw();
           logout();
           router.replace('/onboarding');
         },
