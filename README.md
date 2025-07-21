@@ -1,157 +1,105 @@
-# WeatherTago: 날씨 기반 지하철 혼잡도 예측 서비스
+# 🚇 WeatherTago
 
-**기술 스택:**  
-- React Native  
-- Expo  
-- TypeScript  
+웨더타고는 교통약자를 위한 기상 현황에 따른 지하철 혼잡도 예측 및 편의시설 제공 서비스입니다.
+혼잡도 영향을 가장 많이 받는 교통약자를 대상으로 ‘교통약자를 위한 기상에 따른 지하철 혼잡도 예측 정보 및 편의시설 제공 서비스’라는 주제로 프로젝트를 진행하였습니다.
 
 ---
 
-## 프로젝트 소개
+## 📱 주요 기능
 
-WeatherTago는 날씨 데이터를 기반으로 지하철 역의 혼잡도를 예측하고, 사용자 맞춤 알림 및 커뮤니티 기능을 제공하는 모바일 앱입니다.
+### 🏠 메인 페이지  
+- 즐겨찾기한 역들의 **날씨**와 **혼잡도 예측 정보** 표시  
+- 하단 탭 네비게이션: 홈 / 알림 / 검색 / 편의시설 / 마이페이지
+
+### 🔖 즐겨찾기 역 페이지  
+- 자주 이용하는 지하철역을 즐겨찾기에 등록하여 빠르게 접근 가능  
+- 즐겨찾기 설정 및 수정 기능 제공
+
+### 📢 공지사항 페이지  
+- 서울교통공사 실시간 공지사항 연동  
+- 지하철 운행 정보, 장애 상황 등을 사용자에게 안내
+
+### 📊 혼잡도 상세 페이지  
+- 선택한 역의 **오늘 / 내일 / 모레** 3일간의 시간대별 혼잡도와 날씨 정보 제공
+
+### 🛠 편의시설 정보  
+- 노선 별로 **승강기 가동 현황**, **휠체어 리프트**, **무빙워크 위치** 등 교통약자를 위한 정보 제공
+
+### 🔔 알림 설정 페이지  
+- 사용자가 원하는 시간대, 방향, 기간에 맞춰 **혼잡도 알림 설정 가능**
+
+---
+<h3>📸 메인 화면</h3>
+<p align="flex-start">
+  <img src="https://github.com/user-attachments/assets/f6258c63-3b1b-4b15-afd1-888a2270caa3" width="200" />
+  <img src="https://github.com/user-attachments/assets/8e75e03a-8395-43d7-8416-efe5a7b65210" width="200" />
+  <img src="https://github.com/user-attachments/assets/04c88f86-6c04-4ed2-b62f-55ca185918bf" width="200" />
+  <img src="https://github.com/user-attachments/assets/23d08a8d-32c0-4603-bf26-fbc76d4dc303" width="200" />
+</p>
 
 ---
 
-## 주요 기능
+## ⚙️ 핵심 기술 스택
 
-1. **로그인/회원가입**
-   - 카카오톡 소셜 로그인 지원
-
-2. **온보딩**
-   - 첫 가입 시 앱 기능 간단 소개
-
-3. **사전정보**
-   - 즐겨찾는 역 다중 설정
-
-4. **홈 화면**
-   - 오늘/일주일 기후 정보
-   - 기후에 따른 즐겨찾기 역 혼잡도 예측
-   - 공지사항(시위, 공사 등) 알림
-   - 즐겨찾기 수정
-
-5. **알림 설정 페이지**
-   - 알림 시간 및 요일 설정(역별)
-
-6. **역 혼잡도 분석**
-   - 전체 지하철 노선도 제공
-   - 역 검색 및 상세 혼잡도 안내
-   - 출발/도착역 입력 및 길찾기 결과
-   - 추천 출발 시간대 안내
-
-7. **커뮤니티**
-   - 지하철 상황 정보 공유 및 조회
-   - 검색 및 리스트 제공
-
-8. **마이페이지**
-   - 즐겨찾기 역 관리
-   - 내 프로필 및 내가 쓴 글 관리
-   - 로그아웃, 회원탈퇴
+| 분류 | 기술 |
+|------|------|
+| 플랫폼 | React Native (Expo) |
+| 언어 | TypeScript |
+| 스타일링 | Emotion |
+| 상태 관리 | Context API |
+| 네비게이션 | Expo Router |
+| API 통신 | Axios |
+| 로컬 저장소 | AsyncStorage, SecureStore |
+| 인증 | 카카오 로그인 (`@react-native-kakao/core`) |
 
 ---
 
-## 설치 및 실행
+## 🛠 개발 도구 및 환경
 
+- 빌드/배포: **Expo EAS**
+- 코드 포맷팅: **Prettier**
+- 린팅: **ESLint**
+- 테스트: **Jest**
+- 푸시 알림: **expo-notifications**
+- Firebase: **google-services.json 사용**
+
+---
+
+## 📁 프로젝트 폴더 구조
 ```bash
-git clone https://github.com/WeatherTago/frontend.git
-cd WeatherRoute
-npm install
-npx expo start
+weathertago-front/
+├── app/ # 페이지 및 라우팅
+│ ├── (tabs)/ # 탭 네비게이션 화면들
+│ │ ├── index.tsx # 홈 탭
+│ │ ├── alert.tsx # 알림 탭
+│ │ ├── information.tsx # 편의시설 탭
+│ │ ├── mypage.tsx # 마이페이지 탭
+│ │ └── congestion/ # 혼잡도 관련 화면들
+│ └── onboarding/ # 온보딩 / 로그인 흐름
+│
+├── assets/ # 이미지 및 폰트 리소스
+├── components/ # 재사용 가능한 UI 컴포넌트
+├── constants/ # 공통 상수
+├── context/ # 전역 상태 관리 (Context API)
+├── hooks/ # 커스텀 훅
+├── styles/ # 글로벌 스타일 및 테마
+├── types/ # 타입 정의
+├── utils/ # 유틸리티 함수
+│
+├── app.json # Expo 설정
+├── eas.json # EAS 빌드 설정
+├── package.json # 의존성 정보
+├── tsconfig.json # TypeScript 설정
+└── google-services.json # Firebase 연동 설정
 ```
-
 ---
 
-## 기여 방법
-
-1. **이슈를 확인하고 작업할 항목 선택**
-2. **브랜치 생성:**  
-   `feat/기능명` 또는 `fix/버그명`
-3. **작업 전 최신 dev 브랜치로부터 pull**
-   ```bash
-   git checkout dev
-   git pull origin dev
-   git checkout -b feat/기능명   # 또는 fix/버그명
-   ```
-4. **기능 개발**
-5. **커밋 전 변경사항 확인**
-   ```bash
-   git status
-   git diff
-   ```
-6. **변경사항 스테이징 및 커밋**
-   ```bash
-   git add .
-   git commit -m "feat: 기능 추가 설명"
-   ```
-7. **PR 생성 전 dev 브랜치 최신 내용 반영**
-   ```bash
-   git pull origin dev
-   # 충돌 발생 시 해결 후 add/commit
-   ```
-8. **PR(Pull Request) 생성**
-9. **코드리뷰 후 병합**
-
----
-
-## 커밋 컨벤션
-
-- `feat`: 새로운 기능 개발
-- `fix`: 버그 수정
-- `refactor`: 코드 리팩토링
-- `style`: 코드 포맷팅/오타/함수명 등 스타일 수정
-- `build`: 빌드 관련 파일 수정
-- `docs`: 문서 수정
-- `chore`: 기타 자잘한 수정
-- `ci`: CI 관련 설정 수정
-- `test`: 테스트 코드 수정
-- `design`: 디자인 관련 수정
-
-**예시**  
-```markdown
-feat: 로그인 기능 추가
-fix: 역 검색 오류 수정
+### 📱 빌드
+Android
+```bash
+npx expo run:android
 ```
-
----
-
-## 브랜치 전략
-
-- `main`: 배포(프로덕션) 브랜치
-- `dev`(develop): 통합 개발 브랜치 (기본 브랜치)
-- `feature/기능명`: 기능 개발 브랜치 (`feat/`도 허용)
-- `hotfix/이슈명`: 배포 중 긴급 버그 수정 브랜치
-
----
-
-## Issue 작성 규칙
-
-- **제목:** `[Feat|Fix|Refactor|Docs] 이슈 제목`
-- **본문:** 아래 템플릿 활용
-
+EAS 빌드 (권장)
+```bash
+eas build --platform android
 ```
-### 만들고자 하는 기능/수정사항
-설명을 작성하세요.
-
-### 세부 작업 목록
-- [ ] 작업 1
-- [ ] 작업 2
-
-### 예상 작업 시간
-ex) 2h
-```
-
-- **라벨, 담당자 지정 필수**  
-  - 라벨: 이슈 유형(예: feat, bug, urgent 등) 선택  
-  - 담당자: 실제 작업할 팀원 지정
-
----
-
-## 기타
-
-- Pull Request, Issue, 커밋, 브랜치명 등에 이슈 번호를 명시하면 추적이 용이합니다.
-- 자세한 협업 규칙 및 코드 스타일 가이드는 추후 별도 문서로 안내될 수 있습니다.
-
----
-
-**문의 및 제안:**  
-이슈 또는 PR로 남겨주세요.
