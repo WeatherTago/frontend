@@ -90,13 +90,29 @@ export const AuthProvider = ({ children }: { children: React.ReactNode }) => {
 
   const withdraw = async () => {
     try {
-      await Promise.all([deleteAllAlarms(), withdrawApi()]);
+      // 1. 알림 삭제 먼저 시도
+      await deleteAllAlarms();
+
+      // 2. 탈퇴 시도 (실패하더라도 에러를 따로 처리)
+      try {
+        await withdrawApi();
+      } catch (apiError: any) {
+        console.warn('탈퇴 API 에러 발생:', apiError);
+        // USER4041 에러는 무시 (이미 탈퇴된 상태로 간주)
+        if (apiError?.response?.data?.code !== 'USER4041') {
+          throw apiError; // 진짜 에러일 경우만 throw
+        }
+      }
+
+      // 3. 로컬 데이터 정리
       setUser(null);
       await Promise.all([
         SecureStore.deleteItemAsync('accessToken'),
         SecureStore.deleteItemAsync('refreshToken'),
         AsyncStorage.removeItem('user'),
       ]);
+
+      Alert.alert('탈퇴 완료', '정상적으로 탈퇴되었습니다.');
     } catch (error) {
       if(__DEV__){
         console.error('회원 탈퇴 중 에러 발생:', error);
