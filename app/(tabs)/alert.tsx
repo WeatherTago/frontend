@@ -42,7 +42,9 @@ export default function AlarmScreen() {
         Alert.alert('오류', '알림 목록을 불러오는데 실패했습니다.');
       }
     } catch (error) {
+      if(__DEV__){
       console.error('알림 목록 불러오기 실패:', error);
+      }
       Alert.alert('오류', '알림 목록을 불러오는 중 문제가 발생했습니다.');
     } finally {
       setIsLoadingAlarms(false);
@@ -80,7 +82,6 @@ export default function AlarmScreen() {
 
   // 알림 저장/삭제 후 실행될 콜백 (목록 갱신)
   const handleAlarmActionCompleted = () => {
-    console.log('알림 저장 또는 삭제 완료! 알림 목록을 새로고침합니다.');
     fetchAlarms(); // 알림 목록 다시 불러오기
   };
 

@@ -99,11 +99,13 @@ export default function FirstResultScreen() {
       setAddress(base?.address ?? '아직 주소를 업데이트하고 있어요');
       setPhoneNumber(base?.phoneNumber ?? '02-0000-0000');
     } catch (e) {
-      console.error(e);
-    } finally {
-      setLoading(false);
+    if (__DEV__) {
+      console.error('혼잡도/날씨 API 에러:', e);
     }
-  };
+    } finally {
+        setLoading(false);
+      }
+    };
   
   fetchData();
 }, [station, line, date, time]);

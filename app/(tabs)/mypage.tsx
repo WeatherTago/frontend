@@ -15,7 +15,7 @@ export default function MyPageScreen() {
   const insets = useSafeAreaInsets();
   const [userInfo, setUserInfo] = useState<UserInfo | null>(null);
 
-  const handleWithdraw = () => {
+  const handleWithdraw = async () => {
     Alert.alert('회원 탈퇴', '정말로 탈퇴하시겠습니까?', [
       {
         text: '취소',
@@ -24,15 +24,14 @@ export default function MyPageScreen() {
       },
       {
         text: '확인',
-        onPress: () => {
-          const res = withdraw();
-          console.log(res);
+        onPress: async () => {
+          await withdraw();
           router.replace('/onboarding');
         },
       },
     ]);
   };
-  const handleLogout = () => {
+  const handleLogout = async () => {
     Alert.alert('로그아웃', '정말로 로그아웃하시겠습니까?', [
       {
         text: '취소',
@@ -41,8 +40,8 @@ export default function MyPageScreen() {
       },
       {
         text: '확인',
-        onPress: () => {
-          logout();
+        onPress: async () => {
+          await logout();
           router.replace('/onboarding');
         },
       },

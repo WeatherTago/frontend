@@ -52,13 +52,10 @@ const loadNotices = async () => {
 };
 
 useEffect(() => {
-    if (isAuthReady && user) {
-      console.log('[🔁 로그인됨 → 공지 refetch 실행]');
-      refetchNotices();
-    } else {
-      console.log('[🚫 로그인 안됨 → 공지 refetch 생략]');
-    }
-  }, [isAuthReady, user]); 
+  if (isAuthReady && user) {
+    refetchNotices();
+  }
+}, [isAuthReady, user]);
 
   const isNewUnreadExists = notices.some(
     (n) => dayjs().diff(dayjs(n.createdAt), 'day') <= 2 && !readMap[n.noticeId]

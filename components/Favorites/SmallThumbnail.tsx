@@ -32,19 +32,17 @@ const SmallThumbnail = ({
   isFavorite,
   onToggleFavorite,
 }: SmallThumbnailProps) => {
-  const handleFavorites = async () => {
-    const newFavorite = !isFavorite(stationId);
+    const handleFavorites = async () => {
+      const newFavorite = !isFavorite(stationId);
 
-    if (newFavorite) {
-      const res = await addFavorite({ stationId });
-      if (__DEV__) console.log('즐겨찾기 등록:', res, '즐겨찾기 여부:', newFavorite);
-    } else {
-      const res = await deleteFavorite({ stationId });
-      if (__DEV__) console.log('즐겨찾기 삭제:', res, '즐겨찾기 여부:', newFavorite);
-    }
+      if (newFavorite) {
+        await addFavorite({ stationId });
+      } else {
+        await deleteFavorite({ stationId });
+      }
+      onToggleFavorite(stationId);
+    };
 
-    onToggleFavorite(stationId);
-  };
 
   const activeBackgroundColor = isFavorite(stationId)
     ? getFavoriteBackgroundColor(stationLine)

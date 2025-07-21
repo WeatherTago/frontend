@@ -28,11 +28,6 @@ export const AuthProvider = ({ children }: { children: React.ReactNode }) => {
       const body: KakaoLoginRequest = { accessToken };
       const res: KakaoLoginResponse = await loginKakao(body);
 
-      // TODO: remove after development
-      if (__DEV__) {
-        console.log('로그인 응답:', res);
-      }
-
       const userData: FullUser = {
         userId: res.result.userId,
         newUser: res.result.newUser,
@@ -46,8 +41,10 @@ export const AuthProvider = ({ children }: { children: React.ReactNode }) => {
         AsyncStorage.setItem('user', JSON.stringify(userData)),
       ]);
     } catch (err) {
-      console.error('로그인 실패:', err);
-      Alert.alert('로그인 실패', '다시 시도해주세요.');
+        if (__DEV__) {
+          console.error('로그인 실패:', err);
+        }
+        Alert.alert('로그인 실패', '다시 시도해주세요.');
     } finally {
       setLoading(false);
       setIsAuthReady(true);
@@ -64,8 +61,10 @@ export const AuthProvider = ({ children }: { children: React.ReactNode }) => {
         AsyncStorage.removeItem('user'),
       ]);
     } catch (error) {
-      console.error('로그아웃 중 에러 발생:', error);
-      Alert.alert('로그아웃 실패', '다시 시도해 주세요.');
+      if(__DEV__){
+        console.error('로그아웃 중 에러 발생:', error);
+      }
+       Alert.alert('로그아웃 실패', '다시 시도해주세요.');
     }
   };
 
@@ -79,7 +78,9 @@ export const AuthProvider = ({ children }: { children: React.ReactNode }) => {
         setUser({ ...parsed, ...profile });
       }
     } catch (err) {
-      console.error('사용자 정보 로드 중 에러 발생:', err);
+      if (__DEV__){
+        console.error('사용자 정보 로드 중 에러 발생:', err);
+      }
       Alert.alert('사용자 정보 로드 실패', '다시 시도해 주세요.');
     } finally {
       setLoading(false);
@@ -113,7 +114,9 @@ export const AuthProvider = ({ children }: { children: React.ReactNode }) => {
 
       Alert.alert('탈퇴 완료', '정상적으로 탈퇴되었습니다.');
     } catch (error) {
-      console.error('회원 탈퇴 중 에러 발생:', error);
+      if(__DEV__){
+        console.error('회원 탈퇴 중 에러 발생:', error);
+      }
       Alert.alert('회원 탈퇴 실패', '다시 시도해 주세요.');
     }
   };

@@ -63,7 +63,9 @@ export default function InfoSearchResultScreen() {
         setLifts(l);
         setWalkways(w);
       } catch (error) {
+        if(__DEV__){
         console.error('❌ API 호출 오류:', error);
+        }
       }
     };
 

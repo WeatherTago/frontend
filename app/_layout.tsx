@@ -29,14 +29,19 @@ Notifications.setNotificationHandler({
     shouldShowList: true,
   }),
   handleSuccess(notificationId) {
-    console.log('Notification sent successfully:', notificationId);
+    if (__DEV__) console.log('Notification sent successfully:', notificationId);
   },
   handleError(notificationId, error) {
-    console.log('Notification failed to send:', notificationId, error);
+    if (__DEV__) console.log('Notification failed to send:', notificationId, error);
   },
+
 });
 
-SplashScreen.preventAutoHideAsync().catch(e => console.error(e));
+SplashScreen.preventAutoHideAsync().catch(e => {
+  if (__DEV__) {
+    console.error('❌ SplashScreen 숨기기 방지 실패:', e);
+  }
+});
 
 function AnimatedAppLoader({ children, image }: { children: React.ReactNode; image: number }) {
   const [isSplashReady, setIsSplashReady] = useState(false);
@@ -77,7 +82,9 @@ function AnimatedSplashScreen({ children, image }: { children: React.ReactNode; 
       await Promise.all([]);
       await SplashScreen.hideAsync();
     } catch (error) {
-      console.error(error);
+      if(__DEV__){
+        console.error(error);
+      }
     } finally {
       setAppReady(true);
     }

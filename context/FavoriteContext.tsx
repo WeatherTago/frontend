@@ -32,11 +32,14 @@ export const FavoriteProvider = ({ children }: { children: React.ReactNode }) =>
         const ids = res.result.stations.map((station: StationInfo) => station.stationId);
         setFavoriteStationIds(ids);
       } catch (error) {
-        console.error('Failed to fetch favorites', error);
+        if (__DEV__) {
+          console.error('Failed to fetch favorites', error);
+        }
       } finally {
         setLoading(false);
       }
     };
+
     if (user) {
       fetchFavorites();
     }
