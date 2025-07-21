@@ -24,7 +24,8 @@ export default function MyPageScreen() {
       },
       {
         text: '확인',
-        onPress: () => {
+        onPress: async () => {
+          const res = await withdraw();
           router.replace('/onboarding');
         },
       },
@@ -39,8 +40,7 @@ export default function MyPageScreen() {
       },
       {
         text: '확인',
-        onPress: async () => {
-          const res = await withdraw();
+        onPress: () => {
           logout();
           router.replace('/onboarding');
         },
