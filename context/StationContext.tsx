@@ -1,6 +1,7 @@
 import { getStationInfo } from '@/apis/station';
 import { useAuth } from '@/context/AuthContext';
 import React, { createContext, useContext, useEffect, useState } from 'react';
+import { Alert } from 'react-native';
 
 export interface StationInfo {
   stationId: number;
@@ -26,19 +27,21 @@ export const StationProvider = ({ children }: { children: React.ReactNode }) => 
       try {
         const response = await getStationInfo();
         setStations(response.result);
-        console.log('✅ 역 정보 불러오기 성공');
       } catch (error) {
+        if (__DEV__) {
         console.error('🚨 역 정보 불러오기 실패:', error);
+      }
+      Alert.alert('역 정보를 불러오지 못했습니다', '인터넷 상태를 확인해 주세요.');
       } finally {
         setLoading(false);
       }
     };
     if (user) {
-      fetchStationInfo(); // ✅ 로그인된 경우만 실행
+      fetchStationInfo(); // 로그인된 경우만 실행
     }
   }, [user]);
 
-  // 🔍 헬퍼 함수
+
   const getStationIdByNameAndLine = (name: string, line: string): number | null => {
     const found = stations.find(
       station => station.stationName === name && station.stationLine === line,
@@ -53,7 +56,7 @@ export const StationProvider = ({ children }: { children: React.ReactNode }) => 
   );
 };
 
-// 커스텀 훅
+
 export const useStationContext = () => {
   const context = useContext(StationContext);
   if (!context) throw new Error('useStationContext must be used within a StationProvider');

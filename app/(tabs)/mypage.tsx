@@ -25,8 +25,6 @@ export default function MyPageScreen() {
       {
         text: '확인',
         onPress: () => {
-          const res = withdraw();
-          console.log(res);
           router.replace('/onboarding');
         },
       },

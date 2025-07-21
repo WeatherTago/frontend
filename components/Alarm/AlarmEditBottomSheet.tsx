@@ -319,7 +319,9 @@ const AlarmEditBottomSheet = forwardRef<AlarmEditBottomSheetRef, AlarmEditBottom
           setFavoriteStationsApiData(response.result.stations);
         }
       } catch (error) {
-        console.error('즐겨찾는 역 불러오기 실패:', error);
+        if(__DEV__){
+          console.error('즐겨찾는 역 불러오기 실패:', error);
+        }
       } finally {
         setIsLoadingFavorites(false);
       }
@@ -555,7 +557,9 @@ const AlarmEditBottomSheet = forwardRef<AlarmEditBottomSheetRef, AlarmEditBottom
         onAlarmActionCompleted(); // 부모 컴포넌트에 알림 저장 완료 알림
       } catch (error) {
         Alert.alert('오류', '알림 저장에 실패했습니다.');
-        console.error('알림 저장 오류:', error);
+        if(__DEV__){
+           console.error('알림 저장 오류:', error);
+        }
       }
     }, [
       selectedStation,
@@ -600,7 +604,9 @@ const AlarmEditBottomSheet = forwardRef<AlarmEditBottomSheetRef, AlarmEditBottom
                 onAlarmActionCompleted(); // 부모 컴포넌트에 알림 삭제 완료 알림
               } catch (error) {
                 Alert.alert('오류', '알림 삭제에 실패했습니다.');
-                console.error('알림 삭제 오류:', error);
+                if(__DEV__){
+                  console.error('알림 삭제 오류:', error);
+                }
               }
             },
           },

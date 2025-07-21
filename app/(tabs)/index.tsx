@@ -70,7 +70,11 @@ export default function HomeScreen() {
       try {
         await sendPushToken(encodedToken);
       } catch (error) {
-        console.error('❌ 푸시 토큰 전송 실패:', JSON.stringify(error));
+        if (__DEV__) {
+          console.error('❌ 푸시 토큰 전송 실패:', JSON.stringify(error));
+        } else {
+          Alert.alert('알림 등록 실패', '알림을 등록하는 데 문제가 발생했어요.');
+        }
       }
     }
   };

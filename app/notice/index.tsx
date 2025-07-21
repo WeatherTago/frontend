@@ -20,7 +20,6 @@ useEffect(() => {
   if (!noticeLoading) {
 
     if (!notices || notices.length === 0) {
-      console.log('🔄 공지사항 리패치 실행');
       refetchNotices();
     }
   }

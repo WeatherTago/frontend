@@ -15,7 +15,6 @@ const DATA_GOKR_API_KEY = process.env.EXPO_PUBLIC_DATA_GOKR_API_KEY!;
 
     // XML 응답 처리
     if (text.startsWith('<')) {
-      console.error('❌ XML 응답 오류 발생. 내용 ↓\n', text);
       throw new Error('Non-JSON response');
     }
 
@@ -23,7 +22,6 @@ const DATA_GOKR_API_KEY = process.env.EXPO_PUBLIC_DATA_GOKR_API_KEY!;
     const items = parsed?.response?.body?.items?.item ?? [];
     return Array.isArray(items) ? items : [items];
   } catch (err) {
-    console.error('❌ API 요청 실패:', err);
     return [];
   }
 };

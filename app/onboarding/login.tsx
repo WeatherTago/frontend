@@ -4,12 +4,11 @@ import StepIndicator from '@/components/Onboarding/StepIndicator';
 import { useAuth } from '@/context/AuthContext';
 import { theme } from '@/styles/theme';
 import { hp, px, wp } from '@/utils/scale';
-import { getKeyHashAndroid, initializeKakaoSDK } from '@react-native-kakao/core';
+import { initializeKakaoSDK } from '@react-native-kakao/core';
 import { login as kakaoLogin } from '@react-native-kakao/user';
 import { router } from 'expo-router';
-import * as SecureStore from 'expo-secure-store';
 import { useEffect } from 'react';
-import { Image, StyleSheet, Text, TextStyle, View } from 'react-native';
+import { Alert, Image, StyleSheet, Text, TextStyle, View } from 'react-native';
 import { useSafeAreaInsets } from 'react-native-safe-area-context';
 
 export default function OnboardingLogin() {
@@ -23,20 +22,6 @@ export default function OnboardingLogin() {
   useEffect(() => {
     if (!!user) {
       const fetchTokens = async () => {
-        // TODO: remove after token validation
-        if (__DEV__) {
-          console.log('user', user);
-
-          try {
-            const accessToken = await SecureStore.getItemAsync('accessToken');
-            const refreshToken = await SecureStore.getItemAsync('refreshToken');
-            console.log('accessToken:', accessToken);
-            console.log('refreshToken:', refreshToken);
-          } catch (error) {
-            console.error('토큰 가져오기 실패:', error);
-          }
-        }
-
         router.replace('/onboarding/favorites');
       };
 
@@ -45,18 +30,18 @@ export default function OnboardingLogin() {
   }, [user]);
 
   const handleLogin = async () => {
-    if (__DEV__) {
-      console.log(await getKeyHashAndroid());
-    }
     try {
       const result = await kakaoLogin();
       const kakaoAccessToken = result.accessToken;
       login(kakaoAccessToken);
     } catch (error) {
-      console.error(error);
+    if (__DEV__) {
+      console.error('카카오 로그인 실패:', error);
     }
-  };
-
+    Alert.alert('로그인 실패', '카카오 로그인 중 문제가 발생했어요. 다시 시도해주세요.');
+  }
+  }
+  
   return (
     <View style={[styles.container, { paddingBottom: insets.bottom }]}>
       <View style={styles.contentContainer}>
