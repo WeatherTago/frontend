@@ -4,7 +4,7 @@ import StepIndicator from '@/components/Onboarding/StepIndicator';
 import { useAuth } from '@/context/AuthContext';
 import { theme } from '@/styles/theme';
 import { hp, px, wp } from '@/utils/scale';
-import { initializeKakaoSDK } from '@react-native-kakao/core';
+import { getKeyHashAndroid, initializeKakaoSDK } from '@react-native-kakao/core';
 import { login as kakaoLogin } from '@react-native-kakao/user';
 import { router } from 'expo-router';
 import { useEffect } from 'react';
@@ -30,18 +30,21 @@ export default function OnboardingLogin() {
   }, [user]);
 
   const handleLogin = async () => {
+    if (__DEV__) {
+      console.log(await getKeyHashAndroid());
+    }
     try {
       const result = await kakaoLogin();
       const kakaoAccessToken = result.accessToken;
       login(kakaoAccessToken);
     } catch (error) {
-    if (__DEV__) {
-      console.error('카카오 로그인 실패:', error);
+      if (__DEV__) {
+        console.error('카카오 로그인 실패:', error);
+      }
+      Alert.alert('로그인 실패', '카카오 로그인 중 문제가 발생했어요. 다시 시도해주세요.');
     }
-    Alert.alert('로그인 실패', '카카오 로그인 중 문제가 발생했어요. 다시 시도해주세요.');
-  }
-  }
-  
+  };
+
   return (
     <View style={[styles.container, { paddingBottom: insets.bottom }]}>
       <View style={styles.contentContainer}>
