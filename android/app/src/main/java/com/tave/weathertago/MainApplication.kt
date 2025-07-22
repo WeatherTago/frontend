@@ -15,6 +15,7 @@ import com.facebook.soloader.SoLoader
 
 import expo.modules.ApplicationLifecycleDispatcher
 import expo.modules.ReactNativeHostWrapper
+import com.kakao.sdk.common.KakaoSDK
 
 class MainApplication : Application(), ReactApplication {
 
@@ -48,6 +49,7 @@ class MainApplication : Application(), ReactApplication {
       load()
     }
     ApplicationLifecycleDispatcher.onApplicationCreate(this)
+    KakaoSDK.init(this, BuildConfig.EXPO_PUBLIC_KAKAO_NATIVE_APP_KEY)
   }
 
   override fun onConfigurationChanged(newConfig: Configuration) {

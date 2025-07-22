@@ -151,8 +151,8 @@ android {
 dependencies {
     // The version of react-native is set by the React Native Gradle Plugin
     implementation("com.facebook.react:react-android")
-    implementation("com.kakao.sdk:auth:2.18.0")
-    implementation("com.kakao.sdk:user:2.18.0")
+    implementation("com.kakao.sdk:v2-auth:2.18.0")
+    implementation("com.kakao.sdk:v2-user:2.18.0")
     def isGifEnabled = (findProperty('expo.gif.enabled') ?: "") == "true";
     def isWebpEnabled = (findProperty('expo.webp.enabled') ?: "") == "true";
     def isWebpAnimatedEnabled = (findProperty('expo.webp.animated') ?: "") == "true";
