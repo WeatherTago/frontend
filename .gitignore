@@ -10,6 +10,7 @@ web-build/
 expo-env.d.ts
 
 # Native
+android/
 .kotlin/
 *.orig.*
 *.jks
@@ -37,6 +38,7 @@ yarn-error.*
 # typescript
 *.tsbuildinfo
 
+# Custom files
 app-example
 google-services.json
 weathertago-*.json
