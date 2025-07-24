@@ -16,7 +16,7 @@ export default function OnboardingLogin() {
   const { login, user } = useAuth();
 
   useEffect(() => {
-    initializeKakaoSDK(process.env.EXPO_PUBLIC_KAKAO_NATIVE_APP_KEY!);
+    initializeKakaoSDK('9aef26f6ceb633518048c01ef8689c10');
   }, []);
 
   useEffect(() => {
@@ -36,7 +36,7 @@ export default function OnboardingLogin() {
     try {
       const result = await kakaoLogin();
       const kakaoAccessToken = result.accessToken;
-      login(kakaoAccessToken);
+      await login(kakaoAccessToken);
     } catch (error) {
       if (__DEV__) {
         console.error('카카오 로그인 실패:', error);

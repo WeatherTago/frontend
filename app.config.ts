@@ -58,7 +58,7 @@ export default ({ config }: ConfigContext): ExpoConfig => ({
     [
       '@react-native-kakao/core',
       {
-        nativeAppKey: process.env.EXPO_PUBLIC_KAKAO_NATIVE_APP_KEY,
+        nativeAppKey: '9aef26f6ceb633518048c01ef8689c10',
         android: {
           authCodeHandlerActivity: true,
         },
