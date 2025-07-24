@@ -19,7 +19,7 @@ import { BottomSheetModal, BottomSheetScrollView } from '@gorhom/bottom-sheet';
 import dayjs from 'dayjs';
 import { useLocalSearchParams, useRouter } from 'expo-router';
 import { useEffect, useRef, useState } from 'react';
-import { ActivityIndicator, Dimensions, Image, StyleSheet, Text, TouchableOpacity, View } from 'react-native';
+import { ActivityIndicator, BackHandler, Dimensions, Image, StyleSheet, Text, TouchableOpacity, View } from 'react-native';
 import { ScrollView as GestureScrollView } from 'react-native-gesture-handler';
 import ImageZoom from 'react-native-image-pan-zoom';
 import { useSafeAreaInsets } from 'react-native-safe-area-context';
@@ -115,6 +115,18 @@ export default function FirstResultScreen() {
       bottomSheetRef.current.present();
     }
   }, [loading]);
+  
+  useEffect(() => {
+  const router = useRouter();
+
+  const onBackPress = () => {
+    router.replace('/congestion'); 
+    return true; 
+  };
+
+  const subscription = BackHandler.addEventListener('hardwareBackPress', onBackPress);
+  return () => subscription.remove();
+}, []);
 
   const renderBottomSheetContent = () => {
     if (!result) {
